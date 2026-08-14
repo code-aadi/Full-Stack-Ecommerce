@@ -1,22 +1,29 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
+import { AuthContext } from '../../Context/AuthContext';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(null)
+  const {userLogin, loginLoading} = useContext(AuthContext)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
   const handleChange = (e) => {
+    setError(null)
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // Tumhara login logic yahan aayega
-    console.log('Login Data:', formData);
+    
+  const result =  await userLogin(formData)
+  if(!result.sucess){
+ setError(result.message)
+  }
   };
 
   return (
@@ -168,6 +175,10 @@ const Login = () => {
         .auth-footer a:hover {
           text-decoration: underline;
         }
+          .login-error{
+  text-align: center;
+  color: rgb(255, 29, 29);
+}
       `}</style>
 
       <div className="auth-container">
@@ -224,8 +235,8 @@ const Login = () => {
                 Forgot password?
               </Link>
             </div>
-
-            <button type="submit" className="auth-btn">
+ {error && <p className='login-error'>{error}</p> }
+            <button type="submit" className="auth-btn" disabled = {loginLoading}>
               <LogIn size={18} />
               <span>Sign In</span>
             </button>

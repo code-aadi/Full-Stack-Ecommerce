@@ -9,6 +9,8 @@ import Cart from './Pages/Cart';
 import CartProvider from '../Context/CartContext';
 import Register from './Pages/Register';
 import Login from './Pages/Login';
+import AuthProvider from '../Context/AuthContext';
+import PublicRoute from './components/PublicRoute';
 
 
 
@@ -20,16 +22,18 @@ const router = createBrowserRouter([
     {path : "/MyCart", element : <Cart />},
 
 ]},
-  {path : "/register", element : <Register />},
-  {path : "/login", element :<Login />},
+  {path : "/register", element : <PublicRoute><Register /></PublicRoute> },
+  {path : "/login", element : <PublicRoute><Login /></PublicRoute>},
 
 ])
 
 
 function App() {
-  return <CartProvider>
+  return (<AuthProvider>
+    <CartProvider>
     <RouterProvider router={router} />
   </CartProvider>
+  </AuthProvider>)
 }
 
 export default App;

@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { AuthContext } from '../../Context/AuthContext';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
   const [error, setError] = useState(null)
+  const {userRegister, registerLoading} = useContext(AuthContext)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -31,26 +33,13 @@ const Register = () => {
       setError("Please Enter Atleast 6 Digits of Password");
       return
     }
-try {
-  setError(null)
-setLoading(false)
-const response = await fetch("http://localhost:2310/api/auth/register",{
-  method : "POST",
-  headers : {"Content-Type" : "application/json"},
-  body : JSON.stringify(formData)
-})
-const result = await response.json()
-if(!response.ok){
-  setError(result.message)
-  return
+const result = await userRegister(formData)
+if(result.success){
+  alert(result.message, "and login bhi ho gya")
+//navigate("/login")
 }
-alert(result.message)
-
-
-} catch (error) {
-  setError("Server Error! Please Try Later")
-}finally{
-  setLoading(false)
+else{
+  setError(result.message)
 }
   };
 
@@ -262,7 +251,7 @@ alert(result.message)
               </div>
             </div>
        {error && <p className='register-error'>{error}</p> } 
-            <button type="submit" className="auth-btn" disabled = {loading}>
+            <button type="submit" className="auth-btn" disabled = {registerLoading}>
               <span>Create Account</span>
               <ArrowRight size={18} />
             </button>
