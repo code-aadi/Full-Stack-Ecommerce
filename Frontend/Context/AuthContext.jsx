@@ -37,14 +37,9 @@ return data
   setRegisterLoading(false)
 }
 }
-useEffect(()=>{
-  console.log(user)
-  
-},[user])
 
-useEffect(()=>{
-  console.log(accessToken)
-},[accessToken])
+
+
 // ----------------login-----------------------------------
 
 async function userLogin(userData) {
@@ -83,7 +78,7 @@ useEffect(() => {
       credentials : "include"
     })
     const data = await response.json()
-    console.log(data)
+  
     if(!response.ok){
       setAccessToken(null)
       setUser(null)
@@ -102,7 +97,7 @@ useEffect(() => {
   }
   }
     initilizeAuth()
-    console.log("useEffect")
+    
 }, []);
 
 async function getCurrentUser(token) {
@@ -147,7 +142,7 @@ async function logout() {
   }
 }
 return(
-    <AuthContext.Provider value={{userRegister, user, loginLoading, registerLoading, userLogin, logout, userLoading}} >
+    <AuthContext.Provider value={{userRegister, user, loginLoading, registerLoading, userLogin, logout, userLoading, accessToken}} >
         {children}
     </AuthContext.Provider>
 )

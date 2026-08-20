@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken"
 
 function authMiddleware(req,res,next){
   const authHeader = req.headers.authorization
-const token = authHeader?.split(" ")[1]
+  const token = authHeader?.split(" ")[1]
+ 
 
 if(!token){
     return res.status(401).json({
@@ -17,9 +18,12 @@ if(!token){
      req.user = decoded
      next()
   } catch (error) {
+    console.log(error)
     return res.status(401).json({
     success: false,
-    message: "Invalid or expired token"
+    message: "Invalid or expired token",
+    error : error.message,
+    
 });
   }
 }

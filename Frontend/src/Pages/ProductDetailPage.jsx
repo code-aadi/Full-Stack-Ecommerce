@@ -5,7 +5,7 @@ import { cartContext } from '../../Context/CartContext';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-  console.log(id);
+
 
   // DB Fields ke anusar State
   const [product, setProduct] = useState(null);
@@ -22,7 +22,7 @@ const ProductDetailPage = () => {
   const cartItem = cartItems?.find((item) => item._id === id || item.id === id);
   const isInCart = Boolean(cartItem);
   const currentQuantity = cartItem ? cartItem.quantity : 1;
-console.log(cartItems)
+
   // API Call to Fetch Product by ID
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -46,7 +46,7 @@ console.log(cartItems)
   }, [id]);
 
 
-console.log(product)
+
  
   const handleAddToCart = () => {
     if (addToCart && product) {
@@ -427,13 +427,13 @@ console.log(product)
                     {isInCart ? (
                       /* Jab Cart me hai -> Counter dikhega */
                       <div className="quantity-selector">
-                        <button className="qty-btn" onClick={()=> quantityDecrease(product._id)}>
+                        <button className="qty-btn" onClick={()=> quantityDecrease(product._id, currentQuantity)}>
                           <Minus size={16} />
                         </button>
                         <span className="qty-value">{currentQuantity}</span>
                         <button
                           className="qty-btn"
-                          onClick={()=> quantityIncrease(product._id)}
+                          onClick={()=> quantityIncrease(product._id, currentQuantity)}
                           disabled={currentQuantity >= product.stock}
                         >
                           <Plus size={16} />

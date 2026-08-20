@@ -11,9 +11,7 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const {cartItems} = useContext(cartContext)
   const userLogo = user?.name?.charAt(0)
-  function handleCart(){
-    navigate("/MyCart")
-  }
+
   function handleIconClick(){
     if(!user){
       navigate("/register")
@@ -47,8 +45,8 @@ const Navbar = () => {
           <button className="icon-btn"><Heart size={22} /></button>
           <button className="icon-btn">
  {dropdownOpen && <UserDropdown setDropdownOpen = {setDropdownOpen} />}
-            <ShoppingCart size={22} onClick={handleCart} />
-            <span className="cart-badge">{cartItems.length}</span>
+            <ShoppingCart size={22} onClick={()=> navigate("/MyCart")} />
+            <span className="cart-badge">{cartItems?.length}</span>
           </button>
         </div>
       </div>

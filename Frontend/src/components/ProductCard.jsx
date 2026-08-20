@@ -8,7 +8,7 @@ const ProductCard = ({ item }) => {
   const { cartItems, addToCart, quantityDecrease, quantityIncrease, removeFromCart } = useContext(cartContext);
 
   // Check karein ki product pehle se cart me hai ya nahi
-  const cartItem = cartItems?.find((cItem) => cItem._id === item._id || cItem.id === item._id);
+  const cartItem = cartItems?.find((cItem) => cItem.product._id === item._id || cItem.product.id === item._id);
   const isInCart = Boolean(cartItem);
   const currentQuantity = cartItem ? cartItem.quantity : 1;
 
@@ -248,13 +248,13 @@ const ProductCard = ({ item }) => {
           {isInCart ? (
             /* Jab Item Cart me hai -> (+ / -) Quantity Counter dikhega */
             <div className="card-quantity-selector">
-              <button className="card-qty-btn" onClick={()=> quantityDecrease(item._id)}>
+              <button className="card-qty-btn" onClick={()=> quantityDecrease(item._id, currentQuantity)}>
                 <Minus size={16} />
               </button>
               <span className="card-qty-value">{currentQuantity}</span>
               <button 
                 className="card-qty-btn" 
-                onClick={()=> quantityIncrease(item._id)} 
+                onClick={()=> quantityIncrease(item._id, currentQuantity)} 
                 disabled={currentQuantity >= item.stock}
               >
                 <Plus size={16} />

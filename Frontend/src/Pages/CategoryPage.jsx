@@ -9,7 +9,7 @@ const CategoryProductsPage = () => {
  const [loading, setLoading] = useState(false)
  const [error, setError] = useState(null);
   const { categoryName } = useParams();
-console.log(categoryName)
+
  useEffect(()=>{
 async function getCategoriesData() {
 try {
