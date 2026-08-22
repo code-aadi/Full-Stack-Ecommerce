@@ -1,29 +1,35 @@
-async function fetchApi(url, options = {}, setAccessToken) {
+let refreshPromise = null; 
 
+async function fetchApi(url, options = {}, setAccessToken) {
+    
     let response = await fetch(url, {
         ...options,
-        credentials: "include", 
+        credentials: "include",
     });
 
     if (response.status !== 401) {
         return response;
     }
 
-    
-    const refreshResponse = await fetch("http://localhost:2310/api/auth/refresh", {
-        method: "POST",
-        credentials: "include",
-    });
+   
+    if (!refreshPromise) {
+        refreshPromise = fetch("http://localhost:2310/api/auth/refresh", {
+            method: "POST",
+            credentials: "include",
+        }).finally(() => {
+            refreshPromise = null; 
+        });
+    }
+
+    const refreshResponse = await refreshPromise;
 
     if (refreshResponse.status === 403) {
-      
         setAccessToken(null);
         window.location.href = "/login";
         return refreshResponse;
     }
 
     if (!refreshResponse.ok) {
-        
         setAccessToken(null);
         window.location.href = "/login";
         return response;
