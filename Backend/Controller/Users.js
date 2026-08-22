@@ -2,6 +2,8 @@ import { User } from "../Model/Users.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { generateAccessToken, generateRefreshToken } from "../utils/jwtHelper.js"
+import RefreshToken from "../Model/RefreshToken.js"
+import { hashToken } from "../utils/tokenHash.js";
 
 export const register = async (req,res)=>{
 const {name, email, password} = req.body
@@ -16,8 +18,8 @@ const {name, email, password} = req.body
      const hashedPassword = await bcrypt.hash(password, 10)
      const newUser = await User.create({name, email, password : hashedPassword})
 
-     const accessToken = generateAccessToken(newUser._id)
-     const refreshToken = generateRefreshToken(newUser._id)
+     const accessToken =  generateAccessToken(newUser._id)
+     const refreshToken = await generateRefreshToken(newUser._id)
     res.cookie("REFRESH-TOKEN", refreshToken,{
         httpOnly : true,
         sameSite : process.env.NODE_ENV === 'production' ? 'none' : 'lax', 
@@ -70,7 +72,7 @@ export const login = async (req,res)=>{
     }
     
     const accessToken = generateAccessToken(user._id)
-    const refreshToken = generateRefreshToken(user._id)
+    const refreshToken = await generateRefreshToken(user._id)
     res.cookie("REFRESH-TOKEN", refreshToken,{
         httpOnly : true,
         sameSite : process.env.NODE_ENV === 'production' ? 'none' : 'lax', 
@@ -130,39 +132,105 @@ export const getCurrentUser = async(req,res)=>{
 }
 
 
-export const refreshAccessToken = async (req,res) => {
-    
-    try {
-        const refreshToken = req.cookies["REFRESH-TOKEN"]
-       
-        if(!refreshToken){
-            return res.status(401).json({
-                success : false,
-                message : "Refresh token required"
-            })
-        }
-        
-        const decoded = jwt.verify(refreshToken,process.env.REFRESH_SECRET)
-        const newAccessToken = generateAccessToken(decoded.userId)
 
-        return res.status(200).json({
-            success : true,
-            accessToken : newAccessToken
-        })
-    } catch (error) {
-        return res.status(500).json({
-            success : false,
-            message : "Invalid or expired refresh token",
-            error : error.message
-        })
+
+
+
+
+
+export const refreshAccessToken = async (req, res) => {
+  try {
+    const incomingToken = req.cookies["REFRESH-TOKEN"];
+
+    if (!incomingToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token required",
+      });
     }
-}
+
+
+    let decoded;
+    try {
+      decoded = jwt.verify(incomingToken, process.env.REFRESH_SECRET);
+    } catch (err) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid or expired refresh token",
+      });
+    }
+
+  
+    const tokenHash = hashToken(incomingToken);
+    const storedToken = await RefreshToken.findOne({ tokenHash });
+
+    if (!storedToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token not recognized",
+      });
+    }
+
+    if (storedToken.revoked) {
+      await RefreshToken.updateMany(
+        { familyId: storedToken.familyId },
+        { revoked: true }
+      );
+      res.clearCookie("REFRESH-TOKEN");
+      return res.status(403).json({
+        success: false,
+        message: "Token reuse detected. Please login again.",
+      });
+    }
+
+    storedToken.revoked = true;
+    await storedToken.save();
+
+    const newAccessToken = generateAccessToken(decoded.userId);
+    const newRefreshToken = await generateRefreshToken(decoded.userId, decoded.familyId);
+
+    res.cookie("REFRESH-TOKEN", newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      success: true,
+      accessToken: newAccessToken,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
+
+
 
 
 
 export const logout = async (req, res) => {
     try {
-        
+        const incomingToken = req.cookies["REFRESH-TOKEN"];
+
+        if (incomingToken) {
+            const tokenHash = hashToken(incomingToken);
+            const storedToken = await RefreshToken.findOne({ tokenHash });
+
+            if (storedToken) {
+                await RefreshToken.updateMany(
+                    { familyId: storedToken.familyId },
+                    { revoked: true }
+                );
+            }
+        }
+
         return res
             .clearCookie('REFRESH-TOKEN', {
                 httpOnly: true,
@@ -171,6 +239,7 @@ export const logout = async (req, res) => {
             })
             .status(200)
             .json({ success: true, message: "Logged out successfully!" });
+
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }
