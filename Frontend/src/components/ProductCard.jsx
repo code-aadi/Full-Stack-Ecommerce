@@ -8,7 +8,7 @@ const ProductCard = ({ item }) => {
   const { cartItems, addToCart, quantityDecrease, quantityIncrease, removeFromCart } = useContext(cartContext);
 
   // Check karein ki product pehle se cart me hai ya nahi
-  const cartItem = cartItems?.find((cItem) => cItem.product._id === item._id || cItem.product.id === item._id);
+  const cartItem = cartItems?.find((cItem) => cItem.product._id === item?._id || cItem.product.id === item?._id);
   const isInCart = Boolean(cartItem);
   const currentQuantity = cartItem ? cartItem.quantity : 1;
 

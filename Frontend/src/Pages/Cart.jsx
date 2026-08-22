@@ -8,11 +8,11 @@ export default function Cart() {
   const {cartItems, quantityIncrease , quantityDecrease , removeFromCart, clearCart} = useContext(cartContext)
 
 const [loading, setLoading] = useState(false)
-const cartItemsObj = {}
+/*const cartItemsObj = {}
 cartItems?.forEach(item => {
   cartItemsObj[item.product._id] = item.quantity
-});
-const subTotal = cartItems.reduce((acc,cart) => acc + cart.product.quantity * cart.product.price, 0)
+});*/
+const subTotal = cartItems.reduce((acc,cart) => acc + cart.quantity * cart.product.price, 0)
 const tax = subTotal * 18 / 100
 
 
@@ -45,7 +45,8 @@ if(loading){
         {/* Left: Cart Items List */}
         <section className="cart-items">
           {cartItems?.map((item) => {
-            item.quantity = cartItemsObj[item.product._id]
+           
+           // item.quantity = cartItemsObj[item.product._id]
            return (
              <div className="cart-card" key={item.product._id}>
               <img src={item.product.image} alt={item.product.name} className="product-img" />

@@ -1,5 +1,7 @@
+
 import Cart from "../Model/Cart.js"
 import Product from "../Model/productModel.js"
+import { User } from "../Model/Users.js"
 
 export async function addToCart(req,res){
     const userId = req.user.userId
@@ -218,4 +220,96 @@ return res.status(200).json({
     error : error.message
   })
 }
+}
+
+
+export const getLocalCart = async (req,res)=>{
+const {ids} = req.body
+
+try {
+    if(!ids, ids.length === 0){
+   return res.status(400).json({
+        success : false,
+        message : "Please Send Product Ids"
+    })
+}
+const products = await Product.find({
+  _id : {$in : ids}
+})
+res.status(200).json({
+    success : true,
+    message : "Cart Data Found Successfully",
+    products
+})
+} catch (error) {
+    res.status(500).json({
+        success : false,
+    message : "Internal Server Error",
+    error : error.message
+    })
+}
+}
+
+
+
+export const localCartToDb = async (req,res)=>{
+       const userId = req.user.userId
+     const {localCart} = req.body
+   try {
+    if (!localCart || !Array.isArray(localCart) || localCart.length === 0) {
+    return res.status(400).json({ success: false, message: "Local cart khali hai!" });
+}
+   const userCart = await Cart.findOne({user : userId})
+   
+   if (!userCart) {
+       
+        const formattedItems = localCart.map(item => ({
+            product: item._id,
+            quantity: item.quantity
+        }));
+        
+        const newCart = new Cart({
+            user: userId,
+            items: formattedItems
+        });
+        
+        await newCart.save();
+        return res.status(200).json({ success : true,  message: "Cart created"});
+    }
+
+
+
+    const operations = localCart.map(item=>{
+ const productExistInCart = userCart.items.some(dbItem => dbItem.product.toString() === item._id.toString())
+
+ if(productExistInCart){
+  return {
+    updateOne : {
+      filter : {user : userId, "items.product" : item._id},
+      update : {$inc : {"items.$.quantity" : item.quantity}}
+    }
+  }
+ } else{
+  return {
+    updateOne : {
+      filter : {user : userId},
+      update : {$push : {items : {product : item._id, quantity : item.quantity}}}
+    }
+  }
+ }
+    }) 
+    await Cart.bulkWrite(operations)
+  return res.status(200).json({
+        success: true,
+        message: "Cart synced successfully",
+       
+    });
+   } catch (error) {
+    res.status(500).json({
+      success : false,
+      message : "Internal server error",
+      error : error.message
+    })
+   }
+
 }

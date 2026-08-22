@@ -74,7 +74,8 @@ getCategoriesData()
           gap: '1.5rem'
         }}>
           {products?.map((product) => (
-            <ProductCard key={product.id} item={product} />
+            
+            <ProductCard key={product._id} item={product} />
           ))}
         </div>
       ) : (

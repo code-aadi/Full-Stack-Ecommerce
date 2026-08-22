@@ -149,28 +149,3 @@ export const searchProducts = async (req,res) => {
 }
 
 
-export const getCartData = async (req,res)=>{
-const {ids} = req.body
-try {
-    if(!ids, ids.length === 0){
-   return res.status(400).json({
-        success : false,
-        message : "Please Send Product Ids"
-    })
-}
-const products = await Product.find({
-  _id : {$in : ids}
-})
-res.status(200).json({
-    success : true,
-    message : "Cart Data Found Successfully",
-    products
-})
-} catch (error) {
-    res.status(500).json({
-        success : false,
-    message : "Internal Server Error",
-    error : error.message
-    })
-}
-}
