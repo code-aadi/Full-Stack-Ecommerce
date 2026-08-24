@@ -171,10 +171,10 @@ export const refreshAccessToken = async (req, res) => {
       });
     }
 
-    if (storedToken.revoked) {
+    if (storedToken.used) {
       await RefreshToken.updateMany(
         { familyId: storedToken.familyId },
-        { revoked: true }
+        { used: true }
       );
       res.clearCookie("REFRESH-TOKEN");
       return res.status(403).json({
@@ -183,7 +183,7 @@ export const refreshAccessToken = async (req, res) => {
       });
     }
 
-    storedToken.revoked = true;
+    storedToken.used = true;
     await storedToken.save();
 
     const newAccessToken = generateAccessToken(decoded.userId);
@@ -226,7 +226,7 @@ export const logout = async (req, res) => {
             if (storedToken) {
                 await RefreshToken.updateMany(
                     { familyId: storedToken.familyId },
-                    { revoked: true }
+                    { used: true }
                 );
             }
         }

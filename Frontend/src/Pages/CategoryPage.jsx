@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
+import Pagination from '../components/Pagination';
 
 
 
 const CategoryProductsPage = () => {
+  const [searchParams] = useSearchParams()
  const [products, setProducts] = useState([])
  const [loading, setLoading] = useState(false)
  const [error, setError] = useState(null);
   const { categoryName } = useParams();
-
+const page = searchParams.get("page") || 1
+const limit = searchParams.get("limit") || 40
+const [totalPages, setTotalPages] = useState(0)
  useEffect(()=>{
 async function getCategoriesData() {
 try {
   setLoading(true)
   setError(null)
-    const response = await fetch(`http://localhost:2310/api/products/category/${categoryName}`)
-  
+    const response = await fetch(`http://localhost:2310/api/products/category/${categoryName}?page=${page}&limit=${limit}`)
   const data = await response.json()
-
     if (data.success) {
-  
+   setTotalPages(data.totalPages)
       setProducts(data.products); 
     } else {
      
@@ -35,7 +37,8 @@ try {
   
 }
 getCategoriesData()
- },[categoryName])
+ },[categoryName,page,limit])
+
   if (loading) {
     return <div className="loading">Loading items for {categoryName}...</div>;
   }
@@ -65,7 +68,6 @@ getCategoriesData()
           Showing {products?.length} Products
         </span>
       </div>
-
       {/* Product Grid View */}
       {products?.length > 0 ? (
         <div style={{
@@ -100,7 +102,8 @@ getCategoriesData()
           </Link>
         </div>
       )}
-
+     {totalPages > 1 && ( <Pagination page = {page} totalPages={totalPages}/>
+)}
     </div>
   );
 };

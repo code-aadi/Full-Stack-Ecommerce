@@ -28,7 +28,7 @@ const Navbar = () => {
       <div className="container nav-container">
         
         {/* Logo */}
-        <div className="logo">ShopEase</div>
+        <div className="logo" onClick={()=> navigate("/")}>ShopEase</div>
 
         {/* Search Bar */}
         <div className="search-bar">
