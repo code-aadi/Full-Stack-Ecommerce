@@ -24,8 +24,7 @@ export const getProductsByCategory = async(req,res) =>{
 try {
     const totalProducts = await Product.countDocuments({category : {$regex : category, $options : "i"}})
     const totalPages = Math.ceil(totalProducts / limit)
-    console.log(totalPages)
-        console.log(`limit = ${limit}, total pages = ${totalPages}, current page = ${page}`)
+   
 
  if(page > totalPages){
    page = totalPages === 0 ? 1 : totalPages;
@@ -151,17 +150,26 @@ try {
 
 
 export const searchProducts = async (req,res) => {
-   try {
-     const query = req.query.query
+     const query = req.query.q
       if (!query) {
     return res.status(200).json([]);
   }
- const products = await Product.find({
-    $or : [
+
+
+const filter = {}
+
+if(query){
+    filter.$or = [
         {name : {$regex : query, $options : "i"}},
         {category : {$regex : query, $options : "i"}}
     ]
- })
+}
+
+
+   try {
+    
+ const products = await Product.find(filter)
+ console.log(filter)
     if(products.length === 0){
         return res.status(404).json({
             success : false,

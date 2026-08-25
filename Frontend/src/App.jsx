@@ -11,6 +11,7 @@ import Register from './Pages/Register';
 import Login from './Pages/Login';
 import AuthProvider from '../Context/AuthContext';
 import PublicRoute from './components/PublicRoute';
+import SearchPage from './Pages/SearchPage';
 
 
 
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
     {path : "/category/:categoryName", element : <CategoryPage />},
     {path : "/product/:id", element : <ProductDetailPage />},
     {path : "/MyCart", element : <Cart />},
+    {path : "/search", element : <SearchPage />},
 
 ]},
   {path : "/register", element : <PublicRoute><Register /></PublicRoute> },
