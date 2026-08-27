@@ -1,5 +1,5 @@
 .search-page-container {
-  max-width: 1280px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 24px 16px;
   min-height: 80vh;
@@ -44,6 +44,12 @@
   color: #94a3b8;
 }
 
+.filter-products {
+    display: flex;
+    gap: 20px; 
+    align-items: flex-start; 
+    width: 100%;
+}
 
 
 /* Search Meta Info */

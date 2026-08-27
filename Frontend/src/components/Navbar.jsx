@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { ShoppingCart, Search, User, Heart } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 import { cartContext } from '../../Context/CartContext';
 import UserDropdown from './UserDropdown';
 import { AuthContext } from '../../Context/AuthContext';
@@ -26,7 +26,7 @@ const Navbar = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchInput.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchInput.trim())}`);
+      navigate({pathname : "/search", search : createSearchParams({q : searchInput.trim()}).toString()});
     }
   };
 

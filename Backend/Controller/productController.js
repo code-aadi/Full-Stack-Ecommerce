@@ -151,10 +151,35 @@ try {
 
 export const searchProducts = async (req,res) => {
      const query = req.query.q
-      if (!query) {
-    return res.status(200).json([]);
-  }
+     const minPrice = Number(req.query.minPrice)
+     const maxPrice = Number(req.query.maxPrice)
+     const rating = Number( req.query.rating)
+     const inStock = req.query.inStock === "true"
+    
+ if (!query || query.trim() === "") {
+  return res.status(400).json({ success: false, message: "Search query is required" });
+}
 
+
+if (req.query.minPrice && (isNaN(minPrice) || minPrice < 0)) {
+  return res.status(400).json({ success: false, message: "Invalid minPrice. It must be a positive number." });
+}
+
+if (req.query.maxPrice && (isNaN(maxPrice) || maxPrice < 0)) {
+  return res.status(400).json({ success: false, message: "Invalid maxPrice. It must be a positive number." });
+}
+
+
+if (req.query.minPrice && req.query.maxPrice && maxPrice < minPrice) {
+  return res.status(400).json({ success: false, message: "maxPrice cannot be less than minPrice" });
+}
+
+
+if (req.query.rating) {
+  if (isNaN(rating) || rating < 1 || rating > 5) {
+    return res.status(400).json({ success: false, message: "Rating must be a number between 1 and 5" });
+  }
+}
 
 const filter = {}
 
@@ -163,13 +188,35 @@ if(query){
         {name : {$regex : query, $options : "i"}},
         {category : {$regex : query, $options : "i"}}
     ]
+
+     filter.$or = [
+        {name : {$regex : query, $options : "i"}},
+        {category : {$regex : query, $options : "i"}}
+    ]
+
 }
+
+if(minPrice){
+    filter.price = filter.price || {}
+   filter.price.$gt = minPrice
+}
+if(maxPrice){
+    filter.price = filter.price || {}
+    filter.price.$lt = maxPrice
+}
+if(rating){
+    filter.rating = {$gte : rating}
+}
+if(inStock){
+    filter.stock = {$gt : 0}
+}
+
 
 
    try {
     
  const products = await Product.find(filter)
- console.log(filter)
+ 
     if(products.length === 0){
         return res.status(404).json({
             success : false,

@@ -1,0 +1,162 @@
+/* Container Box */
+.filter-sidebar {
+  width: 100%;
+  max-width: 270px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* Header */
+.filter-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.filter-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Sections */
+.filter-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.filter-section-title {
+  margin: 0 0 12px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Radio & Checkbox Groups */
+.filter-options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-radio-label,
+.filter-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.filter-radio-label:hover,
+.filter-checkbox-label:hover {
+  color: #0f172a;
+}
+
+.filter-radio-input,
+.filter-checkbox-input {
+  cursor: pointer;
+  accent-color: #2563eb;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.filter-option-text {
+  line-height: 1;
+}
+
+/* Price Inputs */
+.filter-price-inputs {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-price-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.filter-currency-symbol {
+  position: absolute;
+  left: 10px;
+  font-size: 0.85rem;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.filter-price-input {
+  width: 100%;
+  padding: 8px 8px 8px 24px;
+  font-size: 0.88rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  background-color: #f8fafc;
+  color: #1e293b;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.filter-price-input:focus {
+  border-color: #2563eb;
+  background-color: #ffffff;
+}
+
+/* Hide number spin arrows for cleaner look */
+.filter-price-input::-webkit-outer-spin-button,
+.filter-price-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+/* Action Buttons */
+.filter-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 20px;
+}
+
+.filter-btn {
+  width: 100%;
+  padding: 10px 0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  text-align: center;
+}
+
+.filter-btn-apply {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.filter-btn-apply:hover {
+  background-color: #1d4ed8;
+}
+
+.filter-btn-clear {
+  background-color: transparent;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+.filter-btn-clear:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+  border-color: #94a3b8;
+}
