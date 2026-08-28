@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import {  useNavigate, useSearchParams } from 'react-router-dom';
 import '../styles/SearchPage.css';
 import ProductCard from '../components/ProductCard';
 import FilterSidebar from '../components/FilterSidebar';
+import Pagination from '../components/Pagination';
 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalProducts, setTotalProducts] = useState(0)
 const navigate = useNavigate()
  const url = new URL("http://localhost:2310/api/products/search")
 
@@ -20,6 +23,8 @@ const navigate = useNavigate()
   const maxPrice = searchParams.get("maxPrice") || ""
   const rating = searchParams.get("rating") || ""
   const inStock = searchParams.get("inStock") || ""
+  const page = searchParams.get("page") || 1
+  const limit = searchParams.get('limit') || 40
  
 const min = Number(minPrice);
 const max = Number(maxPrice);
@@ -47,6 +52,8 @@ if(rating){
    url.searchParams.set("maxPrice", maxPrice)
    url.searchParams.set("rating", rating)
    url.searchParams.set("inStock", inStock)
+   url.searchParams.set("page", page)
+   url.searchParams.set("limit", limit)
     setSearchTerm(query);
     if (query.trim()) {
       fetchSearchResults();
@@ -63,7 +70,8 @@ if(rating){
       const response = await fetch(url);
       const data = await response.json();
       setProducts(data.products);
-
+       setTotalPages(data.totalPages)
+       setTotalProducts(data.totalProducts)
     } catch (error) {
       console.error('Error fetching search results:', error);
       setProducts([]);
@@ -72,12 +80,12 @@ if(rating){
     }
   };
 
+
  
 
   return (
     <div className="search-page-container">
-               
-
+       
       {query && (
        
         <div className="search-meta">
@@ -86,7 +94,7 @@ if(rating){
           </p>
           {!loading && (
               <span className="results-count">
-              {products?.length} {products?.length === 1 ? 'Product' : 'Products'} found
+              {totalProducts} {totalProducts === 1 ? 'Product' : 'Products'} found
             </span>
           )}
         </div>
@@ -108,13 +116,14 @@ if(rating){
                 <ProductCard key={product._id} item={product} />
             ))}
           </div>
+                  
             </div>
         ) : (
           query && (
             <div className="no-results">
               <div className="no-results-icon">🔍</div>
               <h3>No products found</h3>
-              <p>Try searching with different keywords or check spelling.</p>
+              <p>Try searching with different keywords or change filters.</p>
             </div>
           )
         )}
@@ -125,6 +134,7 @@ if(rating){
           </div>
         )}
       </div>
+     {!loading &&  <Pagination page={page} totalPages={totalPages}/>}
     </div>
   );
 };

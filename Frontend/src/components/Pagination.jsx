@@ -8,8 +8,8 @@ const Pagination = ({page, totalPages }) => {
     const startPage = Math.floor((page - 1) / buttonsToShow) * buttonsToShow + 1;
   
     const endPage = Math.min(startPage + buttonsToShow - 1, totalPages);
-  
-
+ const currentParams = Object.fromEntries(searchParams)
+ 
   const pagesArray = [];
   for (let i = startPage; i <= endPage; i++) {
     pagesArray.push(i);
@@ -20,7 +20,7 @@ const Pagination = ({page, totalPages }) => {
       {startPage > 1 && (
         <button 
         onClick={()=>{
-            setSearchParams({page : startPage -10})
+            setSearchParams({...currentParams, page : startPage -10})
         }}
         type="button" 
         className="pagination-btn pagination-nav-btn pagination-prev" 
@@ -50,7 +50,7 @@ const Pagination = ({page, totalPages }) => {
               searchParams.delete("page");
               setSearchParams(searchParams);
             } else {
-              setSearchParams({ page: button, limit : 40 });
+              setSearchParams({...currentParams, page: button, limit : 40 });
             }
           }}
         >
@@ -64,7 +64,7 @@ const Pagination = ({page, totalPages }) => {
          <button 
       onClick={()=>{
       
-        setSearchParams({page : endPage + 1})
+        setSearchParams({...currentParams, page : endPage + 1})
        
       }}
         type="button" 

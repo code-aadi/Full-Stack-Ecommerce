@@ -2,8 +2,6 @@ import Product from "../Model/productModel.js"
 
 
 
-// console.log("products=",products.length)
-   // console.log("pages=",products.length /20)
 
 export const getProductsByCategory = async(req,res) =>{
     const category = req.params.category 
@@ -181,6 +179,20 @@ if (req.query.rating) {
   }
 }
 
+ let{page , limit} = req.query
+  page = Number(page) || 1
+  limit = Number(limit) || 40
+  
+  if (isNaN(page) || page < 1) {
+        return res.status(400).json({ success : false, error: "page should be number or greater than 0" });
+    }
+  if (isNaN(limit) || limit > 100 || limit < 1) {
+    return res.status(400).json({ 
+        success: false, 
+        error: "limit should be a number between 1 and 100" 
+    });
+}
+
 const filter = {}
 
 if(query){
@@ -214,8 +226,17 @@ if(inStock){
 
 
    try {
+    const totalProducts = await Product.countDocuments(filter)
+    const totalPages = Math.ceil(totalProducts / limit)
+   
+
+ if(page > totalPages){
+   page = totalPages === 0 ? 1 : totalPages;
+  
+ }
+ const skip = (page - 1) * 40
     
- const products = await Product.find(filter)
+ const products = await Product.find(filter).skip(skip).limit(limit)
  
     if(products.length === 0){
         return res.status(404).json({
@@ -226,7 +247,9 @@ if(inStock){
     res.status(200).json({
         success : true,
         message : "Search Products Found",
-        products
+        products,
+        totalPages,
+        totalProducts,
     })
    } catch (error) {
       res.status(500).json({

@@ -44,11 +44,13 @@ const FilterSidebar = () => {
 
   const handleApply = (e) => {
     e.preventDefault();
-        if(Number(filters.maxPrice) < Number(filters.minPrice) || Number(filters.minPrice) <= 0 || Number(filters.maxPrice) <=0){
+     if(filters.maxPrice || filters.minPrice){
+         if(Number(filters.maxPrice) < Number(filters.minPrice) || Number(filters.minPrice) <= 0 || Number(filters.maxPrice) <=0){
 
       alert("please Enter a Valid Price Range")
       return
     }
+     }
     
     const currentParams = Object.fromEntries(searchParams.entries())
     const properParam = {...currentParams}
