@@ -7,6 +7,7 @@ export const cartContext = createContext()
 function CartProvider ({children}){
     const {user} = useContext(AuthContext)
     const {accessToken, setAccessToken} = useContext(AuthContext)
+    const [cartLoading, setCartLoading] = useState(false)
 
     const [cartItems, setCartItems] = useState([]);
 const [localCart, setLocalCart] = useState(() => JSON.parse(localStorage.getItem("cart-data") || '[]'));
@@ -56,11 +57,12 @@ async function addToCart(productId){
 
 }
 
+
 useEffect(()=>{
     async function getCart(){
+        setCartLoading(true)
        
 if(user){
-  
      try {
     const response = await fetchApi("http://localhost:2310/api/cart/get",{
     method : "GET",
@@ -74,6 +76,8 @@ setCartItems(data.cart.items)
 
  } catch (error) {
     alert("unable to fetch cart data")
+ }finally{
+    setCartLoading(false)
  }
 } else{
       
@@ -102,6 +106,8 @@ setCartItems(data.cart.items)
     setCartItems(formatedData)
  } catch (error) {
     console.log(error)
+ }finally{
+    setCartLoading(false)
  }
 }
 
@@ -272,7 +278,7 @@ useEffect(()=>{
 
 
 return(
-    <cartContext.Provider value={{cartItems, addToCart, quantityIncrease, quantityDecrease, clearCart, removeFromCart}}>
+    <cartContext.Provider value={{cartItems, addToCart, quantityIncrease, quantityDecrease, clearCart, removeFromCart, cartLoading, setCartItems}}>
         {children}
     </cartContext.Provider>
 )

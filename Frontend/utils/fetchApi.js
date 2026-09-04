@@ -37,15 +37,19 @@ async function fetchApi(url, options = {}, setAccessToken) {
 
     const data = await refreshResponse.json();
     const newAccessToken = data.accessToken;
+    
     setAccessToken(newAccessToken);
 
-    options.headers = {
+    const retryOptions = {
+    ...options,
+    headers: {
         ...options.headers,
         Authorization: `Bearer ${newAccessToken}`,
-    };
+    },
+};
 
     response = await fetch(url, {
-        ...options,
+        ...retryOptions,
         credentials: "include",
     });
 

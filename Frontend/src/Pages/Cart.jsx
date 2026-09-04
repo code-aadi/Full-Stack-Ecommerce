@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import '../styles/cart.css';
 import { cartContext } from '../../Context/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Cart() {
  
   const {cartItems, quantityIncrease , quantityDecrease , removeFromCart, clearCart} = useContext(cartContext)
-
+const navigate = useNavigate()
 const [loading, setLoading] = useState(false)
 /*const cartItemsObj = {}
 cartItems?.forEach(item => {
@@ -14,7 +15,7 @@ cartItems?.forEach(item => {
 });*/
 const subTotal = cartItems.reduce((acc,cart) => acc + cart.quantity * cart.product.price, 0)
 const tax = subTotal * 18 / 100
-
+ 
 
 
 if(loading){
@@ -45,7 +46,6 @@ if(loading){
         {/* Left: Cart Items List */}
         <section className="cart-items">
           {cartItems?.map((item) => {
-           
            // item.quantity = cartItemsObj[item.product._id]
            return (
              <div className="cart-card" key={item.product._id}>
@@ -60,7 +60,7 @@ if(loading){
               <div className="quantity-controls">
                 <button className="qty-btn" aria-label="Decrease quantity" onClick={()=> quantityDecrease(item.product._id, item.quantity)}>−</button>
                 <span className="qty-count">{item.quantity}</span>
-                <button className="qty-btn" aria-label="Increase quantity" onClick={()=> quantityIncrease(item.product._id, item.quantity)}>+</button>
+                <button className="qty-btn" disabled = {item.product.stock === item.quantity} aria-label="Increase quantity" onClick={()=> quantityIncrease(item.product._id, item.quantity)}>+</button>
               </div>
 
               <div className="item-total">
@@ -70,6 +70,7 @@ if(loading){
               <button className="remove-btn" title="Remove Item" aria-label="Remove item" onClick={()=> removeFromCart(item.product._id)}>
                 ✕
               </button>
+             {item?.product.stock === item?.quantity &&  <p className="outStock">Out of Stock</p>}
             </div>
            )
 })}
@@ -107,7 +108,7 @@ if(loading){
             <span>{(subTotal + tax).toFixed(2)}</span>
           </div>
 
-          <button type="button" className="checkout-btn">
+          <button onClick={()=> navigate('/userAddress')} type="button" className="checkout-btn">
             Proceed to Checkout →
           </button>
         </aside>

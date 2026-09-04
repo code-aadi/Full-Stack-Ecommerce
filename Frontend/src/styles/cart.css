@@ -23,6 +23,7 @@
   max-width: 1100px;
   margin: 0 auto;
   width: 100%;
+  
 }
 
 /* Header */
@@ -82,6 +83,7 @@
   padding: 16px;
   display: flex;
   align-items: center;
+position: relative;
   gap: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
@@ -318,13 +320,20 @@
   transform: none;
   box-shadow: none;
 }
-
+.outStock{
+  color: red;
+  font-style: italic;
+  position: absolute;
+  bottom: 14px;
+    right: 42px;
+}
 /* Mobile Responsive */
 @media (max-width: 600px) {
   .cart-card {
     display: grid;
     grid-template-columns: 70px 1fr auto;
     grid-template-rows: auto auto;
+    position: relative;
   }
 
   .product-img {

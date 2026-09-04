@@ -106,7 +106,7 @@ if(rating){
         {loading ? (
           <div className="search-loader">
             <div className="spinner"></div>
-            <p>Searching products...</p>
+            <p className = 'address-error'>Searching products...</p>
           </div>
         ) : products?.length > 0 ? (
             <div className='filter-products'>
@@ -123,14 +123,14 @@ if(rating){
             <div className="no-results">
               <div className="no-results-icon">🔍</div>
               <h3>No products found</h3>
-              <p>Try searching with different keywords or change filters.</p>
+              <p className = 'address-error'>Try searching with different keywords or change filters.</p>
             </div>
           )
         )}
 
         {!query && !loading && (
           <div className="search-placeholder">
-            <p>Type something in the search bar to find products.</p>
+            <p className = 'address-error'>Type something in the search bar to find products.</p>
           </div>
         )}
       </div>

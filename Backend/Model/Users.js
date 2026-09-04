@@ -11,7 +11,37 @@ const userSchema = new mongoose.Schema({
         unique : true,
         trim : true
     },
-    password : {type : String, required : true}
+    password : {type : String, required : true},
+
+     defaultAddress: {
+    name: {
+      type: String,
+    },
+    phone: {
+      type: String
+    },
+    flatNo: {
+      type: String
+    },
+    city: {
+      type: String
+    },
+    street: {
+      type: String
+    },
+    pincode: {
+      type: String
+    },
+    landmark : {
+        type : String
+    },
+    state : {
+        type : String
+    },
+    addressType : {
+        type : String
+    },
+  }
 })
 
 export const User = mongoose.model("User", userSchema)

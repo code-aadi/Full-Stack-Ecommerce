@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container footer-grid">
         <div>
           <h2 style={{ color: 'white', marginBottom: '1rem' }}>ShopEase</h2>
-          <p>Your one-stop destination for best deals on electronics, fashion, and everyday essentials.</p>
+          <p className = 'address-error'>Your one-stop destination for best deals on electronics, fashion, and everyday essentials.</p>
         </div>
         <div>
           <h4>Quick Links</h4>
@@ -26,7 +26,7 @@ const Footer = () => {
         </div>
         <div>
           <h4>Newsletter</h4>
-          <p>Subscribe to get special discounts.</p>
+          <p className = 'address-error'>Subscribe to get special discounts.</p>
           <div className="newsletter-form">
             <input type="email" placeholder="Your Email" />
             <button>Join</button>

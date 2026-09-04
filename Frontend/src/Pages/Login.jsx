@@ -185,7 +185,7 @@ const Login = () => {
         <div className="auth-card">
           <div className="auth-header">
             <h2>Welcome Back</h2>
-            <p>Enter your credentials to access your account</p>
+            <p className = 'address-error'>Enter your credentials to access your account</p>
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>

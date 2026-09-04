@@ -189,7 +189,7 @@ else{
         <div className="auth-card">
           <div className="auth-header">
             <h2>Create Account</h2>
-            <p>Join us to get started with your account</p>
+            <p className = 'address-error'>Join us to get started with your account</p>
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>

@@ -142,7 +142,7 @@ async function logout() {
   }
 }
 return(
-    <AuthContext.Provider value={{userRegister, user, loginLoading, registerLoading, userLogin, logout, userLoading, accessToken}} >
+    <AuthContext.Provider value={{userRegister, user, loginLoading, registerLoading, userLogin, logout, userLoading, accessToken, setAccessToken}} >
         {children}
     </AuthContext.Provider>
 )
