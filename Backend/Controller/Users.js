@@ -35,7 +35,8 @@ const {name, email, password} = req.body
          user : {
             id : newUser._id,
             name : newUser.name,
-            email : newUser.email
+            email : newUser.email,
+            role : newUser.role
         }
       
      })
@@ -87,7 +88,8 @@ export const login = async (req,res)=>{
         user : {
             id : user._id,
             name : user.name,
-            email : user.email
+            email : user.email,
+            role : user.role
         }
     })
  } catch (error) {
@@ -119,7 +121,8 @@ export const getCurrentUser = async(req,res)=>{
         user : {
              id: user._id,
     name: user.name,
-    email: user.email
+    email: user.email,
+    role : user.role
         }
      })
   } catch (error) {

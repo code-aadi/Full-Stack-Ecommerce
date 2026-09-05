@@ -18,6 +18,12 @@ import PaymentPage from './Pages/PaymentPage';
 import OrderSuccess from './Pages/OrderSuccess';
 import CartProtectedRoute from './components/CartProtectedRoute';
 import SuccessProtection from './components/SuccessProtection';
+import AdminLayout from './Admin/Layout/AdminLayout';
+import Products from './Admin/Pages/Products';
+import AdminCategories from './Admin/Pages/AdminCategories';
+import Orders from './Admin/Pages/Orders';
+import Users from './Admin/Pages/Users';
+import Dashboard from './Admin/Pages/Dashboard';
 
 
 
@@ -35,6 +41,13 @@ const router = createBrowserRouter([
   {path : '/userAddress', element : <CartProtectedRoute><AddressPage /></CartProtectedRoute> },
   {path : '/payment', element : <CartProtectedRoute><PaymentPage /></CartProtectedRoute> },
   {path : '/order-success/:orderId', element : <SuccessProtection><OrderSuccess /></SuccessProtection> },
+  {path : "/admin", element : <AdminLayout />, children : [
+    {path : "products", element : <Products />},
+    {path : "categories", element : <AdminCategories />},
+    {path : "orders", element : <Orders />},
+    {path : "users", element : <Users />},
+    {path : "dashboard", element : <Dashboard />}
+  ]}
 
 ])
 
