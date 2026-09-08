@@ -505,3 +505,8 @@ font-weight: 600;
 color: white;
 
 }
+
+.admin-error{
+    font-size : 14px;
+    color : red;
+    }

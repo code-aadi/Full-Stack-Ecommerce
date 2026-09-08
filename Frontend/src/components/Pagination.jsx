@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import '../styles/Pagination.css';
 
-const Pagination = ({page, totalPages }) => {
+const Pagination = ({page, totalPages, limit}) => {
     const [searchParams, setSearchParams] = useSearchParams()
     
     const buttonsToShow = 10
@@ -50,7 +50,7 @@ const Pagination = ({page, totalPages }) => {
               searchParams.delete("page");
               setSearchParams(searchParams);
             } else {
-              setSearchParams({...currentParams, page: button, limit : 40 });
+              setSearchParams({...currentParams, page: button, limit : limit });
             }
           }}
         >

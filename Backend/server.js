@@ -10,6 +10,7 @@ import checkoutRouter from "./routes/checkoutRoute.js"
 import orderRouter from "./routes/orderRoute.js"
 import paymentRouter from "./routes/paymentRouter.js"
 import payementVerifyRoute from "./routes/paymentVerifyRoute.js"
+import AdminProductRoute from "./Admin/AdminRoutes/AdminProductRoutes.js"
 const app = express()
 connectDB()
 
@@ -27,4 +28,6 @@ app.use("/api/checkout", checkoutRouter)
 app.use("/api/order", orderRouter)
 app.use("/api/payment/create", paymentRouter)
 app.use("/api/payment/verify", payementVerifyRoute)
+
+app.use("/api/admin/product", AdminProductRoute)
 app.listen(process.env.port)

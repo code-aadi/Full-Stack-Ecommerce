@@ -134,7 +134,7 @@ if(rating){
           </div>
         )}
       </div>
-     {!loading &&  <Pagination page={page} totalPages={totalPages}/>}
+     {!loading &&  <Pagination page={page} totalPages={totalPages} limit={40}/>}
     </div>
   );
 };

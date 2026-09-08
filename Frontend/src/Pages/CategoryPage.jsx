@@ -102,7 +102,7 @@ getCategoriesData()
           </Link>
         </div>
       )}
-     {totalPages > 1 && ( <Pagination page = {page} totalPages={totalPages}/>
+     {totalPages > 1 && ( <Pagination page = {page} totalPages={totalPages} limit={40}/>
 )}
     </div>
   );

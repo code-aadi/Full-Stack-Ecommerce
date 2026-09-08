@@ -24,6 +24,7 @@ import AdminCategories from './Admin/Pages/AdminCategories';
 import Orders from './Admin/Pages/Orders';
 import Users from './Admin/Pages/Users';
 import Dashboard from './Admin/Pages/Dashboard';
+import AddProduct from './Admin/Pages/AddProduct';
 
 
 
@@ -46,7 +47,8 @@ const router = createBrowserRouter([
     {path : "categories", element : <AdminCategories />},
     {path : "orders", element : <Orders />},
     {path : "users", element : <Users />},
-    {path : "dashboard", element : <Dashboard />}
+    {path : "dashboard", element : <Dashboard />},
+    {path : "products/add", element : <AddProduct />},
   ]}
 
 ])

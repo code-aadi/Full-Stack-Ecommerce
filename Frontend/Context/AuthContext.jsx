@@ -19,7 +19,7 @@ async function userRegister(userData) {
 const response = await fetch("http://localhost:2310/api/auth/register",{
   method : "POST",
   headers : {"Content-Type" : "application/json"},
-  credentials : "include",
+ credentials : "include",
   body : JSON.stringify(userData)
 })
 const data = await response.json()

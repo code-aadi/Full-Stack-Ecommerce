@@ -28,7 +28,7 @@ try {
    page = totalPages === 0 ? 1 : totalPages;
   
  }
- const skip = (page - 1) * 40
+ const skip = (page - 1) * limit
    
 
     const products = await Product.find({
@@ -51,7 +51,7 @@ try {
     })
   
 } catch (error) {
- res.status(500).json({
+ return res.status(500).json({
             success: false,
             message: "Internal Server Error",
             error: error.message
@@ -234,7 +234,7 @@ if(inStock){
    page = totalPages === 0 ? 1 : totalPages;
   
  }
- const skip = (page - 1) * 40
+ const skip = (page - 1) * limit
     
  const products = await Product.find(filter).skip(skip).limit(limit)
  

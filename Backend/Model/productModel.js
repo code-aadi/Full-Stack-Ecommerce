@@ -41,13 +41,14 @@ const productSchema = new mongoose.Schema({
     },
     stock: { 
         type: Number, 
-        default: 50 // Practice ke liye humne default stock de diya hai
+        default: 50
     },
-    createdAt: { 
-        type: Date, 
-        default: Date.now 
-    }
-});
+    imagePublicId : {
+        type : String,
+        required : true
+    },
+    isActive: { type: Boolean, default: true }
+}, {timestamps : true});
 
 const Product = mongoose.model('Product', productSchema);
 export default Product;

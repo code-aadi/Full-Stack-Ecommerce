@@ -403,7 +403,7 @@ const ProductDetailPage = () => {
                 </div>
 
                 <div className="price-section">
-                  <span className="price-tag">${product.price}</span>
+                  <span className="price-tag">₹{product.price}</span>
                 </div>
 
                 <div>
