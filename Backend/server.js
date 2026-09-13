@@ -11,6 +11,15 @@ import orderRouter from "./routes/orderRoute.js"
 import paymentRouter from "./routes/paymentRouter.js"
 import payementVerifyRoute from "./routes/paymentVerifyRoute.js"
 import AdminProductRoute from "./Admin/AdminRoutes/AdminProductRoutes.js"
+import AdminDashboardRoutes from "./Admin/AdminRoutes/AdminDashboardRoutes.js"
+import AdminOrderRoute from "./Admin/AdminRoutes/AdminOrdersRoutes.js"
+
+
+
+
+
+
+
 const app = express()
 connectDB()
 
@@ -22,6 +31,17 @@ app.use(cors({origin : "http://localhost:5173", credentials : true}))
 
 app.use("/api/products", productRouter);
 
+
+
+
+
+
+
+
+
+
+
+
 app.use("/api/auth", userRouter )
 app.use("/api/cart", cartRouter)
 app.use("/api/checkout", checkoutRouter)
@@ -30,4 +50,6 @@ app.use("/api/payment/create", paymentRouter)
 app.use("/api/payment/verify", payementVerifyRoute)
 
 app.use("/api/admin/product", AdminProductRoute)
+app.use("/api/admin/dashboard", AdminDashboardRoutes)
+app.use("/api/admin/orders", AdminOrderRoute)
 app.listen(process.env.port)

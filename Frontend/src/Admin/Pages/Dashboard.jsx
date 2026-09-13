@@ -1,30 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import getStatusBadge from "../Components/StatusBadge";
 
 const Dashboard = () => {
-  const stats = [
-    { title: "Total Sales", value: "₹1,24,500", icon: "💰", color: "#10b981" },
-    { title: "Total Orders", value: "248", icon: "🛍️", color: "#3b82f6" },
-    { title: "Total Users", value: "1,240", icon: "👥", color: "#8b5cf6" },
-    { title: "Total Products", value: "86", icon: "📦", color: "#f59e0b" },
-  ];
+  const navigate = useNavigate()
+  const [stats, setStats] = useState([
+    { title: "Total Sales", value: "0", icon: "💰", color: "#10b981", keyName : "totalSales" },
+    { title: "Total Orders", value: "248", icon: "🛍️", color: "#3b82f6" , keyName : "totalOrders"},
+    { title: "Total Users", value: "1,240", icon: "👥", color: "#8b5cf6", keyName : "totalUsers" },
+    { title: "Total Products", value: "86", icon: "📦", color: "#f59e0b", keyName : "totalProducts" },
+  ])
 
-  const recentOrders = [
-    { id: "#ORD101", customer: "Rahul", amount: "₹2,499", status: "Delivered" },
-    { id: "#ORD102", customer: "Amit", amount: "₹1,299", status: "Pending" },
-    { id: "#ORD103", customer: "Neha", amount: "₹3,499", status: "Shipped" },
-  ];
+ 
 
-  const lowStockProducts = [
-    { name: "Nike Shoes", stock: 3 },
-    { name: "T-Shirt", stock: 2 },
-    { name: "Smart Watch", stock: 4 },
-  ];
 
-  const getStatusBadge = (status) => {
-    if (status === "Delivered") return { bg: "#dcfce7", color: "#16a34a" };
-    if (status === "Shipped") return { bg: "#e0f2fe", color: "#0284c7" };
-    return { bg: "#fef3c7", color: "#d97706" };
-  };
+
+const [recentOrders, setRecentOrders] = useState([])
+const [lowStockProducts, setLowStockProducts] = useState([])
+useEffect(()=>{
+  async function getDashboardData() {
+    try {
+      const response = await fetch("http://localhost:2310/api/admin/dashboard")
+      const data = await response.json()
+      console.log(data)
+  if(response.ok){
+    const orderData = data?.latestOrders.map(order => {
+      return {
+        id : order._id,
+        status : order.orderStatus,
+        customer : order.userId.name.split(" ")[0],
+        amount : order.totalAmount
+      }
+    })
+    setStats(prev =>
+      prev.map(card =>({
+        ...card,
+        value : data[card.keyName]
+      }))
+    )
+setRecentOrders(orderData)
+setLowStockProducts(data?.lowStockProducts)
+  }
+    } catch (error) {
+      alert(error.message)
+    }
+  }
+  getDashboardData()
+},[])
+
 
   return (
     <>
@@ -202,27 +225,44 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {recentOrders.map((ord) => {
-                    const badge = getStatusBadge(ord.status);
-                    return (
-                      <tr key={ord.id}>
-                        <td style={{ fontWeight: "600", color: "#0f172a" }}>{ord.id}</td>
-                        <td>{ord.customer}</td>
-                        <td style={{ fontWeight: "600" }}>{ord.amount}</td>
-                        <td>
-                          <span
-                            className="badge"
-                            style={{ backgroundColor: badge.bg, color: badge.color }}
-                          >
-                            {ord.status}
-                          </span>
-                        </td>
-                        <td>
-                          <button className="view-btn">View</button>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                 {recentOrders.map((ord) => {
+  const badge = getStatusBadge(ord.status);
+  const formattedId = ord.id && ord.id.length > 8 
+    ? `#...${ord.id.slice(-6)}` 
+    : ord.id;
+
+  return (
+    <tr key={ord.id}>
+      <td 
+        title={ord.id} 
+        style={{ 
+          fontWeight: "600", 
+          color: "#0f172a",
+          fontFamily: "monospace",
+          cursor: "pointer",
+          whiteSpace: "nowrap"
+        }}
+      >
+        {formattedId}
+      </td>
+      <td style={{ whiteSpace: "nowrap" }}>{ord.customer}</td>
+      <td style={{ fontWeight: "600", whiteSpace: "nowrap" }}>
+        ₹{ord.amount.toFixed(2)}
+      </td>
+      <td>
+        <span
+          className="badge"
+          style={{ backgroundColor: badge.bg, color: badge.color }}
+        >
+          {ord.status}
+        </span>
+      </td>
+      <td>
+        <button className="view-btn" onClick={()=> navigate(`/admin/orders/${ord.id}`)}>View</button>
+      </td>
+    </tr>
+  );
+})}
                 </tbody>
               </table>
             </div>
@@ -239,19 +279,34 @@ const Dashboard = () => {
                     <th>Action</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {lowStockProducts.map((p, index) => (
-                    <tr key={index}>
-                      <td style={{ fontWeight: "500", color: "#0f172a" }}>{p.name}</td>
-                      <td>
-                        <span className="stock-badge">{p.stock}</span>
-                      </td>
-                      <td>
-                        <button className="view-btn">View</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+              <tbody>
+  {lowStockProducts.map((p, index) => (
+    <tr key={index}>
+      <td
+        title={p.name}
+        style={{
+          fontWeight: "500",
+          color: "#0f172a",
+          maxWidth: "160px",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          cursor: "default"
+        }}
+      >
+        {p.name}
+      </td>
+      <td style={{ whiteSpace: "nowrap" }}>
+        <span className="stock-badge">
+          {p.stock} left
+        </span>
+      </td>
+      <td style={{ whiteSpace: "nowrap" }}>
+        <button className="view-btn" onClick={()=> navigate(`/admin/products/${p._id}`)}>View</button>
+      </td>
+    </tr>
+  ))}
+</tbody>
               </table>
             </div>
           </div>

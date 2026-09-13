@@ -25,6 +25,8 @@ import Orders from './Admin/Pages/Orders';
 import Users from './Admin/Pages/Users';
 import Dashboard from './Admin/Pages/Dashboard';
 import AddProduct from './Admin/Pages/AddProduct';
+import OrderDetail from './Admin/Pages/OrderDetails';
+import ProductDetail from './Admin/Pages/ProductDetail';
 
 
 
@@ -49,6 +51,8 @@ const router = createBrowserRouter([
     {path : "users", element : <Users />},
     {path : "dashboard", element : <Dashboard />},
     {path : "products/add", element : <AddProduct />},
+    {path : "orders/:orderId", element : <OrderDetail />},
+    {path : "products/:productId", element : <ProductDetail />},
   ]}
 
 ])

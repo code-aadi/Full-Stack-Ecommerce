@@ -6,7 +6,7 @@ function addressValidation(req,res, next){
 if(!fullName.trim() || fullName.length < 2){
     return res.status(400).json({
         success : false,
-        message : "Enter a vlid full name"
+        message : "Enter a valid full name"
     })
 }
 

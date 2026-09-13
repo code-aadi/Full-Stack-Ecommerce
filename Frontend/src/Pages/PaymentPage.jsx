@@ -94,7 +94,7 @@ const handleButtonClick = (e) =>{
         body: JSON.stringify(paymentData)
       }, setAccessToken);
       const data = await response.json();
-      
+     
       const options = {
   key: import.meta.env.VITE_RAZORPAY_KEY_ID,
   amount: data.amount,

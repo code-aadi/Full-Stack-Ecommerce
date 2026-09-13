@@ -2,7 +2,6 @@ import { deleteFromCloudinary, uploadToCloudinary } from "../../config/cloudinar
 import Product from "../../Model/productModel.js";
 
 
-
 export const getCategories = async (req,res) =>{
     try {
         const categories = await Product.distinct("category")
@@ -46,7 +45,7 @@ export const getAllProducts = async (req,res)=>{
         error: "limit should be a number between 1 and 100" 
     });
 }
-const filter = {};
+const filter = {isActive : true};
 
 if (search) {
     filter.name = {
@@ -210,3 +209,106 @@ export const deleteProduct = async (req, res) => {
     res.status(500).json({ success : false , message: "Internal server error", error : error.message });
   }
 };
+
+
+export const productDetail = async (req,res)=>{
+    const {id} = req.params
+if(!id){
+    return res.status(400).json({
+        success : false,
+        message : "Id not received"
+    })
+}
+    try {
+       const product = await Product.findById(id) 
+       if(!product){
+        return res.status(404).json({
+            success : false,
+            message : "Product not found"
+        })
+       }
+       return res.status(200).json({
+        success : true,
+        message : "Product found successfully",
+        product
+       })
+    } catch (error) {
+       return res.status(500).json({
+        success : false,
+        message : "Internal server error",
+        error : error.message
+       }) 
+    }
+}
+
+export const updateStock = async (req,res)=>{
+   let {stock} = req.body
+   const {id} = req.params
+ stock = Number(stock)
+ 
+ if(!stock || isNaN(stock)){
+    return res.status(400).json({
+        success : false,
+        message : "Enter a valid stock"
+    })
+ }
+ if(!id || id.length !== 24){
+    return res.status(400).json({
+        success : false,
+        message : "Id not received"
+    })
+}
+try {
+   const updatedStockProduct = await Product.findByIdAndUpdate(id, {$set : {stock : stock}}, {returnDocument : "after"}) 
+  if(!updatedStockProduct){
+    return res.status(404).json({
+        success : false,
+        message : "Product not found"
+    })
+  }
+
+  return res.status(201).json({
+    success : true,
+    message : "Product's stock updated successfully"
+  })
+} catch (error) {
+    return res.status(500).json({
+        success : false,
+    message : "Internal server error",
+    error : error.message
+ })
+}
+ 
+}
+export const updateProductStatus = async (req,res)=>{
+    const {status} = req.body
+   const {id} = req.params
+
+ if(!id || id.length !== 24){
+    return res.status(400).json({
+        success : false,
+        message : "Id not received"
+    })
+}
+try {
+   const updatedStockProduct = await Product.findByIdAndUpdate(id, {$set : {isActive : status}}, {returnDocument : "after"}) 
+  if(!updatedStockProduct){
+    return res.status(404).json({
+        success : false,
+        message : "Product not found"
+    })
+  }
+
+  return res.status(201).json({
+    success : true,
+    message : "Product's status updated successfully"
+  })
+} catch (error) {
+    return res.status(500).json({
+        success : false,
+    message : "Internal server error",
+    error : error.message
+ })
+}
+ 
+}
