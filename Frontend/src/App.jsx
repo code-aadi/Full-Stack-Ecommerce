@@ -20,13 +20,13 @@ import CartProtectedRoute from './components/CartProtectedRoute';
 import SuccessProtection from './components/SuccessProtection';
 import AdminLayout from './Admin/Layout/AdminLayout';
 import Products from './Admin/Pages/Products';
-import AdminCategories from './Admin/Pages/AdminCategories';
 import Orders from './Admin/Pages/Orders';
 import Users from './Admin/Pages/Users';
 import Dashboard from './Admin/Pages/Dashboard';
 import AddProduct from './Admin/Pages/AddProduct';
 import OrderDetail from './Admin/Pages/OrderDetails';
 import ProductDetail from './Admin/Pages/ProductDetail';
+import UserDetail from './Admin/Pages/UserDetail';
 
 
 
@@ -46,13 +46,13 @@ const router = createBrowserRouter([
   {path : '/order-success/:orderId', element : <SuccessProtection><OrderSuccess /></SuccessProtection> },
   {path : "/admin", element : <AdminLayout />, children : [
     {path : "products", element : <Products />},
-    {path : "categories", element : <AdminCategories />},
     {path : "orders", element : <Orders />},
     {path : "users", element : <Users />},
     {path : "dashboard", element : <Dashboard />},
     {path : "products/add", element : <AddProduct />},
     {path : "orders/:orderId", element : <OrderDetail />},
     {path : "products/:productId", element : <ProductDetail />},
+    {path : "users/:userId", element : <UserDetail />},
   ]}
 
 ])

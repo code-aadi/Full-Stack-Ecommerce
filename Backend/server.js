@@ -13,6 +13,7 @@ import payementVerifyRoute from "./routes/paymentVerifyRoute.js"
 import AdminProductRoute from "./Admin/AdminRoutes/AdminProductRoutes.js"
 import AdminDashboardRoutes from "./Admin/AdminRoutes/AdminDashboardRoutes.js"
 import AdminOrderRoute from "./Admin/AdminRoutes/AdminOrdersRoutes.js"
+import AdminUserRoutes from "./Admin/AdminRoutes/AdminUserRoutes.js"
 
 
 
@@ -52,4 +53,5 @@ app.use("/api/payment/verify", payementVerifyRoute)
 app.use("/api/admin/product", AdminProductRoute)
 app.use("/api/admin/dashboard", AdminDashboardRoutes)
 app.use("/api/admin/orders", AdminOrderRoute)
+app.use("/api/admin/users", AdminUserRoutes)
 app.listen(process.env.port)
