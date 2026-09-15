@@ -52,12 +52,16 @@ const [categories, setCategories] = useState([])
 
    const getCategories= async()=>{
     try {
-    const response = await fetchApi("http://localhost:2310/api/admin/product/categories")
+    const response = await fetchApi("http://localhost:2310/api/admin/product/categories",{
+      method : "GET",
+    headers : {
+        Authorization : `Bearer ${accessToken}`
+    }
+    },setAccessToken)
       const data = await response.json()
       if(data.success){
         setCategories(data.categories)
       }
-      console.log(data)
     } catch (error) {
       alert(error.message)
     }

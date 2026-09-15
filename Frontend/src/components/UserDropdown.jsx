@@ -4,7 +4,7 @@ import { User, Package, LogOut, X, } from 'lucide-react';
 import { AuthContext } from '../../Context/AuthContext';
 
 const UserDropdown = ({ setDropdownOpen }) => {
-    const {logout} = useContext(AuthContext)
+    const {logout, logoutLoading} = useContext(AuthContext)
 
     function handleLogout(){
       logout()
@@ -107,6 +107,7 @@ const UserDropdown = ({ setDropdownOpen }) => {
 
         <button 
           type="button"
+          disabled = {logoutLoading}
           className="user-dropdown-item logout" 
           onClick={handleLogout}
         >

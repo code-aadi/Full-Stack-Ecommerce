@@ -1,5 +1,6 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../../Context/AuthContext';
 
 const Sidebar = () => {
   const menuItems = [
@@ -8,10 +9,11 @@ const Sidebar = () => {
     { name: 'Orders', path: '/admin/orders', icon: '🛍' },
     { name: 'Users', path: '/admin/users', icon: '👥' },
   ];
-
+    const {logout, logoutLoading} = useContext(AuthContext)
+const navigate = useNavigate()
   const handleLogout = () => {
-    // Logout logic yahan add karein (clear token/localStorage)
-    console.log('User logged out');
+   logout()
+   navigate("/")
   };
 
   return (
@@ -127,7 +129,7 @@ const Sidebar = () => {
             <span>Settings</span>
           </NavLink>
 
-          <button onClick={handleLogout} className="nav-item logout-btn">
+          <button onClick={handleLogout} disabled = {logoutLoading} className="nav-item logout-btn">
             <span>🚪</span>
             <span>Logout</span>
           </button>

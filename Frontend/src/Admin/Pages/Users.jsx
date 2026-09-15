@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useDebounce from "../../../Hooks/useDebounce";
 import Pagination from "../../components/Pagination";
+import { AuthContext } from "../../../Context/AuthContext";
+import fetchApi from "../../../utils/fetchApi";
 
 
 
@@ -15,6 +17,7 @@ const Users = () => {
   const limit = searhParams.get("limit") || 10
 const [totalPages, setTotalPages] = useState(0)
 const debounceValue = useDebounce(searchTerm, 300)
+const {accessToken, setAccessToken} = useContext(AuthContext)
   useEffect(()=>{
  async function fetchUsers() {
   const url = new URL("http://localhost:2310/api/admin/users")
@@ -23,7 +26,12 @@ const debounceValue = useDebounce(searchTerm, 300)
   url.searchParams.set("page", page)
   url.searchParams.set("limit", limit)
   try {
-    const response = await fetch(url)
+    const response = await fetchApi(url,{
+      method : "GET",
+    headers : {
+        Authorization : `Bearer ${accessToken}`
+    }
+    },setAccessToken)
     const data = await response.json()
    setUsers(data.users)
    setTotalPages(data.totalPages)

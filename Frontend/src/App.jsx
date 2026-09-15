@@ -27,6 +27,7 @@ import AddProduct from './Admin/Pages/AddProduct';
 import OrderDetail from './Admin/Pages/OrderDetails';
 import ProductDetail from './Admin/Pages/ProductDetail';
 import UserDetail from './Admin/Pages/UserDetail';
+import AdminRoutes from './Admin/Components/AdminRoutes';
 
 
 
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
   {path : '/userAddress', element : <CartProtectedRoute><AddressPage /></CartProtectedRoute> },
   {path : '/payment', element : <CartProtectedRoute><PaymentPage /></CartProtectedRoute> },
   {path : '/order-success/:orderId', element : <SuccessProtection><OrderSuccess /></SuccessProtection> },
-  {path : "/admin", element : <AdminLayout />, children : [
+  {path : "/admin", element : <AdminRoutes><AdminLayout /></AdminRoutes>, children : [
     {path : "products", element : <Products />},
     {path : "orders", element : <Orders />},
     {path : "users", element : <Users />},

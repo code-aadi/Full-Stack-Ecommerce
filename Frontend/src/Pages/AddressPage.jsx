@@ -26,7 +26,7 @@ const AddressPage = ({ onSaveAddress }) => {
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
 
-
+console.log(accessToken)
 
 
 

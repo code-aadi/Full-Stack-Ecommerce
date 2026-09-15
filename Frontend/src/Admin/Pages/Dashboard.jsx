@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import getStatusBadge from "../Components/StatusBadge";
+import { AuthContext } from "../../../Context/AuthContext";
+import fetchApi from "../../../utils/fetchApi";
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -17,10 +19,16 @@ const Dashboard = () => {
 
 const [recentOrders, setRecentOrders] = useState([])
 const [lowStockProducts, setLowStockProducts] = useState([])
+const {accessToken, setAccessToken} = useContext(AuthContext)
 useEffect(()=>{
   async function getDashboardData() {
     try {
-      const response = await fetch("http://localhost:2310/api/admin/dashboard")
+      const response = await fetchApi("http://localhost:2310/api/admin/dashboard",{
+        method : "GET",
+    headers : {
+        Authorization : `Bearer ${accessToken}`
+    }
+  }, setAccessToken)
       const data = await response.json()
       console.log(data)
   if(response.ok){

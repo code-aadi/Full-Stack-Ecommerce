@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Pagination from "../../components/Pagination";
 import fetchApi from "../../../utils/fetchApi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useDebounce from "../../../Hooks/useDebounce";
 import EditProductModal from "../Components/EditProductModel";
 import Toast from "../../components/Toast";
+import { AuthContext } from "../../../Context/AuthContext";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -29,7 +30,7 @@ const [toast, setToast] = useState({
 })
 const navigate = useNavigate()
 const debounceValue = useDebounce(searchTerm, 500)
-
+const {accessToken, setAccessToken} = useContext(AuthContext)
   const handleCloseToast = () => {
     setToast(prev => ({ ...prev, isOpen: false }));
   };
@@ -48,10 +49,14 @@ const updateProduct = async (productId, product)=>{
  try {
   setEditLoading(true)
   setBackendErrors({})
-   const response = await fetch(`http://localhost:2310/api/admin/product/${productId}`,{
+   const response = await fetchApi(`http://localhost:2310/api/admin/product/${productId}`,{
     method : "PUT",
+    headers : {
+              Authorization : `Bearer ${accessToken}`
+
+    },
     body : product
-  })
+  },setAccessToken)
   const data = await response.json()
   if(!response.ok && data.errors){
     setBackendErrors(data.errors)
@@ -85,7 +90,12 @@ useEffect(()=>{
   const getProducts = async () => {
     try {
       setProductLoading(true);
-      const response = await fetchApi(`http://localhost:2310/api/admin/product?page=${page}&limit=${limit}&search=${debounceValue}&category=${selectedCategory}`);
+      const response = await fetchApi(`http://localhost:2310/api/admin/product?page=${page}&limit=${limit}&search=${debounceValue}&category=${selectedCategory}`,{
+        method : "GET",
+    headers : {
+        Authorization : `Bearer ${accessToken}`
+    }
+      },setAccessToken);
       const data = await response.json();
       if (data.success) {
         setProducts(data.products);
@@ -102,13 +112,17 @@ useEffect(()=>{
 
   const getCategories= async()=>{
     try {
-    const response = await fetchApi("http://localhost:2310/api/admin/product/categories")
+    const response = await fetchApi("http://localhost:2310/api/admin/product/categories",{
+      method : "GET",
+    headers : {
+        Authorization : `Bearer ${accessToken}`
+    }
+    },setAccessToken)
       const data = await response.json()
       if(data.success){
         setCategories(["All", ...data.categories])
         setTotalCategories(data.categories)
       }
-      console.log(data)
     } catch (error) {
       alert(error.message)
     }
@@ -116,11 +130,14 @@ useEffect(()=>{
   const handleDelete = async(id) => {
    
     try {
-      const response = await fetch(`http://localhost:2310/api/admin/product/${id}`,{
-        method : "DELETE"
-      })
+      const response = await fetchApi(`http://localhost:2310/api/admin/product/${id}`,{
+        method : "DELETE",
+        headers : {
+          Authorization : `Bearer ${accessToken}`
+
+        }
+      },setAccessToken)
       const data = await response.json()
-      console.log(data)
       if(!response.ok){
         alert(data.message)
         return

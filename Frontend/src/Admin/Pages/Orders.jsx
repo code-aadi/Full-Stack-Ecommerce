@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import getStatusBadge from "../Components/StatusBadge";
 import Pagination from "../../components/Pagination";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useDebounce from "../../../Hooks/useDebounce";
-
-
+import { AuthContext } from "../../../Context/AuthContext";
+import fetchApi from "../../../utils/fetchApi";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -17,7 +17,7 @@ const [searchParam] = useSearchParams()
     const limit = searchParam.get("limit") || 10;
 const [dateFilter, setDateFilter] = useState("All")
   const debounceValue = useDebounce(searchTerm, 300)
-
+const {accessToken , setAccessToken} = useContext(AuthContext)
 
 const navigate = useNavigate()
 const formatDate = (dateString) => {
@@ -46,10 +46,14 @@ useEffect(()=>{
    url.searchParams.set("paymentStatus" , paymentFilter)
    url.searchParams.set("dateFilter" , dateFilter)
     try {
-      const response = await fetch(url)
+      const response = await fetchApi(url,{
+        method : "GET",
+    headers : {
+        Authorization : `Bearer ${accessToken}`
+    }
+      },setAccessToken)
       const data = await response.json()
       setOrders(data?.orders)
-      console.log(dateFilter)
       setTotalPages(data.totalPages)
      
     } catch (error) {

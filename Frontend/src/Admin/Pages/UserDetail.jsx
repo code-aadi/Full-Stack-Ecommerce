@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
+import { AuthContext } from "../../../Context/AuthContext";
+import fetchApi from "../../../utils/fetchApi";
 
 const UserDetail = ({ onBack }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [roleLoading, setRoleLoading] = useState(false)
   const [totalOrders, setTotalOrders] = useState(0);
-
+const {accessToken, setAccessToken} = useContext(AuthContext)
 const {userId} = useParams()
 
   useEffect(() => {
@@ -14,10 +16,14 @@ const {userId} = useParams()
     if(!userId) return
     setLoading(true)
       try {
-        const response = await fetch(`http://localhost:2310/api/admin/users/${userId}`)
+        const response = await fetchApi(`http://localhost:2310/api/admin/users/${userId}`,{
+          method : "GET",
+    headers : {
+        Authorization : `Bearer ${accessToken}`
+    }
+        },setAccessToken)
         const data = await response.json()
         setUser(data.userData)
-        console.log(data.userData)
         setTotalOrders(data.userData.orderCount)
       } catch (error) {
         alert(error.message)
@@ -42,13 +48,15 @@ fetchUser()
     if (confirmChange) {
      setRoleLoading(true)
       try {
-        const response = await fetch(`http://localhost:2310/api/admin/users/${userId}`,{
+        const response = await fetchApi(`http://localhost:2310/api/admin/users/${userId}`,{
           method : "PATCH",
           headers : {
-            "Content-Type" : "application/json"
+            "Content-Type" : "application/json",
+            Authorization : `Bearer ${accessToken}`
+
           },
           body : JSON.stringify({newRole})
-        })
+        },setAccessToken)
         const data = await response.json()
         if(!response.ok){
           alert(data.message || "something went wrong")

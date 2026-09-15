@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../../styles/OrderDetails.css";
 import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../../../Context/AuthContext";
+import fetchApi from "../../../utils/fetchApi";
 
 const OrderDetail = () => {
   const [order, setOrder] = useState(null);
@@ -9,7 +11,7 @@ const OrderDetail = () => {
   const [status, setStatus] = useState("");
 const navigate = useNavigate()
 const orderStatus = ["pending", "confirmed", "shipped", "delivered", "cancelled"]
-
+const {accessToken, setAccessToken} = useContext(AuthContext)
   function onBack(){
 navigate(-1)
   }
@@ -27,7 +29,12 @@ navigate(-1)
        setLoading(true)
        
    try {
-     const response = await fetch(`http://localhost:2310/api/admin/orders/${orderId}`)
+     const response = await fetchApi(`http://localhost:2310/api/admin/orders/${orderId}`,{
+      method : "GET",
+    headers : {
+        Authorization : `Bearer ${accessToken}`
+    }
+     },setAccessToken)
     const data = await response.json()
     
    setOrder(data?.order)
@@ -45,20 +52,21 @@ getOrderDetails()
   const handleStatusChange = async(e) => {
     const newStatus = e.target.value;
         setStatus(newStatus);
-console.log(status)
     if(!orderId){
            alert("order id missing")
            return
         }
        setStatusLoading(true)
     try {
-        const response = await fetch(`http://localhost:2310/api/admin/orders/${orderId}`,{
+        const response = await fetchApi(`http://localhost:2310/api/admin/orders/${orderId}`,{
             method : "PATCH",
             headers : {
-            "Content-Type" : "application/json"
+            "Content-Type" : "application/json",
+          Authorization : `Bearer ${accessToken}`
+
             },
             body : JSON.stringify({status : newStatus})
-        })
+        },setAccessToken)
         const data = await response.json()
        
     } catch (error) {

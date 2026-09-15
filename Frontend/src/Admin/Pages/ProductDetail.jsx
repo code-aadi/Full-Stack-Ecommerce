@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../../styles/AdminProductDetail.css"
+import { AuthContext } from "../../../Context/AuthContext";
 import { useParams } from "react-router-dom";
+import fetchApi from "../../../utils/fetchApi";
 
 const ProductDetail = ({ onBack }) => {
   const [product, setProduct] = useState(null);
@@ -9,12 +11,17 @@ const ProductDetail = ({ onBack }) => {
   const [isActive, setIsActive] = useState(true);
   const [updateLoading, setUpdateLoading] = useState(false)
  const {productId} = useParams()
-
+const {accessToken, setAccessToken} = useContext(AuthContext)
   useEffect(() => {
   
 async function getProductDetails(){
    try {
-     const response = await fetch(`http://localhost:2310/api/admin/product/${productId}`)
+     const response = await fetchApi(`http://localhost:2310/api/admin/product/${productId}`,{
+      method : "GET",
+    headers : {
+        Authorization : `Bearer ${accessToken}`
+    }
+     },setAccessToken)
     const data = await response.json()
    if(response.ok){
          setProduct(data?.product);
@@ -37,13 +44,15 @@ getProductDetails()
     const updatedStock = product.stock + Number(newStock);
    setUpdateLoading(true)
     try {
-        const response = await fetch(`http://localhost:2310/api/admin/product/${productId}/stock`, {
+        const response = await fetchApi(`http://localhost:2310/api/admin/product/${productId}/stock`, {
             method : "PATCH",
             headers : {
-                "Content-Type" : "application/json"
+                "Content-Type" : "application/json",
+                        Authorization : `Bearer ${accessToken}`
+
             },
             body :JSON.stringify({stock : updatedStock})
-        })
+        },setAccessToken)
         const data = await response.json()
         if(response.ok){
               setProduct((prev) => ({ ...prev, stock: updatedStock }));
@@ -66,13 +75,15 @@ getProductDetails()
     const updatedStatus = !isActive;
    setUpdateLoading(true)
     try {
-        const response = await fetch(`http://localhost:2310/api/admin/product/${productId}/status`,{
+        const response = await fetchApi(`http://localhost:2310/api/admin/product/${productId}/status`,{
             method : "PATCH",
             headers : {
-                "Content-Type" : "application/json"
+                "Content-Type" : "application/json",
+            Authorization : `Bearer ${accessToken}`
+
             },
             body : JSON.stringify({status : updatedStatus})
-        })
+        },setAccessToken)
         const data = await response.json()
         if(response.ok){
       setIsActive(updatedStatus);

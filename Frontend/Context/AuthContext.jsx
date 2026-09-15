@@ -11,6 +11,7 @@ const [userLoading, setUserLoading] = useState(true)
 const [loginLoading, setLoginLoading] = useState(false);
 const [accessToken , setAccessToken] = useState(null)
 const [registerLoading, setRegisterLoading] = useState(false);
+const [logoutLoading, setLogoutLoading] = useState(false)
 // --------------------register ------------------------------------
 async function userRegister(userData) {
 
@@ -126,6 +127,7 @@ if(data.success){
 
 
 async function logout() {
+  setLogoutLoading(true)
   try {
     const response = await fetch("http://localhost:2310/api/auth/logout",{
       method : "POST",
@@ -139,10 +141,12 @@ async function logout() {
     alert("You Logged Out Sucessfully")
   } catch (error) {
     console.log(error)
+  }finally{
+    setLogoutLoading(false)
   }
 }
 return(
-    <AuthContext.Provider value={{userRegister, user, loginLoading, registerLoading, userLogin, logout, userLoading, accessToken, setAccessToken}} >
+    <AuthContext.Provider value={{userRegister, user, loginLoading, registerLoading, userLogin, logout, userLoading, accessToken, setAccessToken, logoutLoading}} >
         {children}
     </AuthContext.Provider>
 )

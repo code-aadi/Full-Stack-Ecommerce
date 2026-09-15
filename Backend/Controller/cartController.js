@@ -5,7 +5,7 @@ import { User } from "../Model/Users.js"
 
 export async function addToCart(req,res){
     const userId = req.user.userId
-    
+
   const {productId, quantity} = req.body
   const qty = Number(quantity)
 if (!quantity || qty < 1 || isNaN(qty)) {
