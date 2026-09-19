@@ -152,11 +152,11 @@ export const refreshAccessToken = async (req, res) => {
       });
     }
 
-
     let decoded;
     try {
       decoded = jwt.verify(incomingToken, process.env.REFRESH_SECRET);
     } catch (err) {
+     
       return res.status(401).json({
         success: false,
         message: "Invalid or expired refresh token",

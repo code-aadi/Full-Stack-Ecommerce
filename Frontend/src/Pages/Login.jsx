@@ -2,10 +2,12 @@ import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import { AuthContext } from '../../Context/AuthContext';
+import { useAlert } from '../../Context/AlertContext';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null)
+  const {showAlert} = useAlert()
   const {userLogin, loginLoading} = useContext(AuthContext)
   const [formData, setFormData] = useState({
     email: '',
@@ -21,8 +23,10 @@ const Login = () => {
     e.preventDefault();
     
   const result =  await userLogin(formData)
-  if(!result.sucess){
+  if(!result.success){
  setError(result.message)
+  }else{
+    showAlert(result.message, "success")
   }
   };
 

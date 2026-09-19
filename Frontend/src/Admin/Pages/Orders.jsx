@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import useDebounce from "../../../Hooks/useDebounce";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
+import { useAlert } from "../../../Context/AlertContext";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -18,7 +19,7 @@ const [searchParam] = useSearchParams()
 const [dateFilter, setDateFilter] = useState("All")
   const debounceValue = useDebounce(searchTerm, 300)
 const {accessToken , setAccessToken} = useContext(AuthContext)
-
+const {showAlert} = useAlert()
 const navigate = useNavigate()
 const formatDate = (dateString) => {
   if (!dateString) return "";
@@ -57,7 +58,7 @@ useEffect(()=>{
       setTotalPages(data.totalPages)
      
     } catch (error) {
-      
+      showAlert("Something went wrong", "error")
     }
   }
 fetchOrders()

@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import Pagination from '../components/Pagination';
+import { useAlert } from '../../Context/AlertContext';
+import EmptyState from '../components/EmptyState';
 
 
 
 const CategoryProductsPage = () => {
   const [searchParams] = useSearchParams()
+  const {showAlert} = useAlert()
  const [products, setProducts] = useState([])
  const [loading, setLoading] = useState(false)
  const [error, setError] = useState(null);
@@ -30,7 +33,7 @@ try {
     }
 } catch (error) {
   setError("Internal Server Error. Please Check Your Internet")
-  console.log(error)
+  showAlert('Something went wrong', "error")
 }finally{
   setLoading(false)
 }
@@ -45,7 +48,7 @@ getCategoriesData()
 
   // 5. Error state handle karein
   if (error) {
-    return <div className="error">Error: {error}</div>;
+    return <EmptyState type='category'/>;
   }
   return (
     <div style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1rem' }}>

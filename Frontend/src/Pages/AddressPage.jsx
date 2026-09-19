@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import ErrorMessage from '../components/ErrorMessage';
 import fetchApi from '../../utils/fetchApi';
 import { AuthContext } from '../../Context/AuthContext';
+import { useAlert } from '../../Context/AlertContext';
 
 const AddressPage = ({ onSaveAddress }) => {
   const {accessToken, setAccessToken} = useContext(AuthContext)
@@ -25,8 +26,7 @@ const AddressPage = ({ onSaveAddress }) => {
   const [addressLoading, setAddressLoading] = useState(false)
   const [errors, setErrors] = useState({})
   const navigate = useNavigate()
-
-console.log(accessToken)
+const {showAlert} = useAlert()
 
 
 
@@ -102,8 +102,8 @@ if(Object.keys(newError).length > 0) return
    navigate('/payment');
 
 } catch (error) {
-    console.log(error)
-    alert(error.message || "Something went wrong")
+    showAlert(error.message, "error")
+   
    }finally{
     setAddressLoading(false)
    }

@@ -4,6 +4,7 @@ import '../styles/SearchPage.css';
 import ProductCard from '../components/ProductCard';
 import FilterSidebar from '../components/FilterSidebar';
 import Pagination from '../components/Pagination';
+import EmptyState from '../components/EmptyState';
 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -81,6 +82,7 @@ if(rating){
   };
 
 
+  
  
 
   return (
@@ -120,11 +122,8 @@ if(rating){
             </div>
         ) : (
           query && (
-            <div className="no-results">
-              <div className="no-results-icon">🔍</div>
-              <h3>No products found</h3>
-              <p className = 'address-error'>Try searching with different keywords or change filters.</p>
-            </div>
+            <EmptyState type='search' message={`No results found for the "${searchTerm}".`} buttonText="Home"
+      buttonLink="/"/>
           )
         )}
 

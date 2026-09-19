@@ -32,7 +32,6 @@ if(data.success){
 return data
 } catch (error) {
   setUser(null)
-    console.log(error)
   return { success: false, message: "Network error. Please try again." };
 }finally{
   setRegisterLoading(false)
@@ -64,7 +63,6 @@ try {
  
 } catch (error) {
   setUser(null)
-  console.log(error)
 }finally{
   setLoginLoading(false)
 }
@@ -92,7 +90,6 @@ useEffect(() => {
     setUser(null)
     setAccessToken(null)
     setUser(null)
-    console.log(error)
   }finally{
     setUserLoading(false)
   }
@@ -119,7 +116,6 @@ if(data.success){
  }
 } catch (error) {
   setUser(null)
-  console.log(error)
 }
  
 }
@@ -137,14 +133,18 @@ async function logout() {
     if(data.success){
       setUser(null)
       setAccessToken(null)
+    return {success : true, message : data.message}
+
     }
-    alert("You Logged Out Sucessfully")
+    return {success : false, message : data.message}
   } catch (error) {
-    console.log(error)
+    return {success : false, message : "Unable to Logout. Please check your internet"}
   }finally{
     setLogoutLoading(false)
   }
 }
+
+
 return(
     <AuthContext.Provider value={{userRegister, user, loginLoading, registerLoading, userLogin, logout, userLoading, accessToken, setAccessToken, logoutLoading}} >
         {children}

@@ -6,6 +6,7 @@ import useDebounce from "../../../Hooks/useDebounce";
 import EditProductModal from "../Components/EditProductModel";
 import Toast from "../../components/Toast";
 import { AuthContext } from "../../../Context/AuthContext";
+import { useAlert } from "../../../Context/AlertContext";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,6 +29,7 @@ const [toast, setToast] = useState({
       type: 'add',
       message: ""
 })
+const {showAlert} = useAlert()
 const navigate = useNavigate()
 const debounceValue = useDebounce(searchTerm, 500)
 const {accessToken, setAccessToken} = useContext(AuthContext)
@@ -62,7 +64,6 @@ const updateProduct = async (productId, product)=>{
     setBackendErrors(data.errors)
     return
   }
-  console.log(data)
   if(response.ok){
     modelOnClose()
       setToast({
@@ -72,7 +73,7 @@ const updateProduct = async (productId, product)=>{
     });
   }
  } catch (error) {
-  alert(error.message)
+  showAlert("Something went wrong", "error")
  }finally{
   setEditLoading(false)
  }
@@ -103,8 +104,7 @@ useEffect(()=>{
         setTotalProducts(data.totalProducts)
       }
     } catch (error) {
-      console.log(error);
-      alert(error.message);
+      showAlert("Something went wrong", "error")
     } finally {
       setProductLoading(false);
     }

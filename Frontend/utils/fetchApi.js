@@ -22,7 +22,6 @@ async function fetchApi(url, options = {}, setAccessToken) {
     }
 
     const refreshResponse = await refreshPromise;
-
     if (refreshResponse.status === 403) {
         setAccessToken(null);
         window.location.href = "/login";
@@ -30,6 +29,7 @@ async function fetchApi(url, options = {}, setAccessToken) {
     }
 
     if (!refreshResponse.ok) {
+       
         setAccessToken(null);
         window.location.href = "/login";
         return response;

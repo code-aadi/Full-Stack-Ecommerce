@@ -21,6 +21,7 @@ localCart?.forEach(item => {
 async function addToCart(productId){
     if(user){
         try {
+            
         const response = await fetchApi("http://localhost:2310/api/cart/add", {
             method : "POST",
              headers : {
@@ -34,10 +35,11 @@ async function addToCart(productId){
         const data = await response.json()
         if(response.ok){
             setCartRefresh(prev => prev + 1)
+          return {success : true, message : "Product is added to cart"}
         }
         
     } catch (error) {
-        console.log(error)
+       return {success : false, message : "Unable to add product to cart. Please check your internet"}
     }
     }
     else{
@@ -52,6 +54,7 @@ async function addToCart(productId){
     }
     return [...prev,{_id : productId, quantity : 1 }]
 })
+ return {success : true, message : "Product is added to cart"}
     }
     
 
@@ -75,7 +78,7 @@ if(user){
 setCartItems(data.cart.items)
 
  } catch (error) {
-    alert("unable to fetch cart data")
+   
  }finally{
     setCartLoading(false)
  }
@@ -105,7 +108,6 @@ setCartItems(data.cart.items)
     });
     setCartItems(formatedData)
  } catch (error) {
-    console.log(error)
  }finally{
     setCartLoading(false)
  }
@@ -138,7 +140,7 @@ if(response.ok){
  const data = await response.json()
 
 } catch (error) {
-    console.log(error)
+    return {success : false, message : "Unable to increase quantity. Please check your internet"}
 }
 } else{
     setCartRefresh(prev => prev + 1)
@@ -170,7 +172,7 @@ if(response.ok){
 const data = await response.json()
 
 } catch (error) {
-   console.log(error) 
+    return {success : false, message : "Unable to decrease quantity. Please check your internet"}
 }
 }else{
     setCartRefresh(prev => prev + 1)
@@ -201,7 +203,7 @@ async function clearCart(){
         },setAccessToken)
         const data = await response.json()
     } catch (error) {
-        console.log(error)
+    return {success : false, message : "Unable to clear the cart. Please check your internet"}
     }
   } else{
     setCartRefresh(prev => prev + 1)
@@ -223,7 +225,8 @@ if(user){
         const data = await response.json()
         
     } catch (error) {
-       console.log(error) 
+          return {success : false, message : "Unable to remove product from cart. Please check your internet"}
+
     }
 } else{
             setCartRefresh(prev => prev + 1)
@@ -259,7 +262,7 @@ useEffect(()=>{
         setCartRefresh(prev => prev + 1)
     }
    } catch (error) {
-    console.log(error)
+    
    }
     }
     localCartToDb()

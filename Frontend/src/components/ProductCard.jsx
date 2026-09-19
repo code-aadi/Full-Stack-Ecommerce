@@ -2,9 +2,11 @@ import React, { useContext, useState } from 'react';
 import { ShoppingCart, Heart, Eye, Star, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cartContext } from '../../Context/CartContext';
+import { useAlert } from '../../Context/AlertContext';
 
 const ProductCard = ({ item }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const {showAlert} = useAlert()
   const { cartItems, addToCart, quantityDecrease, quantityIncrease, removeFromCart } = useContext(cartContext);
 
   // Check karein ki product pehle se cart me hai ya nahi
@@ -18,7 +20,28 @@ const ProductCard = ({ item }) => {
     ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100) 
     : 0;
 
-  // Handlers (aap custom logic add kar sakte hain)
+async function handleAddToCart(id) {
+  const result = await addToCart(id)
+  if(result.success){
+  showAlert(result.message, "success")
+  }else{
+    showAlert(result.message, "error")
+  }
+}
+
+async function handleQuantityIncrease(id, currentQuantity,) {
+  const result = await quantityIncrease(id, currentQuantity)
+  
+  if(result && !result.success){
+    showAlert(result.message, "error")
+  }
+}
+async function handleQuantityDecrease(id, currentQuantity,) {
+  const result = await quantityDecrease(id, currentQuantity)
+  if(result && !result.success){
+    showAlert(result.message, "error")
+  }
+}
 
 
   return (
@@ -207,7 +230,7 @@ const ProductCard = ({ item }) => {
       <div className="product-card">
         <div className="image-container">
           <Link to={`/product/${item._id}`}> 
-            <img src={item.image} onLoad={() => console.log("image Loaded")} alt={item.name} className="product-img" loading="lazy" />
+            <img src={item.image} alt={item.name} className="product-img" loading="lazy" />
           </Link>
           <div className="badge-container">
             {item.isNew && !isOutOfStock && <span className="badge badge-new">NEW</span>}
@@ -248,13 +271,13 @@ const ProductCard = ({ item }) => {
           {isInCart ? (
             /* Jab Item Cart me hai -> (+ / -) Quantity Counter dikhega */
             <div className="card-quantity-selector">
-              <button className="card-qty-btn" onClick={()=> quantityDecrease(item._id, currentQuantity)}>
+              <button className="card-qty-btn" onClick={()=> handleQuantityDecrease(item._id, currentQuantity)}>
                 <Minus size={16} />
               </button>
               <span className="card-qty-value">{currentQuantity}</span>
               <button 
                 className="card-qty-btn" 
-                onClick={()=> quantityIncrease(item._id, currentQuantity)} 
+                onClick={()=> handleQuantityIncrease(item._id, currentQuantity)} 
                 disabled={currentQuantity >= item.stock}
               >
                 <Plus size={16} />
@@ -262,7 +285,7 @@ const ProductCard = ({ item }) => {
             </div>
           ) : (
             /* Jab Item Cart me nahi hai -> Add to Cart Button dikhega */
-            <button className="cart-btn" disabled={isOutOfStock} onClick={() => addToCart(item._id)}>
+            <button className="cart-btn" disabled={isOutOfStock} onClick={() => handleAddToCart(item._id)}>
               <ShoppingCart size={17} />
               <span>{isOutOfStock ? 'Out of Stock' : 'Add to Cart'}</span>
             </button>

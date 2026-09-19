@@ -4,9 +4,11 @@ import fetchApi from "../../../utils/fetchApi";
 import { AuthContext } from "../../../Context/AuthContext";
 import Toast from "../../components/Toast";
 import validateForm from "../../../helper/productValidate";
+import { useAlert } from "../../../Context/AlertContext";
 
 const AddProduct = () => {
   const navigate = useNavigate();
+  const {showToast} = useAlert()
   const {accessToken, setAccessToken} = useContext(AuthContext)
 const [loading, setLoading] = useState(false)
 const [toast, setToast] = useState({
@@ -63,7 +65,7 @@ const [categories, setCategories] = useState([])
         setCategories(data.categories)
       }
     } catch (error) {
-      alert(error.message)
+      showToast("Unable to load cateogories. Please check your internet", "error")
     }
   }
 
@@ -134,7 +136,7 @@ const [categories, setCategories] = useState([])
 
 
     } catch (error) {
-      alert(error.message)
+     showToast("Something went wrong. Please check your internet", "error")
     }finally{
       setLoading(false)
     }

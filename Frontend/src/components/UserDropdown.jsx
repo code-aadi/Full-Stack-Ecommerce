@@ -2,12 +2,18 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { User, Package, LogOut, X, } from 'lucide-react';
 import { AuthContext } from '../../Context/AuthContext';
+import { useAlert } from '../../Context/AlertContext';
 
 const UserDropdown = ({ setDropdownOpen }) => {
     const {logout, logoutLoading} = useContext(AuthContext)
-
-    function handleLogout(){
-      logout()
+const {showAlert} = useAlert()
+    async function handleLogout(){
+     const result = await logout()
+  if(result.success){
+showAlert(result.message, "success")
+  }else{
+    showAlert(result.message, "error")
+  }
       setDropdownOpen(false)
     }
   return (

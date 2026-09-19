@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import "../../styles/OrderDetails.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { data, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
+import { useAlert } from "../../../Context/AlertContext";
 
 const OrderDetail = () => {
   const [order, setOrder] = useState(null);
+  const {showAlert} = useAlert()
   const [loading, setLoading] = useState(true);
   const [statusLoading , setStatusLoading] = useState(false)
   const [status, setStatus] = useState("");
@@ -40,7 +42,7 @@ navigate(-1)
    setOrder(data?.order)
    setStatus(data?.order.orderStatus)
    } catch (error) {
-    alert(error.message)
+    showAlert("Something went wrong", "error")
    }finally{
     setLoading(false)
    }
@@ -51,7 +53,7 @@ getOrderDetails()
 
   const handleStatusChange = async(e) => {
     const newStatus = e.target.value;
-        setStatus(newStatus);
+       
     if(!orderId){
            alert("order id missing")
            return
@@ -68,9 +70,12 @@ getOrderDetails()
             body : JSON.stringify({status : newStatus})
         },setAccessToken)
         const data = await response.json()
-       
+       if(response.ok){
+         setStatus(newStatus);
+        showAlert(data.message, "success")
+       }
     } catch (error) {
-        alert(error.message)
+      showAlert("Something went wrong", "error")
     }finally{
       setStatusLoading(false)  
     }

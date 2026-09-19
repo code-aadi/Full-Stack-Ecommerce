@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import getStatusBadge from "../Components/StatusBadge";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
+import { useAlert } from "../../../Context/AlertContext";
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -14,7 +15,7 @@ const Dashboard = () => {
   ])
 
  
-
+const {showAlert} = useAlert()
 
 
 const [recentOrders, setRecentOrders] = useState([])
@@ -30,7 +31,6 @@ useEffect(()=>{
     }
   }, setAccessToken)
       const data = await response.json()
-      console.log(data)
   if(response.ok){
     const orderData = data?.latestOrders.map(order => {
       return {
@@ -50,7 +50,7 @@ setRecentOrders(orderData)
 setLowStockProducts(data?.lowStockProducts)
   }
     } catch (error) {
-      alert(error.message)
+      showAlert("Something went wrong. Please check your internet", "error")
     }
   }
   getDashboardData()

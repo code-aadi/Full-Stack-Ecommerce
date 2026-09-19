@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../Context/AuthContext';
+import { useAlert } from '../../../Context/AlertContext';
 
 const Sidebar = () => {
+  const {showAlert} = useAlert()
   const menuItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
     { name: 'Products', path: '/admin/products', icon: '📦' },
@@ -11,9 +13,14 @@ const Sidebar = () => {
   ];
     const {logout, logoutLoading} = useContext(AuthContext)
 const navigate = useNavigate()
-  const handleLogout = () => {
-   logout()
-   navigate("/")
+  const handleLogout = async() => {
+   const result = await logout()
+   if(result.success){
+  showAlert(result.message, "success")
+  navigate("/")
+   }else{
+    showAlert(result.message, "error")
+   }
   };
 
   return (

@@ -3,6 +3,7 @@ import "../../styles/AdminProductDetail.css"
 import { AuthContext } from "../../../Context/AuthContext";
 import { useParams } from "react-router-dom";
 import fetchApi from "../../../utils/fetchApi";
+import { useAlert } from "../../../Context/AlertContext";
 
 const ProductDetail = ({ onBack }) => {
   const [product, setProduct] = useState(null);
@@ -12,6 +13,7 @@ const ProductDetail = ({ onBack }) => {
   const [updateLoading, setUpdateLoading] = useState(false)
  const {productId} = useParams()
 const {accessToken, setAccessToken} = useContext(AuthContext)
+const {showAlert} = useAlert()
   useEffect(() => {
   
 async function getProductDetails(){
@@ -26,10 +28,10 @@ async function getProductDetails(){
    if(response.ok){
          setProduct(data?.product);
     setIsActive(data?.product.isActive);
-    console.log(data.product)
+    
    }
    } catch (error) {
-    alert(error.message)
+    showAlert("Unable to Fetch products. Please check your internet", "error")
    }
 }
 getProductDetails()
@@ -39,7 +41,7 @@ getProductDetails()
 
   const handleUpdateStock = async(e) => {
     e.preventDefault();
-    if (!newStock || Number(newStock) < 0) return alert("Valid quantity enter karein");
+    if (!newStock || Number(newStock) < 0) return showAlert("Enter a Valid Quantity", "error");
     
     const updatedStock = product.stock + Number(newStock);
    setUpdateLoading(true)
@@ -57,12 +59,12 @@ getProductDetails()
         if(response.ok){
               setProduct((prev) => ({ ...prev, stock: updatedStock }));
     setNewStock("");
-    alert("Stock successfully updated!");
+    showAlert("Stock successfully update", "success")
         }else{
-            alert(data.message || "failed to update stock")
+           showAlert(data.message, "error")
         }
     } catch (error) {
-       alert("something went wrong") 
+      showAlert("Something went wrong. Please check your internet", "error")
     }finally{
         setUpdateLoading(false)
     }
@@ -87,12 +89,12 @@ getProductDetails()
         const data = await response.json()
         if(response.ok){
       setIsActive(updatedStatus);
-      alert(data.message)
+      showAlert(data.message, "success")
         }else{
             alert("unable to update stock")
         }
     } catch (error) {
-        alert(data.message || "something went wrong")
+       alert("Something went wrong. Please check your internet")
     }finally{
         setUpdateLoading(false)
     }

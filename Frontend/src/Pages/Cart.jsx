@@ -2,12 +2,15 @@ import React, { useContext, useEffect, useState } from 'react';
 import '../styles/cart.css';
 import { cartContext } from '../../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { useAlert } from '../../Context/AlertContext';
+import EmptyState from '../components/EmptyState';
 
 
 export default function Cart() {
  
   const {cartItems, quantityIncrease , quantityDecrease , removeFromCart, clearCart} = useContext(cartContext)
 const navigate = useNavigate()
+const {showAlert} = useAlert()
 const [loading, setLoading] = useState(false)
 /*const cartItemsObj = {}
 cartItems?.forEach(item => {
@@ -22,6 +25,30 @@ if(loading){
   return <h1>Data is Loading. Please Wait</h1>
 }
 
+if(cartItems.length === 0){
+  return <EmptyState type='cart' buttonLink="/" />
+}
+
+async function handleRemoveFromCart(id) {
+const result = await removeFromCart(id)
+if(!result.success){
+  showAlert(result.message, "error")
+}  
+
+}
+
+async function handleQuantityIncrease(id, currentQuantity,) {
+  const result = await quantityIncrease(id, currentQuantity)
+  if(!result.success){
+    showAlert(result.message, "error")
+  }
+}
+async function handleQuantityDecrease(id, currentQuantity,) {
+  const result = await quantityDecrease(id, currentQuantity)
+  if(!result.success){
+    showAlert(result.message, "error")
+  }
+}
   return (
     <div className="cart-container">
       {/* Header */}
@@ -58,16 +85,16 @@ if(loading){
               </div>
 
               <div className="quantity-controls">
-                <button className="qty-btn" aria-label="Decrease quantity" onClick={()=> quantityDecrease(item.product._id, item.quantity)}>−</button>
+                <button className="qty-btn" aria-label="Decrease quantity" onClick={()=> handleQuantityDecrease(item.product._id, item.quantity)}>−</button>
                 <span className="qty-count">{item.quantity}</span>
-                <button className="qty-btn" disabled = {item.product.stock === item.quantity} aria-label="Increase quantity" onClick={()=> quantityIncrease(item.product._id, item.quantity)}>+</button>
+                <button className="qty-btn" disabled = {item.product.stock === item.quantity} aria-label="Increase quantity" onClick={()=> handleQuantityIncrease(item.product._id, item.quantity)}>+</button>
               </div>
 
               <div className="item-total">
                 ₹{(item.product.price * item?.quantity)?.toFixed(2).toLocaleString('en-IN')}
               </div>
 
-              <button className="remove-btn" title="Remove Item" aria-label="Remove item" onClick={()=> removeFromCart(item.product._id)}>
+              <button className="remove-btn" title="Remove Item" aria-label="Remove item" onClick={()=> handleRemoveFromCart(item.product._id)}>
                 ✕
               </button>
              {item?.product.stock === item?.quantity &&  <p className="outStock">Out of Stock</p>}
@@ -113,6 +140,7 @@ if(loading){
           </button>
         </aside>
       </div>
+      
     </div>
   );
 }

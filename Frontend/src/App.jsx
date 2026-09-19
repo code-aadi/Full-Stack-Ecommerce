@@ -28,7 +28,9 @@ import OrderDetail from './Admin/Pages/OrderDetails';
 import ProductDetail from './Admin/Pages/ProductDetail';
 import UserDetail from './Admin/Pages/UserDetail';
 import AdminRoutes from './Admin/Components/AdminRoutes';
-
+import { AlertProvider } from '../Context/AlertContext';
+import UserOrders from './Pages/Orders';
+import UserOrderDetail from './Pages/userOrderDetails';
 
 
 const router = createBrowserRouter([
@@ -38,6 +40,8 @@ const router = createBrowserRouter([
     {path : "/product/:id", element : <ProductDetailPage />},
     {path : "/MyCart", element : <Cart />},
     {path : "/search", element : <SearchPage />},
+    {path : "/orders", element : <UserOrders />},
+    {path : "/orders/:id", element : <UserOrderDetail />},
 
 ]},
   {path : "/register", element : <PublicRoute><Register /></PublicRoute> },
@@ -61,9 +65,11 @@ const router = createBrowserRouter([
 
 function App() {
   return (<AuthProvider>
+    <AlertProvider>
     <CartProvider>
     <RouterProvider router={router} />
   </CartProvider>
+  </AlertProvider>
   </AuthProvider>)
 }
 

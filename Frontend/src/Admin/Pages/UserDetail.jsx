@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
+import { useAlert } from "../../../Context/AlertContext";
 
 const UserDetail = ({ onBack }) => {
   const [user, setUser] = useState(null);
@@ -10,7 +11,7 @@ const UserDetail = ({ onBack }) => {
   const [totalOrders, setTotalOrders] = useState(0);
 const {accessToken, setAccessToken} = useContext(AuthContext)
 const {userId} = useParams()
-
+const {showAlert} = useAlert()
   useEffect(() => {
    const fetchUser = async () => {
     if(!userId) return
@@ -23,10 +24,14 @@ const {userId} = useParams()
     }
         },setAccessToken)
         const data = await response.json()
-        setUser(data.userData)
+       if(response.ok){
+         setUser(data.userData)
         setTotalOrders(data.userData.orderCount)
+       }else{
+        showAlert(data.message, "error")
+       }
       } catch (error) {
-        alert(error.message)
+       showAlert("Something went wrong", "error")
       }finally{
         setLoading(false)
       }
@@ -59,13 +64,13 @@ fetchUser()
         },setAccessToken)
         const data = await response.json()
         if(!response.ok){
-          alert(data.message || "something went wrong")
+         showAlert(data.message, "error")
         }else{
               setUser((prev) => ({ ...prev, role: newRole }));
-      alert(data.message || "role changed successfully")
+      showAlert(data.message, "success")
         }
       } catch (error) {
-        alert(error.message)
+       showAlert("Something went wrong")
       }finally{
         setRoleLoading(false)
       }

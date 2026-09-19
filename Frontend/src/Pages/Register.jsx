@@ -2,10 +2,11 @@ import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { AuthContext } from '../../Context/AuthContext';
-
+import { useAlert } from '../../Context/AlertContext';
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate()
+  const {showAlert} = useAlert()
   const [error, setError] = useState(null)
   const {userRegister, registerLoading} = useContext(AuthContext)
   const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ const Register = () => {
     }
 const result = await userRegister(formData)
 if(result.success){
-  alert(result.message, "and login bhi ho gya")
+ showAlert(result.message, "success")
 //navigate("/login")
 }
 else{

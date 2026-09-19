@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ShoppingCart, Heart, Star, ExternalLink, ShieldCheck, Truck, RotateCcw, Minus, Plus } from 'lucide-react';
 import { cartContext } from '../../Context/CartContext';
+import { useAlert } from '../../Context/AlertContext';
+import EmptyState from '../components/EmptyState';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -17,13 +19,11 @@ const ProductDetailPage = () => {
 
   
   const [isWishlisted, setIsWishlisted] = useState(false);
-
-  // Check karein ki product pehle se cart me hai ya nahi
-  const cartItem = cartItems?.find((item) => item._id === id || item.id === id);
+const {showAlert} = useAlert()
+  const cartItem = cartItems?.find((cItem) => cItem.product._id === product?._id || cItem.product.id === product?._id);
   const isInCart = Boolean(cartItem);
   const currentQuantity = cartItem ? cartItem.quantity : 1;
 
-  // API Call to Fetch Product by ID
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -35,7 +35,6 @@ const ProductDetailPage = () => {
 
         setProduct(data.product);
       } catch (err) {
-        console.error('Error fetching product detail:', err);
         setError('Product load nahi ho paya. Kripya dobara try karein.');
       } finally {
         setLoading(false);
@@ -45,15 +44,33 @@ const ProductDetailPage = () => {
     if (id) fetchProductDetails();
   }, [id]);
 
-
+if(!product || error){
+  return <EmptyState type='product'/>
+}
 
  
-  const handleAddToCart = () => {
+  const handleAddToCart = async() => {
     if (addToCart && product) {
-      addToCart(product._id);
+     const result = await addToCart(product._id);
+     if(result.success){
+     showAlert(result.message, "success")
+     }else{
+      showAlert(result.message,  "error")
+     }
     }
   };
-
+async function handleQuantityIncrease(id, currentQuantity,) {
+  const result = await quantityIncrease(id, currentQuantity)
+  if(result && !result.success){
+    showAlert(result.message, "error")
+  }
+}
+async function handleQuantityDecrease(id, currentQuantity,) {
+  const result = await quantityDecrease(id, currentQuantity)
+  if(result && !result.success){
+    showAlert(result.message, "error")
+  }
+}
   return (
     <>
       <style>{`
@@ -427,13 +444,13 @@ const ProductDetailPage = () => {
                     {isInCart ? (
                       /* Jab Cart me hai -> Counter dikhega */
                       <div className="quantity-selector">
-                        <button className="qty-btn" onClick={()=> quantityDecrease(product._id, currentQuantity)}>
+                        <button className="qty-btn" onClick={()=> handleQuantityDecrease(product._id, currentQuantity)}>
                           <Minus size={16} />
                         </button>
                         <span className="qty-value">{currentQuantity}</span>
                         <button
                           className="qty-btn"
-                          onClick={()=> quantityIncrease(product._id, currentQuantity)}
+                          onClick={()=> handleQuantityIncrease(product._id, currentQuantity)}
                           disabled={currentQuantity >= product.stock}
                         >
                           <Plus size={16} />

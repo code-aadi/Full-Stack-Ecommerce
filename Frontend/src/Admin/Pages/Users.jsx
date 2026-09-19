@@ -4,10 +4,12 @@ import useDebounce from "../../../Hooks/useDebounce";
 import Pagination from "../../components/Pagination";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
+import { useAlert } from "../../../Context/AlertContext";
 
 
 
 const Users = () => {
+  const {showAlert} = useAlert()
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
@@ -36,7 +38,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
    setUsers(data.users)
    setTotalPages(data.totalPages)
   } catch (error) {
-    console.log(error)
+   showAlert("Something went wrong", "error")
   }
  }
  fetchUsers()
