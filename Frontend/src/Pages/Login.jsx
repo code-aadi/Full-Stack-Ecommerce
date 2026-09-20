@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react';
 import { AuthContext } from '../../Context/AuthContext';
 import { useAlert } from '../../Context/AlertContext';
@@ -8,6 +8,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null)
   const {showAlert} = useAlert()
+  const navigate = useNavigate()
   const {userLogin, loginLoading} = useContext(AuthContext)
   const [formData, setFormData] = useState({
     email: '',
@@ -235,9 +236,13 @@ const Login = () => {
             </div>
 
             <div className="form-actions">
-              <Link to="/forgot-password" className="forgot-link">
-                Forgot password?
-              </Link>
+             <span 
+            onClick={() => navigate('/forgot-password')} 
+            className="forgot-link" 
+            style={{ cursor: 'pointer' }}
+        >
+            Forgot Password?
+        </span>
             </div>
  {error && <p className='login-error'>{error}</p> }
             <button type="submit" className="auth-btn" disabled = {loginLoading}>

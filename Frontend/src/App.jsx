@@ -31,6 +31,8 @@ import AdminRoutes from './Admin/Components/AdminRoutes';
 import { AlertProvider } from '../Context/AlertContext';
 import UserOrders from './Pages/Orders';
 import UserOrderDetail from './Pages/userOrderDetails';
+import ForgotPassword from './Pages/ForgotPassword';
+import ResetPassword from './Pages/ResetPassword';
 
 
 const router = createBrowserRouter([
@@ -45,6 +47,8 @@ const router = createBrowserRouter([
 
 ]},
   {path : "/register", element : <PublicRoute><Register /></PublicRoute> },
+  {path : "/forgot-password", element : <PublicRoute><ForgotPassword /></PublicRoute> },
+  {path : "/reset-password/:token", element : <PublicRoute><ResetPassword /></PublicRoute> },
   {path : "/login", element : <PublicRoute><Login /></PublicRoute>},
   {path : '/userAddress', element : <CartProtectedRoute><AddressPage /></CartProtectedRoute> },
   {path : '/payment', element : <CartProtectedRoute><PaymentPage /></CartProtectedRoute> },

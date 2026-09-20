@@ -15,7 +15,7 @@ if(!email){
 if(!password || password.length < 6){
     return res.status(400).json({
         success : false,
-        message : "Please Enter Atleast 6 Digits of Password"
+        message : "The password must be at least 6 characters long"
     })
 }
 next()
