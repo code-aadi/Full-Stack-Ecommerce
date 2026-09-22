@@ -6,6 +6,8 @@ const ForgotPassword = () => {
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+    const [isButtonDisable, setIsButtonDisable] = useState(false)
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +28,9 @@ const ForgotPassword = () => {
         setMessage(data.message || 'Password reset link aapke email par bhej diya gaya hai.');
         setIsSuccess(true);
       } else {
+        if(response.status === 429){
+          setIsButtonDisable(true)
+        }
         setMessage(data.message || 'Kuch gadbad hui, kripya firse koshish karein.');
         setIsSuccess(false);
       }
@@ -67,7 +72,7 @@ const ForgotPassword = () => {
               </div>
 
               {message && !isSuccess && (
-                <div className="error-alert">
+                <div className="error-alert-forgot">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="8" x2="12" y2="12"></line>
@@ -77,13 +82,13 @@ const ForgotPassword = () => {
                 </div>
               )}
 
-              <button type="submit" className="submit-btn" disabled={loading}>
+              <button type="submit" className="submit-btn" disabled={loading || isButtonDisable}>
                 {loading ? (
                   <span className="btn-loader">
                     <span className="spinner"></span> sending email...
                   </span>
                 ) : (
-                  'Send Reset Link'
+                  <> { isButtonDisable ? 'Blocked 🔒' : 'Send Resent Link'}</>
                 )}
               </button>
             </form>

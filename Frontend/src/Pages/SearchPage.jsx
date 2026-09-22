@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {  useNavigate, useSearchParams } from 'react-router-dom';
+import {  Link, useNavigate, useSearchParams } from 'react-router-dom';
 import '../styles/SearchPage.css';
 import ProductCard from '../components/ProductCard';
 import FilterSidebar from '../components/FilterSidebar';
@@ -10,6 +10,7 @@ const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("")
+  const [isLimitCrossed, setIsLimitCrossed] = useState(true)
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(0)
   const [totalProducts, setTotalProducts] = useState(0)
@@ -73,6 +74,9 @@ if(rating){
       setProducts(data.products);
        setTotalPages(data.totalPages)
        setTotalProducts(data.totalProducts)
+       if(response.status === 429){
+       setIsLimitCrossed(true)
+       }
     } catch (error) {
       console.error('Error fetching search results:', error);
       setProducts([]);
@@ -81,13 +85,17 @@ if(rating){
     }
   };
 
-
+if(isLimitCrossed){
+  return (
+  
+  )
+}
   
  
 
   return (
     <div className="search-page-container">
-       
+      
       {query && (
        
         <div className="search-meta">

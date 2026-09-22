@@ -60,9 +60,9 @@ try {
 
   }
   return data
- 
 } catch (error) {
   setUser(null)
+  return {success : false, message : "Something went wrong. Please check your internet"}
 }finally{
   setLoginLoading(false)
 }

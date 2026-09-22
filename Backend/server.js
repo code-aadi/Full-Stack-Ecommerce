@@ -14,6 +14,7 @@ import AdminProductRoute from "./Admin/AdminRoutes/AdminProductRoutes.js"
 import AdminDashboardRoutes from "./Admin/AdminRoutes/AdminDashboardRoutes.js"
 import AdminOrderRoute from "./Admin/AdminRoutes/AdminOrdersRoutes.js"
 import AdminUserRoutes from "./Admin/AdminRoutes/AdminUserRoutes.js"
+import  { paymentLimiter, productLimiter } from "./utils/RateLimit.js"
 
 
 
@@ -30,25 +31,17 @@ app.use(cookieParser())
 
 app.use(cors({origin : "http://localhost:5173", credentials : true}))
 
-app.use("/api/products", productRouter);
+app.use("/api/products", productLimiter,  productRouter);
 
 
 
 
-
-
-
-
-
-
-
-
-app.use("/api/auth", userRouter )
-app.use("/api/cart", cartRouter)
-app.use("/api/checkout", checkoutRouter)
-app.use("/api/order", orderRouter)
-app.use("/api/payment/create", paymentRouter)
-app.use("/api/payment/verify", payementVerifyRoute)
+app.use("/api/auth",  userRouter )
+app.use("/api/cart", productLimiter, cartRouter)
+app.use("/api/checkout", paymentLimiter, checkoutRouter)
+app.use("/api/order", productLimiter, orderRouter)
+app.use("/api/payment/create", paymentLimiter, paymentRouter)
+app.use("/api/payment/verify", paymentLimiter, payementVerifyRoute)
 
 app.use("/api/admin/product", AdminProductRoute)
 app.use("/api/admin/dashboard", AdminDashboardRoutes)

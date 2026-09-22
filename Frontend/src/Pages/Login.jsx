@@ -6,6 +6,7 @@ import { useAlert } from '../../Context/AlertContext';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isButtonDisable, setIsButtonDisable] = useState(false)
   const [error, setError] = useState(null)
   const {showAlert} = useAlert()
   const navigate = useNavigate()
@@ -24,7 +25,13 @@ const Login = () => {
     e.preventDefault();
     
   const result =  await userLogin(formData)
+  
   if(!result.success){
+    if(result.status === 429){
+    setError(result.message || "Too many attempts! Please try again later.")
+    setIsButtonDisable(true)
+    return
+  }
  setError(result.message)
   }else{
     showAlert(result.message, "success")
@@ -245,9 +252,9 @@ const Login = () => {
         </span>
             </div>
  {error && <p className='login-error'>{error}</p> }
-            <button type="submit" className="auth-btn" disabled = {loginLoading}>
+            <button type="submit" className="auth-btn" disabled = {loginLoading || isButtonDisable}>
               <LogIn size={18} />
-              <span>Sign In</span>
+              <span>{loginLoading ? 'Logging in...' : isButtonDisable ? 'Blocked 🔒' : 'Login'}</span>
             </button>
           </form>
 
