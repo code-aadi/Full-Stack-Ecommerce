@@ -5,18 +5,19 @@ import ProductCard from '../components/ProductCard';
 import FilterSidebar from '../components/FilterSidebar';
 import Pagination from '../components/Pagination';
 import EmptyState from '../components/EmptyState';
+import { useAlert } from '../../Context/AlertContext';
 
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("")
-  const [isLimitCrossed, setIsLimitCrossed] = useState(true)
+  const [isLimitCrossed, setIsLimitCrossed] = useState(false)
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(0)
   const [totalProducts, setTotalProducts] = useState(0)
 const navigate = useNavigate()
  const url = new URL("http://localhost:2310/api/products/search")
-
+const {showAlert} = useAlert()
  const [searchParams] = useSearchParams()
 
 
@@ -78,18 +79,14 @@ if(rating){
        setIsLimitCrossed(true)
        }
     } catch (error) {
-      console.error('Error fetching search results:', error);
+      showAlert("Error fetching search results", "error")
       setProducts([]);
     } finally {
       setLoading(false);
     }
   };
 
-if(isLimitCrossed){
-  return (
-  
-  )
-}
+
   
  
 
@@ -110,7 +107,9 @@ if(isLimitCrossed){
         </div>
           
       )}
-
+{isLimitCrossed && (<div style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #f87171', padding: '10px 16px', borderRadius: '6px', textAlign: 'center', margin: '10px 0' }}>
+      ⚠️ Search limit exceeded! Please try again after a while.
+    </div>)}
       {/* Main Content Area */}
       <div className="search-content">
         {loading ? (

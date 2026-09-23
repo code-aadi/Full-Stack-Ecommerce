@@ -15,6 +15,7 @@ import AdminDashboardRoutes from "./Admin/AdminRoutes/AdminDashboardRoutes.js"
 import AdminOrderRoute from "./Admin/AdminRoutes/AdminOrdersRoutes.js"
 import AdminUserRoutes from "./Admin/AdminRoutes/AdminUserRoutes.js"
 import  { paymentLimiter, productLimiter } from "./utils/RateLimit.js"
+import webhookRoute from "./routes/razorpayWebhookRoute.js"
 
 
 
@@ -42,7 +43,7 @@ app.use("/api/checkout", paymentLimiter, checkoutRouter)
 app.use("/api/order", productLimiter, orderRouter)
 app.use("/api/payment/create", paymentLimiter, paymentRouter)
 app.use("/api/payment/verify", paymentLimiter, payementVerifyRoute)
-
+app.use("/api/payment/razorpay-webhook", webhookRoute)
 app.use("/api/admin/product", AdminProductRoute)
 app.use("/api/admin/dashboard", AdminDashboardRoutes)
 app.use("/api/admin/orders", AdminOrderRoute)

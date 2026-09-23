@@ -26,6 +26,13 @@ try {
   });
 }
 
+if (order.paymentStatus === "paid") {
+  return res.status(200).json({
+    success: true,
+    message: "Payment verified successfully (via webhook/previous sync)",
+    orderId: order._id
+  });
+}
 
 const generatedSignature = crypto
   .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -45,6 +52,8 @@ order.orderStatus = "confirmed";
 await order.save();
 
 await Cart.findOneAndDelete({user : req.user.userId})
+
+
 return res.status(200).json({
   success: true,
   message: "Payment verified successfully",
@@ -60,3 +69,7 @@ return res.status(500).json({
 }
 }
 export default paymentVerify
+
+
+
+

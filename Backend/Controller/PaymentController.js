@@ -36,13 +36,13 @@ const order = await Order.create({userId : userId, items : validatedItems, shipp
         paymentStatus : "pending",paymentMethod : "online", orderStatus : "pending", paymentOrderId : razorpayOrder.id, paymentId : null 
   })
 
-
 return res.status(200).json({
   success: true,
   razorpayOrderId: razorpayOrder.id,
   amount: razorpayOrder.amount,
   currency: razorpayOrder.currency
 });
+
   } catch (error) {
     console.log(error);
 

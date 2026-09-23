@@ -4,10 +4,11 @@ import "../styles/userOrderDetails.css"
 import fetchApi from "../../utils/fetchApi";
 import { AuthContext } from "../../Context/AuthContext";
 import EmptyState from "../components/EmptyState";
+import { useAlert } from "../../Context/AlertContext";
 
 const statusSteps = ["pending", "confirmed", "shipped", "delivered"];
-
 const UserOrderDetail = () => {
+  const { showAlert } = useAlert()
   const { id } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
@@ -26,9 +27,9 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           },setAccessToken)
       const data = await response.json()
       setOrder(data.userOrder)
-      console.log(data)
+      
     } catch (error) {
-      console.log(error)
+      showAlert("Something went wrong", "error")
     }
   }
   fetchOrderDetails()

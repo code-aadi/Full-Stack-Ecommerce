@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState } from 'react';
 import AlertModal from '../src/components/AlertModal';
 
 const AlertContext = createContext();
-
 export const AlertProvider = ({ children }) => {
+  
   const [alert, setAlert] = useState({ message: '', type: 'success' });
 
  

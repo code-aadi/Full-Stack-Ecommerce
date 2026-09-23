@@ -13,14 +13,18 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import fetchApi from '../../utils/fetchApi';
 import { AuthContext } from '../../Context/AuthContext';
+import { useAlert } from '../../Context/AlertContext';
 
 const PaymentPage = () => {
   const [selectedMethod, setSelectedMethod] = useState('online');
   const [cartData, setCartData] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [isPaymentButtonDisable, setIsPaymentButtonDisable] = useState(false)
   const [shippingAddress, setShippingAddress] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
   const { accessToken, setAccessToken } = useContext(AuthContext);
 const navigate = useNavigate()
+const {showAlert} = useAlert()
   useEffect(() => {
     const savedData = localStorage.getItem("checkout_details");
     
@@ -31,7 +35,7 @@ const navigate = useNavigate()
         setTotalAmount(parsedData.totalAmount || 0);
         setShippingAddress(parsedData.shippingAddress || null);
       } catch (error) {
-        console.error("Failed to parse checkout details from localStorage:", error);
+        showAlert("Failed to parse checkout details", "error")
       }
     }
   }, []);
@@ -51,7 +55,7 @@ const handleButtonClick = (e) =>{
       method: "cod", 
       address: shippingAddress
     };
-
+   setIsLoading(true)
     try {
       const response = await fetchApi("http://localhost:2310/api/order", {
         method: "POST",
@@ -73,6 +77,8 @@ const handleButtonClick = (e) =>{
 }
     } catch (error) {
       alert(error.message);
+    }finally{
+      setIsLoading(false)
     }
   };
 
@@ -83,7 +89,7 @@ const handleButtonClick = (e) =>{
       method: "online", 
       address: shippingAddress
     };
-
+setIsLoading(true)
     try {
       const response = await fetchApi("http://localhost:2310/api/payment/create", {
         method: "POST",
@@ -94,7 +100,10 @@ const handleButtonClick = (e) =>{
         body: JSON.stringify(paymentData)
       }, setAccessToken);
       const data = await response.json();
-     
+     if(response.status === 429){
+      setIsPaymentButtonDisable(true)
+      return
+     }
       const options = {
   key: import.meta.env.VITE_RAZORPAY_KEY_ID,
   amount: data.amount,
@@ -134,7 +143,9 @@ const razorpay = new window.Razorpay(options);
 
 razorpay.open();
     } catch (error) {
-      alert(error.message);
+      showAlert("Something went wrong", "error")
+    }finally{
+      setIsLoading(false)
     }
   };
 
@@ -610,14 +621,26 @@ razorpay.open();
                     )}
 
                     {/* Submit Button */}
-                    <button type="submit" className="pay-now-btn">
-                      <Lock size={16} />
-                      <span>
-                        {selectedMethod === 'cod' 
-                          ? 'Place Order (Pay on Delivery)' 
-                          : `Pay ₹${totalAmount.toLocaleString('en-IN')} Online`}
-                      </span>
-                    </button>
+                   <button 
+  type="submit" 
+  className="pay-now-btn" 
+  disabled={isPaymentButtonDisable || isLoading} 
+>
+  <Lock size={16} />
+  <span>
+    {isPaymentButtonDisable ? "Blocked" : 
+     
+     isLoading ? "Processing..." : 
+     
+     selectedMethod === 'cod' 
+        ? 'Place Order (Pay on Delivery)' 
+        : `Pay ₹${totalAmount.toLocaleString('en-IN')} Online`
+    }
+  </span>
+</button>
+{isPaymentButtonDisable && (<div style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #f87171', padding: '10px 16px', borderRadius: '6px', textAlign: 'center', margin: '10px 0' }}>
+      ⚠️ Payment request limited. Please wait a moment
+    </div>)}
                   </form>
                 </div>
               </div>
