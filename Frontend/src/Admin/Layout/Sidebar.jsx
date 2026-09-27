@@ -1,10 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../Context/AuthContext';
 import { useAlert } from '../../../Context/AlertContext';
 
 const Sidebar = () => {
   const {showAlert} = useAlert()
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+
   const menuItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
     { name: 'Products', path: '/admin/products', icon: '📦' },
@@ -13,6 +15,10 @@ const Sidebar = () => {
   ];
     const {logout, logoutLoading} = useContext(AuthContext)
 const navigate = useNavigate()
+
+  const closeMobileMenu = () => setIsMobileOpen(false)
+  const toggleMobileMenu = () => setIsMobileOpen(prev => !prev)
+
   const handleLogout = async() => {
    const result = await logout()
    if(result.success){
@@ -21,6 +27,7 @@ const navigate = useNavigate()
    }else{
     showAlert(result.message, "error")
    }
+   closeMobileMenu()
   };
 
   return (
@@ -38,6 +45,7 @@ const navigate = useNavigate()
           position: sticky;
           top: 0;
           left: 0;
+          flex-shrink: 0;
         }
 
         .sidebar-brand {
@@ -103,9 +111,81 @@ const navigate = useNavigate()
           background-color: #ef4444;
           color: #ffffff;
         }
+
+        /* ---- Mobile hamburger toggle ---- */
+        .mobile-toggle-btn {
+          display: none;
+          position: fixed;
+          top: 14px;
+          left: 14px;
+          width: 42px;
+          height: 42px;
+          align-items: center;
+          justify-content: center;
+          background-color: #1e293b;
+          color: #ffffff;
+          border: none;
+          border-radius: 8px;
+          font-size: 1.2rem;
+          cursor: pointer;
+          z-index: 1100;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+
+        .sidebar-overlay {
+          display: none;
+        }
+
+        /* ---- Mobile / tablet behaviour ---- */
+        @media (max-width: 768px) {
+          .mobile-toggle-btn {
+            display: flex;
+          }
+
+          .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1050;
+            box-shadow: 4px 0 16px rgba(0,0,0,0.2);
+          }
+
+          .admin-sidebar.open {
+            transform: translateX(0);
+          }
+
+          .sidebar-overlay {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1040;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .admin-sidebar {
+            width: 220px;
+          }
+        }
       `}</style>
 
-      <aside className="admin-sidebar">
+      <button
+        type="button"
+        className="mobile-toggle-btn"
+        onClick={toggleMobileMenu}
+        aria-label={isMobileOpen ? "Close menu" : "Open menu"}
+      >
+        {isMobileOpen ? '✕' : '☰'}
+      </button>
+
+      {isMobileOpen && (
+        <div className="sidebar-overlay" onClick={closeMobileMenu}></div>
+      )}
+
+      <aside className={`admin-sidebar ${isMobileOpen ? 'open' : ''}`}>
         <div className="sidebar-brand">
           <span>🛒</span> MyStore
         </div>
@@ -115,6 +195,7 @@ const navigate = useNavigate()
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={closeMobileMenu}
               className={({ isActive }) =>
                 isActive ? 'nav-item active' : 'nav-item'
               }
@@ -128,6 +209,7 @@ const navigate = useNavigate()
         <div className="sidebar-bottom">
           <NavLink
             to="/admin/settings"
+            onClick={closeMobileMenu}
             className={({ isActive }) =>
               isActive ? 'nav-item active' : 'nav-item'
             }
@@ -136,7 +218,7 @@ const navigate = useNavigate()
             <span>Settings</span>
           </NavLink>
 
-          <button onClick={handleLogout} disabled = {logoutLoading} className="nav-item logout-btn">
+          <button onClick={handleLogout} disabled={logoutLoading} className="nav-item logout-btn">
             <span>🚪</span>
             <span>Logout</span>
           </button>

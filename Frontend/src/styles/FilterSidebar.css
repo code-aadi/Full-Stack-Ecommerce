@@ -112,13 +112,11 @@
   background-color: #ffffff;
 }
 
-/* Hide number spin arrows for cleaner look */
 .filter-price-input::-webkit-outer-spin-button,
 .filter-price-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 
 /* Action Buttons */
 .filter-actions {
@@ -159,4 +157,18 @@
   background-color: #f1f5f9;
   color: #334155;
   border-color: #94a3b8;
+}
+
+/* Mobile Drawer Context Adjustments */
+@media (max-width: 880px) {
+  .filter-sidebar {
+    max-width: 100%;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .filter-header {
+    display: none; /* Handled by drawer header */
+  }
 }

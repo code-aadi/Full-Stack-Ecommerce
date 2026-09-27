@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const AdminNavbar = () => {
+const AdminNavbar = ({ onMenuClick, isSidebarOpen }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
@@ -18,19 +18,51 @@ const AdminNavbar = () => {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           position: sticky;
           top: 0;
-          z-index: 10;
+          z-index: 500;
+          gap: 12px;
+        }
+
+        .navbar-left {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          min-width: 0;
+        }
+
+        .menu-toggle-btn {
+          display: none;
+          background: none;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          width: 38px;
+          height: 38px;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.1rem;
+          cursor: pointer;
+          flex-shrink: 0;
+          color: #334155;
+          transition: background-color 0.2s ease;
+        }
+
+        .menu-toggle-btn:hover {
+          background-color: #f1f5f9;
         }
 
         .navbar-title {
           font-size: 1.15rem;
           font-weight: 600;
           color: #0f172a;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .navbar-actions {
           display: flex;
           align-items: center;
           gap: 20px;
+          flex-shrink: 0;
         }
 
         .notify-btn {
@@ -92,12 +124,14 @@ const AdminNavbar = () => {
           justify-content: center;
           font-size: 0.85rem;
           font-weight: 600;
+          flex-shrink: 0;
         }
 
         .admin-name {
           font-size: 0.95rem;
           font-weight: 500;
           color: #334155;
+          white-space: nowrap;
         }
 
         .dropdown-menu {
@@ -112,6 +146,7 @@ const AdminNavbar = () => {
           padding: 6px 0;
           display: flex;
           flex-direction: column;
+          z-index: 600;
         }
 
         .dropdown-item {
@@ -134,10 +169,58 @@ const AdminNavbar = () => {
           color: #ef4444;
           border-top: 1px solid #f1f5f9;
         }
+
+        /* ---------------- Responsive ---------------- */
+        @media (max-width: 768px) {
+          .menu-toggle-btn {
+            display: flex;
+          }
+
+          .admin-navbar {
+            padding: 0 16px;
+          }
+
+          .navbar-title {
+            font-size: 1rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .admin-navbar {
+            padding: 0 12px;
+            gap: 8px;
+          }
+
+          .navbar-actions {
+            gap: 10px;
+          }
+
+          .admin-name {
+            display: none;
+          }
+
+          .profile-trigger {
+            padding: 6px;
+          }
+
+          .navbar-title {
+            font-size: 0.95rem;
+          }
+        }
       `}</style>
 
       <header className="admin-navbar">
-        <div className="navbar-title">Admin Panel</div>
+        <div className="navbar-left">
+          <button
+            type="button"
+            className="menu-toggle-btn"
+            onClick={onMenuClick}
+            aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
+          >
+            {isSidebarOpen ? '✕' : '☰'}
+          </button>
+          <div className="navbar-title">Admin Panel</div>
+        </div>
 
         <div className="navbar-actions">
           <button className="notify-btn" aria-label="Notifications">

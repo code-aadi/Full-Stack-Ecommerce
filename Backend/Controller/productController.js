@@ -83,13 +83,13 @@ try {
             });
         }
    
-    res.status(200).json({
+   return res.status(200).json({
             success: true,
             message: "Product details fetched successfully",
              product
         });
 } catch (error) {
-    res.status(500).json({
+   return res.status(500).json({
             success: false,
             message: "Server me koi dikkat aayi hai.",
             error: error.message
@@ -97,50 +97,28 @@ try {
 }
 }
 
-export const getCheapProducts = async(req,res) =>{
-  
-try {
-    const products = await Product.find({price :{$lt : 100}})
-   if (products.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No Products Found."
-            });
-        }
-   res.status(200).json({
-    success : true,
-    message : "Cheap Products Fetched Successfully",
-    products
-   })
-} catch (error) {
-     res.status(500).json({
-            success: false,
-            message: "Server me koi dikkat aayi hai.",
-            error: error.message
-        });
-}
-}
+
 
 
 export const getTopProducts = async(req,res) =>{
  
 try {
-    const products = await Product.find({price : {$gt : 100}})
+    const products = await Product.find({rating : 5}).limit(5).select("image name price rating category")
    if(products.length === 0){
      return res.status(404).json({
                 success: false,
                 message: "No Products Found."
             });
    }
-  res.status(200).json({
+ return res.status(200).json({
     success : true,
-    message : "Top Products Found Sucessfully",
+    message : "Products Found Sucessfully",
     products
   })
 } catch (error) {
   res.status(500).json({
             success: false,
-            message: "Server me koi dikkat aayi hai.",
+            message: "Internal server error.",
             error: error.message
         });
 }

@@ -156,7 +156,6 @@ export const refreshAccessToken = async (req, res) => {
     try {
       decoded = jwt.verify(incomingToken, process.env.REFRESH_SECRET);
     } catch (err) {
-     
       return res.status(401).json({
         success: false,
         message: "Invalid or expired refresh token",
@@ -166,7 +165,6 @@ export const refreshAccessToken = async (req, res) => {
   
     const tokenHash = hashToken(incomingToken);
     const storedToken = await RefreshToken.findOne({ tokenHash });
-
     if (!storedToken) {
       return res.status(401).json({
         success: false,
@@ -179,6 +177,7 @@ export const refreshAccessToken = async (req, res) => {
         { familyId: storedToken.familyId },
         { used: true }
       );
+
       res.clearCookie("REFRESH-TOKEN");
       return res.status(403).json({
         success: false,
@@ -247,3 +246,5 @@ export const logout = async (req, res) => {
         return res.status(500).json({ success: false, message: error.message });
     }
 };
+
+

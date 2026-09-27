@@ -9,12 +9,12 @@ const Dashboard = () => {
   const navigate = useNavigate()
   const [stats, setStats] = useState([
     { title: "Total Sales", value: "0", icon: "💰", color: "#10b981", keyName : "totalSales" },
-    { title: "Total Orders", value: "248", icon: "🛍️", color: "#3b82f6" , keyName : "totalOrders"},
-    { title: "Total Users", value: "1,240", icon: "👥", color: "#8b5cf6", keyName : "totalUsers" },
-    { title: "Total Products", value: "86", icon: "📦", color: "#f59e0b", keyName : "totalProducts" },
+    { title: "Total Orders", value: "0", icon: "🛍️", color: "#3b82f6" , keyName : "totalOrders"},
+    { title: "Total Users", value: "0", icon: "👥", color: "#8b5cf6", keyName : "totalUsers" },
+    { title: "Total Products", value: "0", icon: "📦", color: "#f59e0b", keyName : "totalProducts" },
   ])
 
- 
+
 const {showAlert} = useAlert()
 
 
@@ -24,7 +24,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
 useEffect(()=>{
   async function getDashboardData() {
     try {
-      const response = await fetchApi("http://localhost:2310/api/admin/dashboard",{
+      const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/dashboard`,{
         method : "GET",
     headers : {
         Authorization : `Bearer ${accessToken}`
@@ -126,12 +126,15 @@ setLowStockProducts(data?.lowStockProducts)
           display: grid;
           grid-template-columns: 3fr 2fr;
           gap: 20px;
+          /* prevents this grid from ever forcing the page wider than the viewport */
+          min-width: 0;
         }
 
-        @media (max-width: 900px) {
-          .dashboard-tables-grid {
-            grid-template-columns: 1fr;
-          }
+        /* Direct grid children: without min-width:0 a grid item can't shrink
+           below its content's width, so the table below would stretch this
+           column (and the whole page) instead of scrolling internally */
+        .table-section {
+          min-width: 0;
         }
 
         .table-card {
@@ -140,6 +143,14 @@ setLowStockProducts(data?.lowStockProducts)
           border: 1px solid #e2e8f0;
           overflow: hidden;
           box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+          min-width: 0;
+        }
+
+        /* Wraps each <table> so it scrolls sideways instead of squashing columns */
+        .table-scroll {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          min-width: 0;
         }
 
         .dash-table {
@@ -155,6 +166,7 @@ setLowStockProducts(data?.lowStockProducts)
           font-weight: 600;
           padding: 12px 16px;
           border-bottom: 1px solid #e2e8f0;
+          white-space: nowrap;
         }
 
         .dash-table td {
@@ -201,6 +213,67 @@ setLowStockProducts(data?.lowStockProducts)
         .view-btn:hover {
           background-color: #e2e8f0;
         }
+
+        /* ---------------- Responsive ---------------- */
+        @media (max-width: 900px) {
+          .dashboard-tables-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+          }
+
+          .stat-card {
+            padding: 16px;
+          }
+
+          .stat-value {
+            font-size: 1.25rem;
+          }
+
+          .page-title {
+            font-size: 1.3rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .dashboard-container {
+            gap: 20px;
+          }
+
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+          }
+
+          .stat-card {
+            padding: 12px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+
+          .stat-icon {
+            font-size: 1.4rem;
+            padding: 8px;
+          }
+
+          .stat-value {
+            font-size: 1.1rem;
+          }
+
+          .stat-title {
+            font-size: 0.78rem;
+          }
+
+          .section-title {
+            font-size: 1rem;
+          }
+        }
       `}</style>
 
       <div className="dashboard-container">
@@ -219,105 +292,147 @@ setLowStockProducts(data?.lowStockProducts)
         </div>
 
         <div className="dashboard-tables-grid">
-          <div>
-            <h3 className="section-title">Recent Orders</h3>
-            <div className="table-card">
-              <table className="dash-table">
-                <thead>
-                  <tr>
-                    <th>Order ID</th>
-                    <th>Customer</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                 {recentOrders.map((ord) => {
-  const badge = getStatusBadge(ord.status);
-  const formattedId = ord.id && ord.id.length > 8 
-    ? `#...${ord.id.slice(-6)}` 
-    : ord.id;
+         <div className="table-section">
+  <h3 className="section-title">Recent Orders</h3>
+  <div className="table-card">
+    <div className="table-scroll">
+      <table className="dash-table" style={{ minWidth: "480px" }}>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Condition check: Agar koi order nahi hai toh message dikhao */}
+          {recentOrders.length === 0 ? (
+            <tr>
+              <td 
+                colSpan="5" 
+                style={{ 
+                  textAlign: "center", 
+                  padding: "24px", 
+                  color: "#64748b",
+                  fontSize: "14px",
+                  fontWeight: "500"
+                }}
+              >
+                No Recent Orders Found 📦
+              </td>
+            </tr>
+          ) : (
+            recentOrders.map((ord) => {
+              const badge = getStatusBadge(ord.status);
+              const formattedId = ord.id && ord.id.length > 8
+                ? `#...${ord.id.slice(-6)}`
+                : ord.id;
 
-  return (
-    <tr key={ord.id}>
-      <td 
-        title={ord.id} 
-        style={{ 
-          fontWeight: "600", 
-          color: "#0f172a",
-          fontFamily: "monospace",
-          cursor: "pointer",
-          whiteSpace: "nowrap"
-        }}
-      >
-        {formattedId}
-      </td>
-      <td style={{ whiteSpace: "nowrap" }}>{ord.customer}</td>
-      <td style={{ fontWeight: "600", whiteSpace: "nowrap" }}>
-        ₹{ord.amount.toFixed(2)}
-      </td>
-      <td>
-        <span
-          className="badge"
-          style={{ backgroundColor: badge.bg, color: badge.color }}
-        >
-          {ord.status}
-        </span>
-      </td>
-      <td>
-        <button className="view-btn" onClick={()=> navigate(`/admin/orders/${ord.id}`)}>View</button>
-      </td>
-    </tr>
-  );
-})}
-                </tbody>
-              </table>
-            </div>
-          </div>
+              return (
+                <tr key={ord.id}>
+                  <td
+                    title={ord.id}
+                    style={{
+                      fontWeight: "600",
+                      color: "#0f172a",
+                      fontFamily: "monospace",
+                      cursor: "pointer",
+                      whiteSpace: "nowrap"
+                    }}
+                  >
+                    {formattedId}
+                  </td>
+                  <td style={{ whiteSpace: "nowrap" }}>{ord.customer}</td>
+                  <td style={{ fontWeight: "600", whiteSpace: "nowrap" }}>
+                    ₹{ord.amount.toFixed(2)}
+                  </td>
+                  <td>
+                    <span
+                      className="badge"
+                      style={{ backgroundColor: badge.bg, color: badge.color }}
+                    >
+                      {ord.status}
+                    </span>
+                  </td>
+                  <td>
+                    <button className="view-btn" onClick={() => navigate(`/admin/orders/${ord.id}`)}>View</button>
+                  </td>
+                </tr>
+              );
+            })
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-          <div>
-            <h3 className="section-title">Low Stock Products</h3>
-            <div className="table-card">
-              <table className="dash-table">
-                <thead>
-                  <tr>
-                    <th>Product</th>
-                    <th>Stock</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-              <tbody>
-  {lowStockProducts.map((p, index) => (
-    <tr key={index}>
-      <td
-        title={p.name}
-        style={{
-          fontWeight: "500",
-          color: "#0f172a",
-          maxWidth: "160px",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          cursor: "default"
-        }}
-      >
-        {p.name}
-      </td>
-      <td style={{ whiteSpace: "nowrap" }}>
-        <span className="stock-badge">
-          {p.stock} left
-        </span>
-      </td>
-      <td style={{ whiteSpace: "nowrap" }}>
-        <button className="view-btn" onClick={()=> navigate(`/admin/products/${p._id}`)}>View</button>
-      </td>
-    </tr>
-  ))}
-</tbody>
-              </table>
-            </div>
-          </div>
+
+         <div className="table-section">
+  <h3 className="section-title">Low Stock Products</h3>
+  <div className="table-card">
+    <div className="table-scroll">
+      <table className="dash-table" style={{ minWidth: "320px" }}>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Stock</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Condition check: Agar array khali hai toh message dikhao, nahi toh data map karo */}
+          {lowStockProducts.length === 0 ? (
+            <tr>
+              <td 
+                colSpan="3" 
+                style={{ 
+                  textAlign: "center", 
+                  padding: "24px", 
+                  color: "#64748b",
+                  fontSize: "14px",
+                  fontWeight: "500"
+                }}
+              >
+                No Low Stock Products Found 🎉
+              </td>
+            </tr>
+          ) : (
+            lowStockProducts.map((p, index) => (
+              <tr key={index}>
+                <td
+                  title={p.name}
+                  style={{
+                    fontWeight: "500",
+                    color: "#0f172a",
+                    maxWidth: "160px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    cursor: "default"
+                  }}
+                >
+                  {p.name}
+                </td>
+                <td style={{ whiteSpace: "nowrap" }}>
+                  <span className="stock-badge">
+                    {p.stock} left
+                  </span>
+                </td>
+                <td style={{ whiteSpace: "nowrap" }}>
+                  <button className="view-btn" onClick={() => navigate(`/admin/products/${p._id}`)}>View</button>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
         </div>
       </div>
     </>

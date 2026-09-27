@@ -21,7 +21,7 @@ const Orders = () => {
       try {
         setLoading(true);
         const response = await fetchApi(
-          "http://localhost:2310/api/order/userOrder",
+          `${import.meta.env.VITE_API_BASE_URL}/api/order/userOrder`,
           {
             method: "GET",
             headers: {
@@ -142,7 +142,6 @@ const Orders = () => {
                     <div className="product-summary">
                       <h4
                         className="product-heading"
-                        onClick={() => navigate(`/orders/${order._id}`)}
                       >
                         {item.name}
                       </h4>

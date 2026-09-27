@@ -17,7 +17,7 @@ const {showAlert} = useAlert()
     if(!userId) return
     setLoading(true)
       try {
-        const response = await fetchApi(`http://localhost:2310/api/admin/users/${userId}`,{
+        const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`,{
           method : "GET",
     headers : {
         Authorization : `Bearer ${accessToken}`
@@ -53,7 +53,7 @@ fetchUser()
     if (confirmChange) {
      setRoleLoading(true)
       try {
-        const response = await fetchApi(`http://localhost:2310/api/admin/users/${userId}`,{
+        const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users/${userId}`,{
           method : "PATCH",
           headers : {
             "Content-Type" : "application/json",

@@ -1,88 +1,122 @@
 .search-page-container {
-  max-width: 1600px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 1.5rem 1.25rem 3rem 1.25rem;
   min-height: 80vh;
   box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Header & Search Bar */
-.search-header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.search-form {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 650px;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
+/* Warning Banner */
+.search-limit-warning {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+  padding: 10px 16px;
   border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
+  margin: 10px 0 20px 0;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-.search-form:focus-within {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-.search-input {
-  flex: 1;
-  padding: 12px 16px;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  color: #1e293b;
-}
-
-.search-input::placeholder {
-  color: #94a3b8;
-}
-
-.filter-products {
-    display: flex;
-    gap: 20px; 
-    align-items: flex-start; 
-    width: 100%;
-}
-
-
-/* Search Meta Info */
+/* Search Meta Info Header */
 .search-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 16px;
-  margin-bottom: 20px;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
   border-bottom: 1px solid #e2e8f0;
+  gap: 1rem;
+}
+
+.search-meta-left {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  flex-wrap: wrap;
 }
 
 .search-meta-text {
-  font-size: 16px;
+  font-size: 1.15rem;
   color: #475569;
   margin: 0;
 }
 
 .query-highlight {
-  font-weight: 600;
+  font-weight: 700;
   color: #0f172a;
 }
 
 .results-count {
-  font-size: 14px;
+  font-size: 0.88rem;
   color: #64748b;
+  background-color: #f1f5f9;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+/* Mobile Filter Trigger Button (Desktop par hide rahega) */
+.mobile-filter-trigger {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.mobile-filter-trigger:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background-color: #f8fafc;
+}
+
+.three-dots-icon {
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  line-height: 1;
+  color: #64748b;
+}
+
+/* Main Flex Layout */
+.filter-products {
+  display: flex;
+  gap: 1.75rem;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Filter Wrapper on Desktop */
+.filter-sidebar-wrapper {
+  flex-shrink: 0;
+  width: 270px;
+}
+
+.mobile-drawer-header {
+  display: none; /* Only visible in mobile drawer */
+}
+
+.filter-drawer-backdrop {
+  display: none;
 }
 
 /* Product Grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.25rem;
+  flex: 1;
   width: 100%;
 }
 
@@ -92,14 +126,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 0;
+  padding: 80px 0;
   color: #64748b;
-  gap: 12px;
+  gap: 14px;
 }
 
 .spinner {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border: 3.5px solid #e2e8f0;
   border-top-color: #2563eb;
   border-radius: 50%;
@@ -112,7 +146,7 @@
   }
 }
 
-/* Empty & Placeholder States */
+/* Empty States */
 .no-results,
 .search-placeholder {
   display: flex;
@@ -124,38 +158,217 @@
   color: #64748b;
 }
 
-.no-results-icon {
-  font-size: 42px;
-  margin-bottom: 12px;
+.search-pagination-wrapper {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+}
+/* Meta Wrapper */
+.search-meta-wrapper {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.no-results h3 {
-  font-size: 18px;
+/* Base search meta */
+.search-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* --- ACTIVE FILTER PILLS STRIP --- */
+.active-filters-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.active-filters-label {
+  font-size: 0.82rem;
   font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 6px 0;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 0.25rem;
 }
 
-.no-results p,
-.search-placeholder p {
-  font-size: 14px;
-  margin: 0;
+/* Filter Tag / Chip */
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 640px) {
-  .search-meta {
+.filter-pill:hover {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.filter-pill-close {
+  font-size: 0.75rem;
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+/* Clear All Button */
+.clear-all-pill-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.clear-all-pill-btn:hover {
+  color: #b91c1c;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 580px) {
+  .active-filters-strip {
+    gap: 0.4rem;
+  }
+
+  .active-filters-label {
+    width: 100%; /* Mobile par nayi line me chala jaye taaki chips neatly wrap ho */
+    margin-bottom: 2px;
+  }
+
+  .filter-pill {
+    font-size: 0.76rem;
+    padding: 3px 8px;
+  }
+}
+/* --- RESPONSIVE MEDIA QUERIES --- */
+
+/* Tablet & Mobile Screens (<= 880px) */
+@media (max-width: 880px) {
+  .mobile-filter-trigger {
+    display: inline-flex;
+  }
+
+  /* Drawer Backdrop */
+  .filter-drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .filter-drawer-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Sliding Drawer from Left */
+  .filter-sidebar-wrapper {
+    position: fixed;
+            top: 113px;
+        left: 0;
+        height: 81vh;
+    width: 310px;
+    max-width: 85vw;
+    background: #ffffff;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
+  }
+
+  .filter-sidebar-wrapper.open {
+    transform: translateX(0);
+  }
+
+  /* Drawer Header */
+  .mobile-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    z-index: 2;
+  }
+
+  .mobile-drawer-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .mobile-drawer-close {
+    background: #f1f5f9;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+  }
+
+  .mobile-drawer-close:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+  }
+}
+
+/* Mobile Screens (<= 580px): 2 Column Cards Side-by-Side */
+@media (max-width: 580px) {
+  .search-page-container {
+    padding: 1rem 0.75rem 2rem 0.75rem;
+  }
+
+  .search-meta {
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .search-meta-text {
+    font-size: 0.95rem;
+  }
+
+  .mobile-filter-trigger {
+    padding: 6px 10px;
+    font-size: 0.8rem;
   }
 
   .product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .search-btn {
-    padding: 12px 18px;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem;
   }
 }

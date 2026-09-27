@@ -1,0 +1,224 @@
+/* Container Layout */
+.category-page-container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 1.5rem auto 3rem auto;
+  padding: 0 1.25rem;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Breadcrumbs */
+.category-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: #64748b;
+  margin-bottom: 1.25rem;
+}
+
+.category-breadcrumb-link {
+  color: var(--primary-color, #2563eb);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.category-breadcrumb-link:hover {
+  color: var(--primary-hover, #1d4ed8);
+  text-decoration: underline;
+}
+
+.category-breadcrumb-separator {
+  color: #cbd5e1;
+  user-select: none;
+}
+
+.category-breadcrumb-parent {
+  color: #64748b;
+}
+
+.category-breadcrumb-current {
+  text-transform: capitalize;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Header Area */
+.category-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.category-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.category-page-title {
+  font-size: clamp(1.4rem, 2.5vw, 1.95rem);
+  font-weight: 800;
+  text-transform: capitalize;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.category-product-count-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--primary-color, #2563eb);
+  background-color: #eff6ff;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+}
+
+/* Products Grid (Desktop: clean multi-column layout) */
+.category-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Empty State */
+.category-no-products {
+  text-align: center;
+  padding: 4.5rem 1rem;
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  margin: 1.5rem 0;
+}
+
+.category-no-products-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.category-no-products-desc {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0 0 1.5rem 0;
+}
+
+.category-back-btn {
+  display: inline-block;
+  background: var(--primary-color, #2563eb);
+  color: #ffffff;
+  padding: 0.65rem 1.4rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.category-back-btn:hover {
+  background: var(--primary-hover, #1d4ed8);
+  transform: translateY(-1px);
+}
+
+/* Loading Spinner & State */
+.category-loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 1rem;
+}
+
+.category-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3.5px solid #e2e8f0;
+  border-top-color: var(--primary-color, #2563eb);
+  border-radius: 50%;
+  animation: categorySpin 0.75s linear infinite;
+}
+
+@keyframes categorySpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.category-loading-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #64748b;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+/* Pagination Placement */
+.category-pagination-wrapper {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- RESPONSIVE MEDIA QUERIES --- */
+
+/* Small Tablets / Large Phones */
+@media (max-width: 768px) {
+  .category-page-container {
+    padding: 0 1rem;
+    margin-top: 1rem;
+  }
+
+  .category-page-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .category-products-grid {
+    gap: 1rem;
+  }
+}
+
+/* Mobile Screens: Exact 2 cards side-by-side */
+@media (max-width: 580px) {
+  .category-page-container {
+    padding: 0 0.75rem;
+  }
+
+  .category-breadcrumb {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .category-page-title {
+    font-size: 1.35rem;
+  }
+
+  .category-product-count-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  /* Force 2 equal columns on small screens */
+  .category-products-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem;
+  }
+}
+
+/* Ultra Small Screens (less than 340px) */
+@media (max-width: 340px) {
+  .category-products-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

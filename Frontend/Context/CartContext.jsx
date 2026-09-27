@@ -22,7 +22,7 @@ async function addToCart(productId){
     if(user){
         try {
             
-        const response = await fetchApi("http://localhost:2310/api/cart/add", {
+        const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/add`, {
             method : "POST",
              headers : {
                 "Content-Type" : "application/json",
@@ -67,7 +67,7 @@ useEffect(()=>{
        
 if(user){
      try {
-    const response = await fetchApi("http://localhost:2310/api/cart/get",{
+    const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/get`,{
     method : "GET",
     headers : {
         Authorization : `Bearer ${accessToken}`
@@ -93,7 +93,7 @@ setCartItems(data.cart.items)
    }
  try {
     
-    const response = await fetch("http://localhost:2310/api/cart/localCart",{
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/cart/localCart`,{
         method : "POST",
         headers :{"Content-Type" : "application/json"},
         body : JSON.stringify({ids})
@@ -126,7 +126,7 @@ if(user){
     const newQuantity = currentQuantity + 1
 
 try {
-const response = await fetchApi("http://localhost:2310/api/cart/quantity", {
+const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/quantity`, {
     method : "PATCH",
     headers : {
         Authorization : `Bearer ${accessToken}`,
@@ -158,7 +158,7 @@ if(user){
     const newQuantity = currentQuantity - 1
 
 try {
-    const response = await fetchApi("http://localhost:2310/api/cart/quantity", {
+    const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/quantity`, {
     method : "PATCH",
     headers : {
         Authorization : `Bearer ${accessToken}`,
@@ -195,7 +195,7 @@ async function clearCart(){
      try {
    
         setCartRefresh(prev => prev + 1)
-        const response = await fetchApi("http://localhost:2310/api/cart/removeCart",{
+        const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/removeCart`,{
             method : "DELETE",
             headers : {
                 Authorization :  `Bearer ${accessToken}`
@@ -216,7 +216,7 @@ async function removeFromCart(productId){
 if(user){
         try {
         setCartRefresh(prev => prev + 1)
-        const response = await fetchApi(`http://localhost:2310/api/cart/${productId}`,{
+        const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${productId}`,{
             method : "DELETE",
             headers : {
                 Authorization : `Bearer ${accessToken}`,
@@ -248,14 +248,14 @@ useEffect(()=>{
       if (!user || !localCart || localCart.length === 0) return;
     async function localCartToDb() {
    try {
-     const response = await fetch("http://localhost:2310/api/cart/localCartToDb",{
+     const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/localCartToDb`,{
         method : "POST",
         headers : {
             "Content-Type" : "application/json",
             Authorization :  `Bearer ${accessToken}`
         },
         body : JSON.stringify({localCart})
-    })
+    },setAccessToken)
     const data = await response.json()
     if(response.ok){
         localStorage.removeItem("cart-data")

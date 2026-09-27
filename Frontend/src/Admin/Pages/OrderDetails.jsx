@@ -4,6 +4,7 @@ import { data, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
 import { useAlert } from "../../../Context/AlertContext";
+import Loader from "../../components/Loader";
 
 const OrderDetail = () => {
   const [order, setOrder] = useState(null);
@@ -31,7 +32,7 @@ navigate(-1)
        setLoading(true)
        
    try {
-     const response = await fetchApi(`http://localhost:2310/api/admin/orders/${orderId}`,{
+     const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/orders/${orderId}`,{
       method : "GET",
     headers : {
         Authorization : `Bearer ${accessToken}`
@@ -60,7 +61,7 @@ getOrderDetails()
         }
        setStatusLoading(true)
     try {
-        const response = await fetchApi(`http://localhost:2310/api/admin/orders/${orderId}`,{
+        const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/orders/${orderId}`,{
             method : "PATCH",
             headers : {
             "Content-Type" : "application/json",
@@ -83,8 +84,136 @@ getOrderDetails()
   };
 
 
-  if (loading) return <div className="loading">Loading Order Details...</div>;
-  if (!order) return <div>Order Not Found!</div>;
+  if (loading) return <div className="loading"><Loader text="Loading user order" /></div>;
+  if (!order) {
+  return (
+    <div 
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "75vh",
+        padding: "40px 24px",
+        textAlign: "center",
+        backgroundColor: "#ffffff",
+        borderRadius: "20px",
+        // Soft layered shadow jo card ko modern depth deta hai
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)",
+        border: "1px solid #f1f5f9",
+        maxWidth: "500px",
+        margin: "40px auto"
+      }}
+    >
+      {/* Soft Glow Background for Icon */}
+      <div 
+        style={{ 
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100px",
+          height: "100px",
+          backgroundColor: "#f8fafc",
+          borderRadius: "50%",
+          marginBottom: "24px",
+          boxShadow: "inset 0 2px 4px 0 rgba(0, 0, 0, 0.02)",
+          border: "1px solid #f1f5f9",
+          fontSize: "44px"
+        }}
+      >
+        📦
+      </div>
+      
+      {/* Title with Gradient Text Style Feel */}
+      <h2 
+        style={{ 
+          color: "#0f172a", 
+          fontSize: "24px", 
+          fontWeight: "700", 
+          marginBottom: "12px",
+          letterSpacing: "-0.02em"
+        }}
+      >
+        Order Not Found
+      </h2>
+      
+      {/* Balanced and Readable Subtext */}
+      <p 
+        style={{ 
+          color: "#64748b", 
+          fontSize: "15px", 
+          maxWidth: "380px", 
+          marginBottom: "32px", 
+          lineHeight: "1.6",
+          fontWeight: "400"
+        }}
+      >
+        The order details you are trying to view do not exist, may have been archived, or deleted by the customer.
+      </p>
+
+      {/* Modern Action Buttons Layout */}
+      <div style={{ display: "flex", gap: "12px", width: "100%", justifyContent: "center" }}>
+        
+        {/* Secondary Clean Button (Optional Dashboard Link) */}
+        <button 
+          onClick={() => navigate('/admin/dashboard')}
+          style={{
+            backgroundColor: "#ffffff",
+            color: "#475569",
+            padding: "12px 24px",
+            fontSize: "14px",
+            fontWeight: "600",
+            border: "1px solid #cbd5e1",
+            borderRadius: "10px",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = "#f8fafc";
+            e.target.style.borderColor = "#94a3b8";
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = "#ffffff";
+            e.target.style.borderColor = "#cbd5e1";
+          }}
+        >
+          Dashboard
+        </button>
+
+        {/* Primary Interactive Button */}
+        <button 
+          onClick={() => navigate('/admin/orders')}
+          style={{
+            backgroundColor: "#4f46e5", // Modern Indigo
+            color: "#ffffff",
+            padding: "12px 24px",
+            fontSize: "14px",
+            fontWeight: "600",
+            border: "none",
+            borderRadius: "10px",
+            cursor: "pointer",
+            boxShadow: "0 4px 12px rgba(79, 70, 229, 0.25)", // Button soft shadow
+            transition: "all 0.2s ease-in-out"
+          }}
+          onMouseOver={(e) => {
+            e.target.style.backgroundColor = "#4338ca";
+            e.target.style.transform = "translateY(-1px)";
+            e.target.style.boxShadow = "0 6px 16px rgba(79, 70, 229, 0.35)";
+          }}
+          onMouseOut={(e) => {
+            e.target.style.backgroundColor = "#4f46e5";
+            e.target.style.transform = "translateY(0)";
+            e.target.style.boxShadow = "0 4px 12px rgba(79, 70, 229, 0.25)";
+          }}
+        >
+          Go Back to Orders
+        </button>
+
+      </div>
+    </div>
+  );
+}
+
 
   return (
     <div className="order-detail-container">

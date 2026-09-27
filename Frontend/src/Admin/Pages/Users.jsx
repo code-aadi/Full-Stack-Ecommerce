@@ -22,7 +22,7 @@ const debounceValue = useDebounce(searchTerm, 300)
 const {accessToken, setAccessToken} = useContext(AuthContext)
   useEffect(()=>{
  async function fetchUsers() {
-  const url = new URL("http://localhost:2310/api/admin/users")
+  const url = new URL(`${import.meta.env.VITE_API_BASE_URL}/api/admin/users`)
   url.searchParams.set("search", debounceValue)
   url.searchParams.set("roleFilter", roleFilter)
   url.searchParams.set("page", page)
@@ -60,6 +60,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           flex-direction: column;
           gap: 20px;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          min-width: 0;
         }
 
         .page-title {
@@ -81,10 +82,17 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           outline: none;
           font-size: 0.9rem;
           background-color: #ffffff;
+          box-sizing: border-box;
         }
 
         .filter-input {
           width: 250px;
+          max-width: 100%;
+          flex: 1 1 220px;
+        }
+
+        .filter-select {
+          flex: 1 1 140px;
         }
 
         .filter-input:focus, .filter-select:focus {
@@ -97,6 +105,15 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           border: 1px solid #e2e8f0;
           overflow: hidden;
           box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+          min-width: 0;
+        }
+
+        /* Lets the wide table scroll sideways inside its own box instead of
+           stretching the page horizontally */
+        .table-scroll {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          min-width: 0;
         }
 
         .custom-table {
@@ -112,6 +129,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           font-weight: 600;
           padding: 14px 18px;
           border-bottom: 1px solid #e2e8f0;
+          white-space: nowrap;
         }
 
         .custom-table td {
@@ -119,6 +137,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           border-bottom: 1px solid #f1f5f9;
           color: #334155;
           vertical-align: middle;
+          white-space: nowrap;
         }
 
         .custom-table tr:last-child td {
@@ -155,6 +174,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           align-items: center;
           gap: 6px;
           padding: 8px 0;
+          flex-wrap: wrap;
         }
 
         .page-btn {
@@ -199,6 +219,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           display: flex;
           flex-direction: column;
           gap: 24px;
+          min-width: 0;
         }
 
         .profile-card {
@@ -207,6 +228,8 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           border-radius: 8px;
           padding: 24px;
           box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+          box-sizing: border-box;
+          min-width: 0;
         }
 
         .profile-card-title {
@@ -228,6 +251,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           display: flex;
           flex-direction: column;
           gap: 4px;
+          min-width: 0;
         }
 
         .field-label {
@@ -242,12 +266,47 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
           font-size: 0.95rem;
           color: #0f172a;
           font-weight: 500;
+          word-break: break-word;
         }
 
         .section-subtitle {
           font-size: 1.1rem;
           font-weight: 700;
           color: #0f172a;
+        }
+
+        /* ---------------- Responsive ---------------- */
+        @media (max-width: 640px) {
+          .page-title {
+            font-size: 1.3rem;
+          }
+
+          .filter-input,
+          .filter-select {
+            flex: 1 1 100%;
+          }
+
+          .profile-card {
+            padding: 18px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .users-container {
+            gap: 16px;
+          }
+
+          .page-title {
+            font-size: 1.15rem;
+          }
+
+          .profile-card {
+            padding: 14px;
+          }
+
+          .profile-fields-grid {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
 
@@ -276,53 +335,74 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
             </div>
 
             <div className="table-card">
-              <table className="custom-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: "60px" }}>#</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Orders</th>
-                    <th style={{ width: "100px" }}>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((u, index) => {
-                    const roleBadge = getRoleBadge(u.role);
-                    return (
-                      <tr key={u.id}>
-                        <td style={{ color: "#64748b" }}>{index + 1}</td>
-                        <td style={{ fontWeight: "500", color: "#0f172a" }}>{u.name}</td>
-                        <td>{u.email}</td>
-                        <td>
-                          <span
-                            className="badge"
-                            style={{
-                              backgroundColor: roleBadge.bg,
-                              color: roleBadge.color,
-                            }}
-                          >
-                            {u.role}
-                          </span>
-                        </td>
-                        <td style={{ fontWeight: "600" }}>{u.orderCount}</td>
-                        <td>
-                          <button
-                            className="view-btn"
-                            onClick={() => navigate(`/admin/users/${u._id}`)}
-                          >
-                            View
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+  <div className="table-scroll">
+    <table className="custom-table" style={{ minWidth: "700px" }}>
+      <thead>
+        <tr>
+          <th style={{ width: "60px" }}>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Orders</th>
+          <th style={{ width: "100px" }}>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {/* Condition check: Agar koi user nahi hai toh message dikhao */}
+        {!users || users.length === 0 ? (
+          <tr>
+            <td 
+              colSpan="6" 
+              style={{ 
+                textAlign: "center", 
+                padding: "32px", 
+                color: "#64748b",
+                fontSize: "14px",
+                fontWeight: "500"
+              }}
+            >
+              No Users Found 👥
+            </td>
+          </tr>
+        ) : (
+          users.map((u, index) => {
+            const roleBadge = getRoleBadge(u.role);
+            return (
+              <tr key={u.id}>
+                <td style={{ color: "#64748b" }}>{index + 1}</td>
+                <td style={{ fontWeight: "500", color: "#0f172a" }}>{u.name}</td>
+                <td>{u.email}</td>
+                <td>
+                  <span
+                    className="badge"
+                    style={{
+                      backgroundColor: roleBadge.bg,
+                      color: roleBadge.color,
+                    }}
+                  >
+                    {u.role}
+                  </span>
+                </td>
+                <td style={{ fontWeight: "600" }}>{u.orderCount}</td>
+                <td>
+                  <button
+                    className="view-btn"
+                    onClick={() => navigate(`/admin/users/${u._id}`)}
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            );
+          })
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
 
-         <Pagination totalPages={totalPages} limit={limit} page={page}/>
+
+        {users.length !== 0 &&  <Pagination totalPages={totalPages} limit={limit} page={page}/>}
           </>
         
       </div>

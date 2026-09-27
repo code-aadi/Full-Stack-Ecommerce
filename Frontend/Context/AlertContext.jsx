@@ -22,7 +22,7 @@ export const AlertProvider = ({ children }) => {
       <AlertModal
         message={alert.message}
         type={alert.type}
-        duration={2000}
+        duration={1500}
         onClose={closeAlert}
       />
     </AlertContext.Provider>

@@ -111,7 +111,7 @@ if(Object.keys(newError).length > 0) return
   };
 
 async function SubmitUserAddress(finalAddress) {
-  const response = await fetchApi('http://localhost:2310/api/checkout',{
+  const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/checkout`,{
     method : 'POST',
     headers : {
       "Content-Type" : "application/json",
@@ -254,7 +254,14 @@ async function SubmitUserAddress(finalAddress) {
           color: #0f172a;
           outline: none;
           background: #ffffff;
+          font-family: inherit;
           transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-field-wrapper textarea {
+          resize: vertical;
+          min-height: 64px;
+          padding-top: 11px;
         }
 
         .input-field-wrapper.no-icon input,
@@ -347,6 +354,20 @@ async function SubmitUserAddress(finalAddress) {
           transform: translateY(-1px);
         }
 
+        .submit-address-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .spin {
+          animation: address-spin 0.8s linear infinite;
+        }
+
+        @keyframes address-spin {
+          to { transform: rotate(360deg); }
+        }
+
         .secure-badge {
           display: flex;
           align-items: center;
@@ -356,10 +377,11 @@ async function SubmitUserAddress(finalAddress) {
           color: #64748b;
           margin-top: -0.5rem;
         }
-          .address-error{
-          font-size : 12px;
-          color : red;
-          }
+
+        .address-error {
+          font-size: 12px;
+          color: red;
+        }
       `}</style>
 
       <div className="address-page">

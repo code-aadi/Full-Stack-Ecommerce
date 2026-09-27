@@ -30,7 +30,7 @@ const {showAlert} = useAlert()
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`http://localhost:2310/api/products/id/${id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/products/id/${id}`);
         const data = await response.json();
 
         setProduct(data.product);

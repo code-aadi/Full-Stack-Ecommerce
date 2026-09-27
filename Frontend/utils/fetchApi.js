@@ -13,7 +13,7 @@ async function fetchApi(url, options = {}, setAccessToken) {
 
    
     if (!refreshPromise) {
-        refreshPromise = fetch("http://localhost:2310/api/auth/refresh", {
+        refreshPromise = fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/refresh`, {
             method: "POST",
             credentials: "include",
         }).finally(() => {
@@ -22,6 +22,8 @@ async function fetchApi(url, options = {}, setAccessToken) {
     }
 
     const refreshResponse = await refreshPromise;
+    const item = await refreshResponse.json()
+    console.log(item)
     if (refreshResponse.status === 403) {
         setAccessToken(null);
         window.location.href = "/login";

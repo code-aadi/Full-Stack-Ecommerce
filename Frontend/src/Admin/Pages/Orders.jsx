@@ -39,7 +39,7 @@ const formatDate = (dateString) => {
 
 useEffect(()=>{
   async function fetchOrders(){
-      const url = new URL("http://localhost:2310/api/admin/orders")
+      const url = new URL(`${import.meta.env.VITE_API_BASE_URL}/api/admin/orders`)
     url.searchParams.set("page", page)
     url.searchParams.set("limit", limit)
       url.searchParams.set("search", debounceValue)
@@ -76,6 +76,7 @@ fetchOrders()
           flex-direction: column;
           gap: 20px;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          min-width: 0;
         }
 
         .page-title {
@@ -97,10 +98,17 @@ fetchOrders()
           outline: none;
           font-size: 0.9rem;
           background-color: #ffffff;
+          box-sizing: border-box;
         }
 
         .filter-input {
           width: 240px;
+          max-width: 100%;
+          flex: 1 1 220px;
+        }
+
+        .filter-select {
+          flex: 1 1 140px;
         }
 
         .filter-input:focus, .filter-select:focus {
@@ -113,6 +121,15 @@ fetchOrders()
           border: 1px solid #e2e8f0;
           overflow: hidden;
           box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+          min-width: 0;
+        }
+
+        /* Lets the wide table scroll sideways inside its own box instead of
+           stretching the page horizontally */
+        .table-scroll {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          min-width: 0;
         }
 
         .orders-table {
@@ -128,6 +145,7 @@ fetchOrders()
           font-weight: 600;
           padding: 14px 18px;
           border-bottom: 1px solid #e2e8f0;
+          white-space: nowrap;
         }
 
         .orders-table td {
@@ -135,6 +153,7 @@ fetchOrders()
           border-bottom: 1px solid #f1f5f9;
           color: #334155;
           vertical-align: middle;
+          white-space: nowrap;
         }
 
         .orders-table tr:last-child td {
@@ -171,6 +190,7 @@ fetchOrders()
           align-items: center;
           gap: 6px;
           padding: 8px 0;
+          flex-wrap: wrap;
         }
 
         .page-btn {
@@ -192,6 +212,28 @@ fetchOrders()
           border-color: #3b82f6;
           color: #ffffff;
           font-weight: 600;
+        }
+
+        /* ---------------- Responsive ---------------- */
+        @media (max-width: 640px) {
+          .page-title {
+            font-size: 1.3rem;
+          }
+
+          .filter-input,
+          .filter-select {
+            flex: 1 1 100%;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .orders-container {
+            gap: 16px;
+          }
+
+          .page-title {
+            font-size: 1.15rem;
+          }
         }
       `}</style>
 
@@ -236,61 +278,82 @@ fetchOrders()
           </select>
         </div>
 
-        <div className="table-card">
-          <table className="orders-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Action</th>
+      <div className="table-card">
+  <div className="table-scroll">
+    <table className="orders-table" style={{ minWidth: "700px" }}>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {/* Condition check: Agar koi order nahi hai toh message dikhao */}
+        {!orders || orders.length === 0 ? (
+          <tr>
+            <td 
+              colSpan="6" 
+              style={{ 
+                textAlign: "center", 
+                padding: "32px", 
+                color: "#64748b",
+                fontSize: "14px",
+                fontWeight: "500"
+              }}
+            >
+              No Orders Found 📦
+            </td>
+          </tr>
+        ) : (
+          orders.map((ord) => {
+            const badge = getStatusBadge(ord?.orderStatus);
+            const formattedId = ord._id && ord._id.length > 8 
+              ? `#...${ord._id.slice(-6)}` 
+              : ord._id;
+              
+            return (
+              <tr key={ord?._id}>
+                <td style={{ fontWeight: "600", color: "#0f172a" }}>
+                  {formattedId}
+                </td>
+                <td>{ord?.shippingAddress?.fullName?.split(" ")[0]}</td>
+                <td>{formatDate(ord?.createdAt)}</td>
+                <td style={{ fontWeight: "600" }}>₹{ord?.totalAmount?.toFixed(2)}</td>
+                <td>
+                  <span
+                    className="status-pill"
+                    style={{
+                      backgroundColor: badge.bg,
+                      color: badge.color,
+                    }}
+                  >
+                    {ord.orderStatus}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className="view-btn"
+                    onClick={() => handleView(ord._id)}
+                  >
+                    View
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {orders?.map((ord) => {
-               
-                const badge = getStatusBadge(ord?.orderStatus);
-                const formattedId = ord._id && ord._id.length > 8 
-    ? `#...${ord._id.slice(-6)}` 
-    : ord._id;
-                return (
-                  <tr key={ord?._id}>
-                    <td style={{ fontWeight: "600", color: "#0f172a" }}>
-                      {formattedId}
-                    </td>
-                    <td>{ord?.shippingAddress?.fullName?.split(" ")[0]}</td>
-                    <td>{formatDate(ord?.createdAt)}</td>
-                    <td style={{ fontWeight: "600" }}>₹{ord?.totalAmount?.toFixed(2)}</td>
-                    <td>
-                      <span
-                        className="status-pill"
-                        style={{
-                          backgroundColor: badge.bg,
-                          color: badge.color,
-                        }}
-                      >
-                        {ord.orderStatus}
-                      </span>
-                    </td>
-                    <td>
-                      <button
-                        className="view-btn"
-                        onClick={() => handleView(ord._id)}
-                      >
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+            );
+          })
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
         
-      <Pagination page={page} totalPages={totalPages} limit={limit} />
+      {orders.length !== 0 && <Pagination page={page} totalPages={totalPages} limit={limit} />}
       </div>
     </>
   );

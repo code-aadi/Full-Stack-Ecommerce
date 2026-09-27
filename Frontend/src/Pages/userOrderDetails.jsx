@@ -18,7 +18,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
   async function fetchOrderDetails() {
     if(!id) return
     try {
-      const response = await fetchApi(`http://localhost:2310/api/order/${id}`,
+      const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/order/${id}`,
           {
             method: "GET",
             headers: {

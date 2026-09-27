@@ -1,66 +1,74 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import '../styles/HomeProducts.css';
+import Loader from './Loader';
+import { cartContext } from '../../Context/CartContext';
+import { useAlert } from '../../Context/AlertContext';
+import { Link } from 'react-router-dom';
 
-const products = [
-  {
-    id: 1,
-    name: 'Wireless Noise Cancelling Headphones',
-    category: 'Electronics',
-    price: '₹4,999',
-    rating: '4.8',
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80',
-  },
-  {
-    id: 2,
-    name: 'Smart Watch Series 7',
-    category: 'Electronics',
-    price: '₹2,499',
-    rating: '4.5',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80',
-  },
-  {
-    id: 3,
-    name: 'Classic Leather Running Shoes',
-    category: 'Fashion',
-    price: '₹1,899',
-    rating: '4.7',
-    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',
-  },
-  {
-    id: 4,
-    name: 'Minimalist Water Bottle (1L)',
-    category: 'Home & Fitness',
-    price: '₹799',
-    rating: '4.9',
-    image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&q=80',
-  },
-];
 
 const FeaturedProducts = () => {
+const [products, setProducts] = useState([])
+const [loading, setLoading] = useState(true)
+const {addToCart} = useContext(cartContext)
+const {showAlert} = useAlert()
+useEffect(()=>{
+  const getTrendingProducts = async()=>{
+    setLoading(true)
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/products/topProducts`)
+      const data = await response.json()
+      if(response.ok){
+        setProducts(data.products)
+      }
+    } catch (error) {
+      alert("Unable to fetch trending products")
+    }finally{
+     setLoading(false)
+    }
+  }
+  getTrendingProducts()
+},[])
+
+ async function handleAddToCart(id) {
+    const result = await addToCart(id);
+    if (result.success) {
+      showAlert(result.message, "success");
+    } else {
+      showAlert(result.message, "error");
+    }
+  }
+
   return (
-    <section className="container">
-      <div className="section-header">
-        <h3 className="section-title">Trending Products</h3>
-        <a href="#view-all" className="link-btn">View All →</a>
+    <section className="home-container">
+      <div className="home-section-header">
+        <h3 className="home-section-title">Trending Products</h3>
+        <a href="/category/Electronics" className="home-link-btn">View All →</a>
       </div>
 
-      <div className="products-grid">
+      {loading ? (<Loader text='loading Trending Products'/>) : (
+        <div className="home-products-grid">
         {products.map((product) => (
-          <div key={product.id} className="product-card">
-            <div>
-              <img src={product.image} alt={product.name} className="product-img" />
-              <div className="product-info">
-                <span className="product-category">{product.category}</span>
-                <h4 className="product-name">{product.name}</h4>
-                <div className="product-bottom">
-                  <span className="product-price">{product.price}</span>
-                  <span className="product-rating">★ {product.rating}</span>
+          <div key={product._id} className="home-product-card">
+            <div className="home-product-top">
+              <div className="home-product-media">
+               <Link to={`/product/${product._id}`}>
+                <img src={product.image} alt={product.name} className="home-product-img" />
+               </Link>
+                <span className="home-product-category">{product.category}</span>
+              </div>
+              <div className="home-product-info">
+                <h4 className="home-product-name">{product.name}</h4>
+                <div className="home-product-bottom">
+                  <span className="home-product-price">₹{product.price}</span>
+                  <span className="home-product-rating">★ {product.rating}</span>
                 </div>
               </div>
             </div>
-            <button className="btn-add-cart">Add to Cart</button>
+            <button className="home-btn-add-cart" onClick={()=> handleAddToCart(product._id)}>Add to cart</button>
           </div>
         ))}
       </div>
+      )}
     </section>
   );
 };

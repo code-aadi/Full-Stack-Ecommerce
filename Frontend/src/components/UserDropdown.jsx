@@ -105,7 +105,7 @@ showAlert(result.message, "success")
         <Link 
           to="/orders" 
           className="user-dropdown-item"
-          
+          onClick={()=> setDropdownOpen(false)}
         >
           <Package size={16} />
           <span>My Order</span>

@@ -17,7 +17,7 @@ async function userRegister(userData) {
 
     setRegisterLoading(true)
    try {
-const response = await fetch("http://localhost:2310/api/auth/register",{
+const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/register`,{
   method : "POST",
   headers : {"Content-Type" : "application/json"},
   credentials : "include",
@@ -46,7 +46,7 @@ async function userLogin(userData) {
   setLoginLoading(true)
 
 try {
-    const response = await fetch("http://localhost:2310/api/auth/login",{
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`,{
     method : "POST",
     headers : {"Content-Type" : "application/json"},
     body : JSON.stringify(userData),
@@ -72,7 +72,7 @@ useEffect(() => {
   async function initilizeAuth() {
     
   try {
-      const response = await fetch("http://localhost:2310/api/auth/refresh",{
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/refresh`,{
       method : "POST",
       credentials : "include"
     })
@@ -100,7 +100,7 @@ useEffect(() => {
 
 async function getCurrentUser(token) {
 try {
-    const response = await fetchApi("http://localhost:2310/api/auth/me",{
+    const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`,{
     headers : {
       Authorization : `Bearer ${token}`
     },
@@ -125,7 +125,7 @@ if(data.success){
 async function logout() {
   setLogoutLoading(true)
   try {
-    const response = await fetch("http://localhost:2310/api/auth/logout",{
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`,{
       method : "POST",
       credentials : "include"
     })

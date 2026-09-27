@@ -4,6 +4,7 @@ import { createSearchParams, useNavigate } from 'react-router-dom';
 import { cartContext } from '../../Context/CartContext';
 import UserDropdown from './UserDropdown';
 import { AuthContext } from '../../Context/AuthContext';
+import AdminNavButton from './AdminNavButton';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Navbar = () => {
   return (
     <header className="navbar">
       <div className="container nav-container">
-        
+       {user?.role === "admin" &&  <AdminNavButton />}
         {/* Logo */}
         <div className="logo" onClick={() => navigate("/")}>ShopEase</div>
 
@@ -45,7 +46,7 @@ const Navbar = () => {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
-          <button type="submit" className="search-btn" aria-label="Search">
+          <button type="submit" className="search-btn-nav" aria-label="Search">
             <Search size={18} />
           </button>
         </form>

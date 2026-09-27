@@ -4,109 +4,106 @@ import ProductCard from '../components/ProductCard';
 import Pagination from '../components/Pagination';
 import { useAlert } from '../../Context/AlertContext';
 import EmptyState from '../components/EmptyState';
-
-
+import '../styles/CategoryPage.css';
 
 const CategoryProductsPage = () => {
-  const [searchParams] = useSearchParams()
-  const {showAlert} = useAlert()
- const [products, setProducts] = useState([])
- const [loading, setLoading] = useState(false)
- const [error, setError] = useState(null);
+  const [searchParams] = useSearchParams();
+  const { showAlert } = useAlert();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { categoryName } = useParams();
-const page = searchParams.get("page") || 1
-const limit = searchParams.get("limit") || 40
-const [totalPages, setTotalPages] = useState(0)
- useEffect(()=>{
-async function getCategoriesData() {
-try {
-  setLoading(true)
-  setError(null)
-    const response = await fetch(`http://localhost:2310/api/products/category/${categoryName}?page=${page}&limit=${limit}`)
-  const data = await response.json()
-    if (data.success) {
-   setTotalPages(data.totalPages)
-      setProducts(data.products); 
-    } else {
-     
-      setError(data.message || "Something Went Wrong!");
+  const page = searchParams.get('page') || 1;
+  const limit = searchParams.get('limit') || 40;
+  const [totalPages, setTotalPages] = useState(0);
+
+  useEffect(() => {
+    async function getCategoriesData() {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/products/category/${categoryName}?page=${page}&limit=${limit}`
+        );
+        const data = await response.json();
+        if (data.success) {
+          setTotalPages(data.totalPages);
+          setProducts(data.products);
+        } else {
+          setError(data.message || 'Something Went Wrong!');
+        }
+      } catch (error) {
+        setError('Internal Server Error. Please Check Your Internet');
+        showAlert('Something went wrong', 'error');
+      } finally {
+        setLoading(false);
+      }
     }
-} catch (error) {
-  setError("Internal Server Error. Please Check Your Internet")
-  showAlert('Something went wrong', "error")
-}finally{
-  setLoading(false)
-}
-  
-}
-getCategoriesData()
- },[categoryName,page,limit])
+    getCategoriesData();
+  }, [categoryName, page, limit]);
 
   if (loading) {
-    return <div className="loading">Loading items for {categoryName}...</div>;
+    return (
+      <div className="category-loading-wrapper">
+        <div className="category-spinner"></div>
+        <p className="category-loading-text">Loading items for {categoryName}...</p>
+      </div>
+    );
   }
 
-  // 5. Error state handle karein
+  // Error state handle karein
   if (error) {
-    return <EmptyState type='category'/>;
+    return <EmptyState type="category" />;
   }
+
   return (
-    <div style={{ maxWidth: '1200px', margin: '2rem auto', padding: '0 1rem' }}>
-      
+    <div className="category-page-container">
       {/* Breadcrumb Navigation */}
-      <div style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '1rem' }}>
-        <Link to="/" style={{ color: '#4f46e5', textDecoration: 'none' }}>Home</Link>
-        {' '}/ Categories /{' '}
-        <span style={{ textTransform: 'capitalize', fontWeight: 600, color: '#111827' }}>
-          {categoryName}
-        </span>
-      </div>
+      <nav className="category-breadcrumb" aria-label="Breadcrumb">
+        <Link to="/" className="category-breadcrumb-link">Home</Link>
+        <span className="category-breadcrumb-separator">/</span>
+        <span className="category-breadcrumb-parent">Categories</span>
+        <span className="category-breadcrumb-separator">/</span>
+        <span className="category-breadcrumb-current">{categoryName}</span>
+      </nav>
 
       {/* Heading Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.8rem', fontWeight: 800, textTransform: 'capitalize', color: '#111827' }}>
-          {categoryName}
-        </h1>
-        <span style={{ color: '#6b7280', fontSize: '0.95rem' }}>
-          Showing {products?.length} Products
-        </span>
+      <div className="category-page-header">
+        <div className="category-title-group">
+          <h1 className="category-page-title">{categoryName}</h1>
+          <span className="category-product-count-badge">
+            {products?.length} {products?.length === 1 ? 'Product' : 'Products'}
+          </span>
+        </div>
       </div>
+
       {/* Product Grid View */}
       {products?.length > 0 ? (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-          gap: '1.5rem'
-        }}>
+        <div className="category-products-grid">
           {products?.map((product) => (
-            
             <ProductCard key={product._id} item={product} />
           ))}
         </div>
       ) : (
         /* Empty State if No Products Found */
-        <div style={{ textAlign: 'center', padding: '4rem 1rem', color: '#6b7280' }}>
-          <h3>No products found in "{categoryName}" category</h3>
-          <p style={{ marginTop: '0.5rem' }}>Try exploring other categories from Home Page.</p>
-          <Link 
-            to="/" 
-            style={{ 
-              display: 'inline-block', 
-              marginTop: '1rem', 
-              background: '#4f46e5', 
-              color: 'white', 
-              padding: '10px 20px', 
-              borderRadius: '8px', 
-              textDecoration: 'none',
-              fontWeight: 600 
-            }}
-          >
+        <div className="category-no-products">
+          <h3 className="category-no-products-title">
+            No products found in "{categoryName}" category
+          </h3>
+          <p className="category-no-products-desc">
+            Try exploring other categories from Home Page.
+          </p>
+          <Link to="/" className="category-back-btn">
             Back to Home
           </Link>
         </div>
       )}
-     {totalPages > 1 && ( <Pagination page = {page} totalPages={totalPages} limit={40}/>
-)}
+
+      {totalPages > 1 && (
+        <div className="category-pagination-wrapper">
+          <Pagination page={page} totalPages={totalPages} limit={40} />
+        </div>
+      )}
     </div>
   );
 };

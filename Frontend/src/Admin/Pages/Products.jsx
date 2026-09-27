@@ -7,6 +7,7 @@ import EditProductModal from "../Components/EditProductModel";
 import Toast from "../../components/Toast";
 import { AuthContext } from "../../../Context/AuthContext";
 import { useAlert } from "../../../Context/AlertContext";
+import Loader from "../../components/Loader";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,7 +52,7 @@ const updateProduct = async (productId, product)=>{
  try {
   setEditLoading(true)
   setBackendErrors({})
-   const response = await fetchApi(`http://localhost:2310/api/admin/product/${productId}`,{
+   const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/product/${productId}`,{
     method : "PUT",
     headers : {
               Authorization : `Bearer ${accessToken}`
@@ -91,7 +92,7 @@ useEffect(()=>{
   const getProducts = async () => {
     try {
       setProductLoading(true);
-      const response = await fetchApi(`http://localhost:2310/api/admin/product?page=${page}&limit=${limit}&search=${debounceValue}&category=${selectedCategory}`,{
+      const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/product?page=${page}&limit=${limit}&search=${debounceValue}&category=${selectedCategory}`,{
         method : "GET",
     headers : {
         Authorization : `Bearer ${accessToken}`
@@ -112,7 +113,7 @@ useEffect(()=>{
 
   const getCategories= async()=>{
     try {
-    const response = await fetchApi("http://localhost:2310/api/admin/product/categories",{
+    const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/product/categories`,{
       method : "GET",
     headers : {
         Authorization : `Bearer ${accessToken}`
@@ -130,7 +131,7 @@ useEffect(()=>{
   const handleDelete = async(id) => {
    
     try {
-      const response = await fetchApi(`http://localhost:2310/api/admin/product/${id}`,{
+      const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/product/${id}`,{
         method : "DELETE",
         headers : {
           Authorization : `Bearer ${accessToken}`
@@ -161,12 +162,15 @@ useEffect(()=>{
           flex-direction: column;
           gap: 20px;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          min-width: 0;
         }
 
         .page-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
         }
 
         .page-title {
@@ -199,6 +203,8 @@ useEffect(()=>{
           font-weight: 600;
           cursor: pointer;
           transition: background-color 0.2s ease;
+          box-sizing: border-box;
+          flex-shrink: 0;
         }
 
         .add-btn:hover {
@@ -208,16 +214,20 @@ useEffect(()=>{
         .filters-bar {
           display: flex;
           gap: 12px;
+          flex-wrap: wrap;
         }
 
         .search-input {
           padding: 9px 14px;
           width: 260px;
+          max-width: 100%;
           border: 1px solid #cbd5e1;
           border-radius: 6px;
           outline: none;
           font-size: 0.9rem;
           background-color: #ffffff;
+          box-sizing: border-box;
+          flex: 1 1 220px;
         }
 
         .search-input:focus {
@@ -232,6 +242,8 @@ useEffect(()=>{
           font-size: 0.9rem;
           background-color: #ffffff;
           cursor: pointer;
+          box-sizing: border-box;
+          flex: 1 1 160px;
         }
 
         .category-select:focus {
@@ -244,6 +256,15 @@ useEffect(()=>{
           border: 1px solid #e2e8f0;
           overflow: hidden;
           box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+          min-width: 0;
+        }
+
+        /* Lets the wide table scroll sideways inside its own box instead of
+           stretching the page horizontally */
+        .table-scroll {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          min-width: 0;
         }
 
         .product-table {
@@ -259,6 +280,7 @@ useEffect(()=>{
           font-weight: 600;
           padding: 14px 18px;
           border-bottom: 1px solid #e2e8f0;
+          white-space: nowrap;
         }
 
         .product-table td {
@@ -291,6 +313,7 @@ useEffect(()=>{
           font-size: 0.8rem;
           font-weight: 500;
           display: inline-block;
+          white-space: nowrap;
         }
 
         .actions-cell {
@@ -306,6 +329,7 @@ useEffect(()=>{
           font-weight: 500;
           cursor: pointer;
           transition: opacity 0.2s ease;
+          white-space: nowrap;
         }
 
         .edit-btn {
@@ -328,6 +352,7 @@ useEffect(()=>{
           align-items: center;
           gap: 6px;
           padding: 8px 0;
+          flex-wrap: wrap;
         }
 
         .page-btn {
@@ -354,6 +379,41 @@ useEffect(()=>{
           border-color: #3b82f6;
           color: #ffffff;
           font-weight: 600;
+        }
+
+        /* ---------------- Responsive ---------------- */
+        @media (max-width: 640px) {
+          .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .add-btn {
+            width: 100%;
+          }
+
+          .page-title {
+            font-size: 1.3rem;
+          }
+
+          .search-input,
+          .category-select {
+            flex: 1 1 100%;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .products-page {
+            gap: 16px;
+          }
+
+          .page-title {
+            font-size: 1.15rem;
+          }
+
+          .total-products-badge {
+            margin-left: 6px;
+          }
         }
       `}</style>
 
@@ -389,44 +449,68 @@ useEffect(()=>{
           </select>
         </div>
 
-        <div className="table-card">
-          <table className="product-table">
-            <thead>
-              <tr>
-                <th style={{ width: "80px" }}>Img</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th style={{ width: "160px" }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product.id}>
-                  <td>
-                   <a href={product.image} target="_blank"> <img src={product.image} alt="" className="img-cell" /></a>
-                  </td>
-                  <td style={{ fontWeight: "500" }}>{product.name}</td>
-                  <td>
-                    <span className="category-pill">{product.category}</span>
-                  </td>
-                  <td style={{ fontWeight: "600", color: "#0f172a" }}>₹{product.price}</td>
-                  <td>
-                    <div className="actions-cell">
-                      <button className="edit-btn" onClick={()=> handleEdit(product)}>Edit</button>
-                      <button className="delete-btn" onClick={() => handleDelete(product._id)}>
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+   {productLoading ? <Loader text="Loading Products"/> : (
+         <div className="table-card">
+  <div className="table-scroll">
+    <table className="product-table" style={{ minWidth: "650px" }}>
+      <thead>
+        <tr>
+          <th style={{ width: "80px" }}>Img</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th style={{ width: "160px" }}>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {products.length === 0 ? (
+          <tr>
+            <td 
+              colSpan="5" 
+              style={{ 
+                textAlign: "center", 
+                padding: "32px", 
+                color: "#64748b",
+                fontSize: "14px",
+                fontWeight: "500"
+              }}
+            >
+              No Products Found 🛍️
+            </td>
+          </tr>
+        ) : (
+          products.map((product) => (
+            <tr key={product.id}>
+              <td>
+                <a href={product.image} target="_blank" rel="noreferrer"> 
+                  <img src={product.image} alt="" className="img-cell" />
+                </a>
+              </td>
+              <td style={{ fontWeight: "500" }}>{product.name}</td>
+              <td>
+                <span className="category-pill">{product.category}</span>
+              </td>
+              <td style={{ fontWeight: "600", color: "#0f172a" }}>₹{product.price}</td>
+              <td>
+                <div className="actions-cell">
+                  <button className="edit-btn" onClick={() => handleEdit(product)}>Edit</button>
+                  <button className="delete-btn" onClick={() => handleDelete(product._id)}>
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+   )}
+
 
         <div className="pagination-container">
-          <Pagination page={page} totalPages={totalPages} limit={20} />
+         {productLoading == false && products.length !== 0 &&  <Pagination page={page} totalPages={totalPages} limit={20} /> }
         </div>
         <EditProductModal isOpen={isEditOpen} onClose={modelOnClose} product={selectedProduct} onUpdate={updateProduct} categories={totalCateogires} backendErrors={backendErrors} loading = {editLoading}/>
 

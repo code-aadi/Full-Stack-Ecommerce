@@ -54,7 +54,7 @@ const [categories, setCategories] = useState([])
 
    const getCategories= async()=>{
     try {
-    const response = await fetchApi("http://localhost:2310/api/admin/product/categories",{
+    const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/product/categories`,{
       method : "GET",
     headers : {
         Authorization : `Bearer ${accessToken}`
@@ -111,7 +111,7 @@ const [categories, setCategories] = useState([])
     try {
     setLoading(true)
 
-      const response = await fetchApi("http://localhost:2310/api/admin/product",{
+      const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/product`,{
         method : "POST",
         headers : {
            Authorization : `Bearer ${accessToken}`,
@@ -162,7 +162,7 @@ const [categories, setCategories] = useState([])
         }
 
         .page-title {
-          font-size: 1.5rem;
+          font-size: clamp(16px, 3vw, 1.5rem);
           font-weight: 700;
           color: #0f172a;
         }
@@ -371,7 +371,12 @@ const [categories, setCategories] = useState([])
           .form-grid {
             grid-template-columns: 1fr;
           }
+             .back-btn{
+              padding: 6px 13px;
+    font-size: 12px;
         }
+         
+          }
       `}</style>
 
       <div className="add-product-container">

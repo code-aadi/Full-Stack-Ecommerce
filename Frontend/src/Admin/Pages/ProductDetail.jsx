@@ -18,7 +18,7 @@ const {showAlert} = useAlert()
   
 async function getProductDetails(){
    try {
-     const response = await fetchApi(`http://localhost:2310/api/admin/product/${productId}`,{
+     const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/product/${productId}`,{
       method : "GET",
     headers : {
         Authorization : `Bearer ${accessToken}`
@@ -46,7 +46,7 @@ getProductDetails()
     const updatedStock = product.stock + Number(newStock);
    setUpdateLoading(true)
     try {
-        const response = await fetchApi(`http://localhost:2310/api/admin/product/${productId}/stock`, {
+        const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/product/${productId}/stock`, {
             method : "PATCH",
             headers : {
                 "Content-Type" : "application/json",
@@ -77,7 +77,7 @@ getProductDetails()
     const updatedStatus = !isActive;
    setUpdateLoading(true)
     try {
-        const response = await fetchApi(`http://localhost:2310/api/admin/product/${productId}/status`,{
+        const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/product/${productId}/status`,{
             method : "PATCH",
             headers : {
                 "Content-Type" : "application/json",

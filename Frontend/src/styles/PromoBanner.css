@@ -1,0 +1,169 @@
+/* Container section */
+.promo-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 2.5rem auto;
+  padding: 0 1.25rem;
+  box-sizing: border-box;
+}
+
+/* Responsive Grid (1 column on mobile, 2 columns on desktop) */
+.promo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .promo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Promo Card */
+.promo-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 320px;
+  display: flex;
+  align-items: flex-end;
+  background-color: #0f172a;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+              0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card Hover Effects */
+.promo-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.2),
+              0 10px 15px -5px rgba(0, 0, 0, 0.12);
+}
+
+/* Image Wrapper and Image */
+.promo-image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.promo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.promo-card:hover .promo-image {
+  transform: scale(1.06);
+}
+
+/* Gradient Overlay for Text Readability */
+.promo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.1) 0%,
+    rgba(15, 23, 42, 0.6) 50%,
+    rgba(15, 23, 42, 0.92) 100%
+  );
+  z-index: 1;
+}
+
+/* Content Container */
+.promo-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+  color: #ffffff;
+}
+
+/* Category Badge */
+.promo-category {
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #38bdf8; /* Vibrant accent color */
+  margin-bottom: 0.5rem;
+}
+
+/* Card Heading & Offer */
+.promo-heading {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 1.25rem 0;
+  color: #f8fafc;
+}
+
+.promo-divider {
+  color: #94a3b8;
+  font-weight: 400;
+  margin: 0 0.25rem;
+}
+
+.promo-offer {
+  color: #facc15; /* Highlight accent */
+}
+
+/* Modern Rounded 'Shop Now' Button */
+.promo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+  background-color: #ffffff;
+  border-radius: 9999px;
+  text-decoration: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
+.promo-btn-icon {
+  transition: transform 0.2s ease;
+}
+
+.promo-btn:hover {
+  background-color: #f1f5f9;
+  transform: translateX(2px);
+}
+
+.promo-btn:hover .promo-btn-icon {
+  transform: translateX(3px);
+}
+
+/* Tablet & Mobile Adjustments */
+@media (max-width: 640px) {
+  .promo-card {
+    height: 280px;
+  }
+
+  .promo-content {
+    padding: 1.5rem;
+  }
+
+  .promo-heading {
+    font-size: 1.2rem;
+  }
+
+  .promo-btn {
+    padding: 0.55rem 1.2rem;
+    font-size: 0.85rem;
+  }
+}

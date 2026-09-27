@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import ShowAllButton from './ShowAllButton';
 import { Link } from 'react-router-dom';
 
-// Sabhi 28 Unique Categories high-resolution images ke saath
 const categories = [
   { id: 1, name: 'Electronics', image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&q=80' },
   { id: 2, name: 'Beauty & Personal Care', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&q=80' },
@@ -34,29 +33,114 @@ const categories = [
   { id: 28, name: 'Travel Accessories', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80' },
 ];
 
-const Categories = () => {
-  const [showAll, setShowAll] = useState(false)
-const visibleCateogries = showAll ? categories : categories.slice(0,12)
-  return (
-    <section className="container">
-      <div className="section-header">
-        <h3 className="section-title">Explore All Categories ({categories.length})</h3>
-        <span className="category-count-badge">Popular & Trending</span>
-      </div>
+// Single Card with built-in skeleton tracker
+const CategoryCardItem = ({ cat }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
 
-      {/* Grid view jo responsive tarike se automatically organize hota hai */}
-      <div className="categories-grid-all">
-        {visibleCateogries.map((cat) => (
-          <Link to={`/category/${cat.name}`} key={cat.id} className="category-card-mini">
-            <img src={cat.image} alt={cat.name} loading="lazy" />
-            <div className="category-overlay-mini">
-              <span>{cat.name}</span>
-            </div>
-          </Link>
-        ))}
+  return (
+    <Link to={`/category/${cat.name}`} className="category-card-mini">
+      {/* 1. Shimmer skeleton layer: jab tak loaded false hai tab tak dikhega */}
+      {!isLoaded && <div className="card-skeleton-loader" />}
+
+      {/* 2. Image: browser cache se turant aaye ya download ho, state update hogi */}
+      <img
+        src={cat.image}
+        alt={cat.name}
+        loading="lazy"
+        className={`category-img ${isLoaded ? 'visible' : 'hidden'}`}
+        onLoad={() => setIsLoaded(true)}
+      />
+
+      <div className="category-overlay-mini">
+        <span>{cat.name}</span>
       </div>
-        <ShowAllButton totalCount={categories.length} isExpanded={showAll} onClick={()=> setShowAll(!showAll)} />
-    </section>
+    </Link>
+  );
+};
+
+const Categories = () => {
+  const [showAll, setShowAll] = useState(false);
+  const visibleCategories = showAll ? categories : categories.slice(0, 12);
+
+  return (
+    <>
+      <style>
+        {`
+        @keyframes skeleton-shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+
+        .category-card-mini {
+          position: relative;
+          height: 130px;
+          border-radius: 14px;
+          overflow: hidden;
+          cursor: pointer;
+          background-color: #e2e8f0;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+          isolation: isolate;
+        }
+
+        /* Pure card ko cover karne wala shimmer box */
+        .card-skeleton-loader {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          background: linear-gradient(90deg, #cbd5e1 25%, #f1f5f9 50%, #cbd5e1 75%);
+          background-size: 200% 100%;
+          animation: skeleton-shimmer 1.4s infinite ease-in-out;
+        }
+
+        .category-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          transition: opacity 0.3s ease-in-out;
+        }
+
+        .category-img.hidden {
+          opacity: 0;
+        }
+
+        .category-img.visible {
+          opacity: 1;
+        }
+
+        .category-overlay-mini {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          display: flex;
+          align-items: flex-end;
+          padding: 0.75rem;
+          background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
+          color: white;
+          font-weight: 500;
+        }
+        `}
+      </style>
+
+      <section className="container">
+        <div className="section-header">
+          <h3 className="section-title">Explore All Categories ({categories.length})</h3>
+          <span className="category-count-badge">Popular & Trending</span>
+        </div>
+
+        <div className="categories-grid-all">
+          {visibleCategories.map((cat) => (
+            <CategoryCardItem key={cat.id} cat={cat} />
+          ))}
+        </div>
+
+        <ShowAllButton
+          totalCount={categories.length}
+          isExpanded={showAll}
+          onClick={() => setShowAll(!showAll)}
+        />
+      </section>
+    </>
   );
 };
 
