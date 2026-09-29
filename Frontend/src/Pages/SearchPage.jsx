@@ -6,7 +6,7 @@ import FilterSidebar from '../components/FilterSidebar';
 import Pagination from '../components/Pagination';
 import EmptyState from '../components/EmptyState';
 import { useAlert } from '../../Context/AlertContext';
-
+import Loader from '../components/Loader';
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
@@ -32,18 +32,17 @@ const SearchPage = () => {
   const max = Number(maxPrice);
   const ratingNum = Number(rating);
 
-  // Check karein ki koi bhi filter laga hai ya nahi
   const hasActiveFilters = Boolean(minPrice || maxPrice || rating || inStock);
 
-  // Single filter hatane ka helper
+
   const handleRemoveFilter = (paramKey) => {
     const newParams = new URLSearchParams(searchParams);
     newParams.delete(paramKey);
-    newParams.set('page', '1'); // Filter change par page 1 par reset
+    newParams.set('page', '1'); 
     setSearchParams(newParams);
   };
 
-  // Saare filters ek saath clear karne ka helper
+  
   const handleClearAllFilters = () => {
     const newParams = new URLSearchParams();
     if (query) newParams.set('q', query);
@@ -230,10 +229,7 @@ const SearchPage = () => {
       {/* Main Content Area */}
       <div className="search-content">
         {loading ? (
-          <div className="search-loader">
-            <div className="spinner"></div>
-            <p className="address-error">Searching products...</p>
-          </div>
+         <Loader text={`Loading Product For "${searchTerm}`}/>
         ) : products?.length > 0 ? (
           <div className="filter-products">
             <div

@@ -4,6 +4,7 @@ import { cartContext } from '../../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { useAlert } from '../../Context/AlertContext';
 import EmptyState from '../components/EmptyState';
+import Loader from '../components/Loader';
 
 export default function Cart() {
   const { cartItems, quantityIncrease, quantityDecrease, removeFromCart, clearCart } = useContext(cartContext);
@@ -20,9 +21,7 @@ export default function Cart() {
 
   if (loading) {
     return (
-      <div className="cart-page">
-        <p className="cart-page__loading">Loading your cart…</p>
-      </div>
+      <div style={{height : "60vh", display : "flex", justifyContent : "center"}}><Loader text='Loading Your Cart'/></div>
     );
   }
 
