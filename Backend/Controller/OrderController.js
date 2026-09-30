@@ -1,7 +1,9 @@
+import { bot } from "../config/telegramBot.js";
 import Cart from "../Model/Cart.js";
 import Order from "../Model/Orders.js";
 import cartTotal from "../utils/cartTotal.js";
 import validateCartItems from "../utils/ValidateCartItems.js";
+import { sendOrderAlert } from "./telegramBotController.js";
 
 
 
@@ -94,6 +96,7 @@ const {totalAmount, tax} = cartTotal(validatedItems)
   })
   
   await Cart.findOneAndDelete({user : userId})
+  sendOrderAlert(bot, order)
   return res.status(200).json({
     success : true,
     message : "Order created for COD",

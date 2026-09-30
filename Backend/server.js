@@ -16,6 +16,8 @@ import AdminOrderRoute from "./Admin/AdminRoutes/AdminOrdersRoutes.js"
 import AdminUserRoutes from "./Admin/AdminRoutes/AdminUserRoutes.js"
 import  { paymentLimiter, productLimiter } from "./utils/RateLimit.js"
 import webhookRoute from "./routes/razorpayWebhookRoute.js"
+import { connectTelegramBot } from "./config/telegramBot.js"
+
 
 
 
@@ -35,7 +37,6 @@ app.use(cors({origin : process.env.FRONTEND_URL, credentials : true}))
 app.use("/api/products", productLimiter,  productRouter);
 
 
-
 app.use("/api/auth",  userRouter )
 app.use("/api/cart", productLimiter, cartRouter)
 app.use("/api/checkout", paymentLimiter, checkoutRouter)
@@ -48,3 +49,5 @@ app.use("/api/admin/dashboard", AdminDashboardRoutes)
 app.use("/api/admin/orders", AdminOrderRoute)
 app.use("/api/admin/users", AdminUserRoutes)
 app.listen(process.env.port)
+connectTelegramBot()
+

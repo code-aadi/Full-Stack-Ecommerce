@@ -1,6 +1,8 @@
+import { sendOrderAlert } from "./telegramBotController.js";
 import Cart from "../Model/Cart.js";
 import Order from "../Model/Orders.js";
 import crypto from "crypto"
+import { bot } from "../config/telegramBot.js";
 const razorpayWebhook = async (req, res) => {
       const signature = req.headers["x-razorpay-signature"];
 
@@ -29,6 +31,7 @@ const razorpayWebhook = async (req, res) => {
         const order = await Order.findOne({ paymentOrderId: razorpay_order_id });
 
         if (order) {
+            
             if (event === "payment.captured") {
                 if (order.paymentStatus !== "paid") {
                     order.paymentId = razorpay_payment_id;
@@ -36,6 +39,7 @@ const razorpayWebhook = async (req, res) => {
                     order.orderStatus = "confirmed";
                     await order.save();
                     await Cart.findOneAndDelete({ user: order.userId });
+                    await sendOrderAlert(bot, order)
                 }
             }
 
