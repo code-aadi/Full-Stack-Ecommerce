@@ -1,9 +1,12 @@
+import mongoose from "mongoose";
 import { bot } from "../config/telegramBot.js";
 import Cart from "../Model/Cart.js";
 import Order from "../Model/Orders.js";
 import cartTotal from "../utils/cartTotal.js";
 import validateCartItems from "../utils/ValidateCartItems.js";
 import { sendOrderAlert } from "./telegramBotController.js";
+import Product from "../Model/productModel.js";
+
 
 
 
@@ -78,24 +81,50 @@ const orders = async (req,res) => {
       })
     }
     const address = req.body.address
+       const session = await mongoose.startSession() 
+
     try {
         const cartValidation = await validateCartItems(userId)
-
+   
 if(!cartValidation.isValid){
   return res.status(cartValidation.status).json({
     success: false,
     message: cartValidation.message
   });
 }
-    
-
+  session.startTransaction()
 const validatedItems = cartValidation.validatedItems
+for (const item of validatedItems) {
+ const updatedProduct = await Product.findOneAndUpdate(
+                { 
+                    _id: item.productId, 
+                    stock: { $gte: item.quantity } 
+                },
+                { 
+                    $inc: { stock: -item.quantity }
+                },
+                { session, new: true }
+            );
+            if (!updatedProduct) {
+                throw new Error(`The stock of ${item.name} has just run out.`);
+            }
+}
+
 const {totalAmount, tax} = cartTotal(validatedItems)
- const order = await Order.create({userId : userId, items : validatedItems, shippingAddress :address, totalAmount : totalAmount,
-        paymentStatus : "pending",paymentMethod : "cod", orderStatus : "confirmed", 
-  })
+ const order = new Order(
+  {userId : userId,
+    items : validatedItems,
+     shippingAddress :address, 
+     totalAmount : totalAmount,
+        paymentStatus : "pending",
+        paymentMethod : "cod", 
+        orderStatus : "confirmed", 
+  }
+ )
+ await order.save({session})
   
-  await Cart.findOneAndDelete({user : userId})
+  await Cart.findOneAndDelete({user : userId}).session(session)
+  await session.commitTransaction()
   sendOrderAlert(bot, order)
   return res.status(200).json({
     success : true,
@@ -104,12 +133,20 @@ const {totalAmount, tax} = cartTotal(validatedItems)
   })
 
     } catch (error) {
-        console.log(error)
+       if (error.message.includes("The stock of") || error.message.includes("run out")) {
+            return res.status(400).json({
+                success: false,
+                message: error.message 
+            });
+        }
+      await session.abortTransaction()
         return res.status(500).json({
       success : false,
       messasge : "Internal server error",
       error : error.message
         })
+    }finally{
+      await session.endSession()
     }
 
 }

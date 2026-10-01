@@ -215,14 +215,15 @@ if(inStock){
  const skip = (page - 1) * limit
     
  const products = await Product.find(filter).skip(skip).limit(limit)
- 
+
     if(products.length === 0){
         return res.status(404).json({
             success : false,
             message : "No Products Found"
         })
     }
-    res.status(200).json({
+    
+   return res.status(200).json({
         success : true,
         message : "Search Products Found",
         products,
@@ -230,7 +231,7 @@ if(inStock){
         totalProducts,
     })
    } catch (error) {
-      res.status(500).json({
+     return res.status(500).json({
             success: false,
             message: "Server me koi dikkat aayi hai.",
             error: error.message

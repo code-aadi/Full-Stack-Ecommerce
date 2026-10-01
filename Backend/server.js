@@ -17,6 +17,7 @@ import AdminUserRoutes from "./Admin/AdminRoutes/AdminUserRoutes.js"
 import  { paymentLimiter, productLimiter } from "./utils/RateLimit.js"
 import webhookRoute from "./routes/razorpayWebhookRoute.js"
 import { connectTelegramBot } from "./config/telegramBot.js"
+import "./utils/stockReleaseCron.js"
 
 
 
@@ -50,4 +51,6 @@ app.use("/api/admin/orders", AdminOrderRoute)
 app.use("/api/admin/users", AdminUserRoutes)
 app.listen(process.env.port)
 connectTelegramBot()
+
+
 

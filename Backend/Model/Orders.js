@@ -76,10 +76,15 @@ paymentMethod: {
     paymentId: {
       type: String,
     },
+     stockReservedUntil: {
+    type: Date
+}
   },
   {
     timestamps: true,
-  }
+  },
+ 
+
 );
 
 

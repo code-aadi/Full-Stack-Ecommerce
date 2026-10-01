@@ -1,25 +1,24 @@
 import { sendOrderAlert } from "./telegramBotController.js";
 import Cart from "../Model/Cart.js";
 import Order from "../Model/Orders.js";
-import crypto from "crypto"
+import Product from "../Model/productModel.js"; 
+import crypto from "crypto";
 import { bot } from "../config/telegramBot.js";
-const razorpayWebhook = async (req, res) => {
-      const signature = req.headers["x-razorpay-signature"];
 
+const razorpayWebhook = async (req, res) => {
+    const signature = req.headers["x-razorpay-signature"];
     if (!signature) {
         return res.status(400).json({ success: false, message: "Missing signature" });
     }
 
-  
-        
-        const generatedSignature = crypto
-            .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET) 
-            .update(JSON.stringify(req.body))
-            .digest("hex");
+    const generatedSignature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET) 
+        .update(JSON.stringify(req.body))
+        .digest("hex");
 
-        if (generatedSignature !== signature) {
-            return res.status(400).json({ success: false, message: "Invalid webhook signature" });
-        }
+    if (generatedSignature !== signature) {
+        return res.status(400).json({ success: false, message: "Invalid webhook signature" });
+    }
 
     try {
         const { event, payload } = req.body;
@@ -27,7 +26,6 @@ const razorpayWebhook = async (req, res) => {
         const razorpay_order_id = paymentEntity.order_id;
         const razorpay_payment_id = paymentEntity.id;
 
-        
         const order = await Order.findOne({ paymentOrderId: razorpay_order_id });
 
         if (order) {
@@ -37,27 +35,37 @@ const razorpayWebhook = async (req, res) => {
                     order.paymentId = razorpay_payment_id;
                     order.paymentStatus = "paid";
                     order.orderStatus = "confirmed";
+                    order.stockReservedUntil = undefined; 
+                    
                     await order.save();
                     await Cart.findOneAndDelete({ user: order.userId });
-                    await sendOrderAlert(bot, order)
+                    await sendOrderAlert(bot, order);
                 }
             }
-
             
             else if (event === "payment.failed") {
-                order.paymentId = razorpay_payment_id;
-                order.paymentStatus = "failed";
-                order.orderStatus = "cancelled"; 
-                await order.save();
+                if (order.paymentStatus === "pending") {
+               
+                    for (const item of order.items) {
+                        await Product.findByIdAndUpdate(item.productId, {
+                            $inc: { stock: item.quantity } 
+                        });
+                    }
+
+                    order.paymentId = razorpay_payment_id;
+                    order.paymentStatus = "failed";
+                    order.orderStatus = "cancelled"; 
+                    order.stockReservedUntil = undefined; 
+                    await order.save();
+                }
             }
         }
 
         return res.status(200).json({ status: "ok" });
 
     } catch (error) {
-        return res.status(500).json({ success: false, message : "Internal server error", error: error.message });
+        return res.status(500).json({ success: false, message: "Internal server error", error: error.message });
     }
 };
 
-
-export default razorpayWebhook
+export default razorpayWebhook;

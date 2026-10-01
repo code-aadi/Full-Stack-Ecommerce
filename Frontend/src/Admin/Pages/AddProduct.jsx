@@ -131,7 +131,7 @@ const [categories, setCategories] = useState([])
       message: responseData.message
     });
       }
-   // navigate("/admin/products");
+    navigate("/admin/products");
         
 
 

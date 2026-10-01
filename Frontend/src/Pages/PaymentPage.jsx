@@ -74,9 +74,11 @@ const handleButtonClick = (e) =>{
     },
     replace : true
   })
+}else{
+  showAlert(data.message || "Something went wrong", "error")
 }
     } catch (error) {
-      alert(error.message);
+      showAlert("Something went wrong")
     }finally{
       setIsLoading(false)
     }
@@ -104,6 +106,11 @@ setIsLoading(true)
       setIsPaymentButtonDisable(true)
       return
      }
+     if (!response.ok || data.success === false) {
+        
+        showAlert(data.message || "Failed to create payment order", "error");
+        return; 
+      }
       const options = {
   key: import.meta.env.VITE_RAZORPAY_KEY_ID,
   amount: data.amount,
@@ -113,7 +120,8 @@ setIsLoading(true)
   order_id: data.razorpayOrderId,
 
  handler: async function (response) {
-
+try {
+  
   const verifyResponse = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/payment/verify`, {
     method: "POST",
     headers: {
@@ -128,6 +136,10 @@ setIsLoading(true)
   },setAccessToken);
 
   const data = await verifyResponse.json();
+   if (!verifyResponse.ok || verifyData.success === false) {
+              showAlert(verifyData.message || "Payment verification failed!", "error");
+              return;
+            }
 if(data.success){
   navigate(`/order-success/${data.orderId}`,{
     state : {
@@ -136,11 +148,16 @@ if(data.success){
     replace : true
   })
 }
+} catch (verifyError) {
+  showAlert("Verification process failed. Your stock is secured.", "error");
+}
 }
 };
 
 const razorpay = new window.Razorpay(options);
-
+ razorpay.on('payment.failed', function (failResponse) {
+          showAlert(`Payment Failed: ${failResponse.error.description}`, "error");
+      });
 razorpay.open();
     } catch (error) {
       showAlert("Something went wrong", "error")

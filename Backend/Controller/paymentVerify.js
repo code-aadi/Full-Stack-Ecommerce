@@ -48,6 +48,7 @@ const generatedSignature = crypto
 order.paymentId = razorpay_payment_id;
 order.paymentStatus = "paid";
 order.orderStatus = "confirmed";
+order.stockReservedUntil = undefined;
 
 await order.save();
 
