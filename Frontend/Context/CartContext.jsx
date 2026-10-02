@@ -8,6 +8,7 @@ function CartProvider ({children}){
     const {user} = useContext(AuthContext)
     const {accessToken, setAccessToken} = useContext(AuthContext)
     const [cartLoading, setCartLoading] = useState(false)
+    const [addToCartLoading, setAddToCartLoading] = useState(null)
 
     const [cartItems, setCartItems] = useState([]);
 const [localCart, setLocalCart] = useState(() => JSON.parse(localStorage.getItem("cart-data") || '[]'));
@@ -20,6 +21,9 @@ localCart?.forEach(item => {
 
 async function addToCart(productId){
     if(user){
+        setAddToCartLoading(productId)
+        
+       
         try {
             
         const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/add`, {
@@ -39,7 +43,9 @@ async function addToCart(productId){
         }
         
     } catch (error) {
+        
        return {success : false, message : "Unable to add product to cart. Please check your internet"}
+
     }
     }
     else{
@@ -81,6 +87,7 @@ setCartItems(data.cart.items)
    
  }finally{
     setCartLoading(false)
+    setAddToCartLoading(false)
  }
 } else{
       
@@ -109,7 +116,7 @@ setCartItems(data.cart.items)
     setCartItems(formatedData)
  } catch (error) {
  }finally{
-    setCartLoading(false)
+    setCartLoading(null)
  }
 }
 
@@ -124,7 +131,12 @@ setCartItems(data.cart.items)
 async function quantityIncrease(productId, currentQuantity){
 if(user){
     const newQuantity = currentQuantity + 1
-
+    setAddToCartLoading(productId)
+ setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.product._id === productId ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
 try {
 const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/quantity`, {
     method : "PATCH",
@@ -134,13 +146,17 @@ const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/q
     },
     body : JSON.stringify({newQuantity : newQuantity, productId : productId})
 }, setAccessToken)
-if(response.ok){
+if(!response.ok){
     setCartRefresh(prev => prev + 1)
 }
  const data = await response.json()
 
 } catch (error) {
+        setCartRefresh(prev => prev + 1)
+
     return {success : false, message : "Unable to increase quantity. Please check your internet"}
+}finally{
+    setAddToCartLoading(null)
 }
 } else{
     setCartRefresh(prev => prev + 1)
@@ -155,8 +171,23 @@ if(response.ok){
 async function quantityDecrease(productId, currentQuantity){
 
 if(user){
-    const newQuantity = currentQuantity - 1
+   
+const currentItem = cartItems.find(item => item.product._id === productId)
 
+if(!currentItem) return
+    setAddToCartLoading(productId);
+
+if(currentItem.quantity === 1){
+          setCartItems(prevItems => prevItems.filter(item => item.product._id !== productId));
+await removeFromCart(productId)
+return
+}
+ const newQuantity = currentQuantity - 1
+ setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.product._id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
 try {
     const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/quantity`, {
     method : "PATCH",
@@ -166,13 +197,15 @@ try {
     },
     body : JSON.stringify({newQuantity : newQuantity, productId : productId})
 },setAccessToken)
-if(response.ok){
+if(!response.ok){
     setCartRefresh(prev => prev + 1)
 }
 const data = await response.json()
 
 } catch (error) {
     return {success : false, message : "Unable to decrease quantity. Please check your internet"}
+}finally{
+    setAddToCartLoading(null)
 }
 }else{
     setCartRefresh(prev => prev + 1)
@@ -193,8 +226,8 @@ async function clearCart(){
     }
   if(user){
      try {
-   
-        setCartRefresh(prev => prev + 1)
+   setCartItems([])
+      
         const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/removeCart`,{
             method : "DELETE",
             headers : {
@@ -202,6 +235,9 @@ async function clearCart(){
             }
         },setAccessToken)
         const data = await response.json()
+        if(!response.ok){
+              setCartRefresh(prev => prev + 1)
+        }
     } catch (error) {
     return {success : false, message : "Unable to clear the cart. Please check your internet"}
     }
@@ -215,7 +251,8 @@ async function removeFromCart(productId){
  
 if(user){
         try {
-        setCartRefresh(prev => prev + 1)
+        
+       setCartItems(prevItems => prevItems.filter(item => item.product._id !== productId));
         const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${productId}`,{
             method : "DELETE",
             headers : {
@@ -223,10 +260,15 @@ if(user){
             }
         },setAccessToken)
         const data = await response.json()
-        
+        if(!response.ok){
+            setCartRefresh(prev => prev + 1)
+        }
+        return data
     } catch (error) {
           return {success : false, message : "Unable to remove product from cart. Please check your internet"}
 
+    }finally{
+        setAddToCartLoading(null)
     }
 } else{
             setCartRefresh(prev => prev + 1)
@@ -281,7 +323,7 @@ useEffect(()=>{
 
 
 return(
-    <cartContext.Provider value={{cartItems, addToCart, quantityIncrease, quantityDecrease, clearCart, removeFromCart, cartLoading, setCartItems}}>
+    <cartContext.Provider value={{cartItems,addToCartLoading, addToCart, quantityIncrease, quantityDecrease, clearCart, removeFromCart, cartLoading, setCartItems}}>
         {children}
     </cartContext.Provider>
 )

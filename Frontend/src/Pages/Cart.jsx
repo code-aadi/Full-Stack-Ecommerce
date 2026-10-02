@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import '../styles/cart.css';
 import { cartContext } from '../../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,7 @@ import EmptyState from '../components/EmptyState';
 import Loader from '../components/Loader';
 
 export default function Cart() {
-  const { cartItems, quantityIncrease, quantityDecrease, removeFromCart, clearCart } = useContext(cartContext);
+  const { cartItems, quantityIncrease, quantityDecrease, removeFromCart, clearCart, cartLoading } = useContext(cartContext);
   const navigate = useNavigate();
   const { showAlert } = useAlert();
   const [loading, setLoading] = useState(false);
@@ -19,11 +19,9 @@ export default function Cart() {
   const formatINR = (value) =>
     value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  if (loading) {
-    return (
-      <div style={{height : "60vh", display : "flex", justifyContent : "center"}}><Loader text='Loading Your Cart'/></div>
-    );
-  }
+ if(cartLoading){
+ return <div style={{height : "60vh", display : "flex", justifyContent : "center"}}><Loader text='Loading Your Cart'/></div>
+ }
 
   if (cartItems.length === 0) {
     return <EmptyState type="cart" buttonLink="/" />;

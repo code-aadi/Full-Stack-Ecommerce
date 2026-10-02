@@ -4,7 +4,7 @@ import Cart from "../Model/Cart.js";
 import Order from "../Model/Orders.js";
 import cartTotal from "../utils/cartTotal.js";
 import validateCartItems from "../utils/ValidateCartItems.js";
-import { sendOrderAlert } from "./telegramBotController.js";
+import { sendLowStockAlert, sendOrderAlert } from "./telegramBotController.js";
 import Product from "../Model/productModel.js";
 
 
@@ -94,6 +94,7 @@ if(!cartValidation.isValid){
 }
   session.startTransaction()
 const validatedItems = cartValidation.validatedItems
+const lowStockProductsToSend = []
 for (const item of validatedItems) {
  const updatedProduct = await Product.findOneAndUpdate(
                 { 
@@ -107,6 +108,10 @@ for (const item of validatedItems) {
             );
             if (!updatedProduct) {
                 throw new Error(`The stock of ${item.name} has just run out.`);
+            }
+              const LOW_STOCK_LIMIT = 5; 
+            if (updatedProduct && updatedProduct.stock <= LOW_STOCK_LIMIT) {
+                lowStockProductsToSend.push(updatedProduct);
             }
 }
 
@@ -126,6 +131,12 @@ const {totalAmount, tax} = cartTotal(validatedItems)
   await Cart.findOneAndDelete({user : userId}).session(session)
   await session.commitTransaction()
   sendOrderAlert(bot, order)
+ 
+   if (lowStockProductsToSend.length > 0) {
+            for (const product of lowStockProductsToSend) {
+                await sendLowStockAlert(bot, product);
+            }
+        }
   return res.status(200).json({
     success : true,
     message : "Order created for COD",
@@ -133,13 +144,18 @@ const {totalAmount, tax} = cartTotal(validatedItems)
   })
 
     } catch (error) {
+      console.log(error)
+       if (session.inTransaction()) {
+            await session.abortTransaction();
+            console.log("Transaction aborted successfully.");
+        } 
        if (error.message.includes("The stock of") || error.message.includes("run out")) {
             return res.status(400).json({
                 success: false,
                 message: error.message 
             });
         }
-      await session.abortTransaction()
+      
         return res.status(500).json({
       success : false,
       messasge : "Internal server error",

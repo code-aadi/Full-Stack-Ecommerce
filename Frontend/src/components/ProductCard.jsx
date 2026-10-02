@@ -3,12 +3,13 @@ import { ShoppingCart, Heart, Eye, Star, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cartContext } from '../../Context/CartContext';
 import { useAlert } from '../../Context/AlertContext';
+import { ThreeDotsLoader } from './ThreeDots';
 
 const ProductCard = ({ item }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { showAlert } = useAlert();
-  const { cartItems, addToCart, quantityDecrease, quantityIncrease } = useContext(cartContext);
-
+  const { cartItems, addToCart, quantityDecrease, quantityIncrease, addToCartLoading } = useContext(cartContext);
+const isProcessing = addToCartLoading === item._id;
   const cartItem = cartItems?.find(
     (cItem) => cItem.product._id === item?._id || cItem.product.id === item?._id
   );
@@ -398,6 +399,7 @@ const ProductCard = ({ item }) => {
               <button
                 type="button"
                 className="card-qty-btn"
+                disabled = {isProcessing}
                 onClick={() => handleQuantityDecrease(item._id, currentQuantity)}
               >
                 <Minus size={14} />
@@ -407,7 +409,7 @@ const ProductCard = ({ item }) => {
                 type="button"
                 className="card-qty-btn"
                 onClick={() => handleQuantityIncrease(item._id, currentQuantity)}
-                disabled={currentQuantity >= item.stock}
+                disabled={currentQuantity >= item.stock || isProcessing}
               >
                 <Plus size={14} />
               </button>
@@ -416,11 +418,11 @@ const ProductCard = ({ item }) => {
             <button
               type="button"
               className="cart-btn"
-              disabled={isOutOfStock}
+              disabled={isOutOfStock || addToCartLoading === item._id}
               onClick={() => handleAddToCart(item._id)}
             >
               <ShoppingCart size={15} />
-              <span>{isOutOfStock ? 'Out of Stock' : 'Add to Cart'}</span>
+              <span>{isOutOfStock ? 'Out of Stock' : addToCartLoading === item._id ? <ThreeDotsLoader /> : "Add to cart"}</span>
             </button>
           )}
         </div>

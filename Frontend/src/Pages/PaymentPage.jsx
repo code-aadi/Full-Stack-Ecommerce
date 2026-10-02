@@ -78,6 +78,7 @@ const handleButtonClick = (e) =>{
   showAlert(data.message || "Something went wrong", "error")
 }
     } catch (error) {
+     
       showAlert("Something went wrong")
     }finally{
       setIsLoading(false)

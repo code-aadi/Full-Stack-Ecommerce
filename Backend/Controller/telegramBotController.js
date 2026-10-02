@@ -95,3 +95,38 @@ ${itemsList}
         console.error("❌ Error sending telegram alert:", error.message);
     }
 };
+
+
+
+
+export const sendLowStockAlert = async (bot, productData) => {
+    try {
+        const adminChatId = process.env.ADMIN_TELEGRAM_CHAT_ID;
+        if (!adminChatId) return;
+
+       
+        const product = Array.isArray(productData) ? productData[0] : productData;
+
+        if (!product || !product.name) {
+            return console.log("⚠️ sendLowStockAlert: Product data or name is missing!");
+        }
+
+        const shortName = product.name.length > 35 
+            ? product.name.substring(0, 35) + "..." 
+            : product.name;
+
+        const message = `⚠️ *LOW STOCK WARNING!*\n` +
+                        `----------------------------------\n` +
+                        `📦 *Product:* ${shortName}\n` +
+                        `🆔 *ID:* \`${product._id}\`\n` +
+                        `📉 *Current Stock:* 🔥 *${product.stock} left*\n` +
+                        `----------------------------------\n` +
+                        `🛒 _Please restock this item from your Admin Panel._`;
+
+        await bot.telegram.sendMessage(adminChatId, message, { parse_mode: 'Markdown' });
+        console.log(`⚠️ Telegram low stock alert sent for: ${product.name}`);
+    } catch (error) {
+        console.error("❌ Error sending low stock alert:", error.message);
+    }
+};
+

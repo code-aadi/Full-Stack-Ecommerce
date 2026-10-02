@@ -19,7 +19,7 @@ cron.schedule("*/5 * * * *", async () => {
             return; 
         }
 
-        console.log(`Found ${expiredOrders.length} expired orders. Restoring stock...`);
+        
 
         for (const order of expiredOrders) {
             for (const item of order.items) {
@@ -35,7 +35,7 @@ cron.schedule("*/5 * * * *", async () => {
             await order.save();
         }
 
-        console.log("✅ Stock restored and expired orders updated successfully.");
+        
 
     } catch (error) {
         console.error("❌ Error in Stock Release Cron Job:", error.message);

@@ -4,12 +4,13 @@ import Loader from './Loader';
 import { cartContext } from '../../Context/CartContext';
 import { useAlert } from '../../Context/AlertContext';
 import { Link } from 'react-router-dom';
+import { ThreeDotsLoader } from './ThreeDots';
 
 
 const FeaturedProducts = () => {
 const [products, setProducts] = useState([])
 const [loading, setLoading] = useState(true)
-const {addToCart} = useContext(cartContext)
+const {addToCart, addToCartLoading} = useContext(cartContext)
 const {showAlert} = useAlert()
 useEffect(()=>{
   const getTrendingProducts = async()=>{
@@ -64,7 +65,7 @@ useEffect(()=>{
                 </div>
               </div>
             </div>
-            <button className="home-btn-add-cart" onClick={()=> handleAddToCart(product._id)}>Add to cart</button>
+            <button className="home-btn-add-cart"  disabled={addToCartLoading === product._id}  onClick={()=> handleAddToCart(product._id)}> {addToCartLoading === product._id ? <ThreeDotsLoader />: "Add to cart"}</button>
           </div>
         ))}
       </div>
