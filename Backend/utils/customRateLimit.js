@@ -6,7 +6,7 @@ const requestTracker = {};
 // Custom Rate Limiter Middleware
 const customRateLimiter = (req, res, next) => {
    
-console.log(requestTracker)
+
     const userIp = req.ip; // User ka IP address nikalna
     const currentTime = Date.now();
     const WINDOW_TIME = 60 * 1000; // 1 minute (milliseconds me)

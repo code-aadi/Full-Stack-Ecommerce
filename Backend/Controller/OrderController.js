@@ -132,11 +132,7 @@ const {totalAmount, tax} = cartTotal(validatedItems)
   await session.commitTransaction()
   sendOrderAlert(bot, order)
  
-   if (lowStockProductsToSend.length > 0) {
-            for (const product of lowStockProductsToSend) {
-                await sendLowStockAlert(bot, product);
-            }
-        }
+ await sendLowStockAlert(bot, lowStockProductsToSend);
   return res.status(200).json({
     success : true,
     message : "Order created for COD",
@@ -144,10 +140,8 @@ const {totalAmount, tax} = cartTotal(validatedItems)
   })
 
     } catch (error) {
-      console.log(error)
        if (session.inTransaction()) {
             await session.abortTransaction();
-            console.log("Transaction aborted successfully.");
         } 
        if (error.message.includes("The stock of") || error.message.includes("run out")) {
             return res.status(400).json({

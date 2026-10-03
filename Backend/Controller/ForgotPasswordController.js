@@ -48,8 +48,6 @@ try {
     });
     
 } catch (error) {
-    
-    console.log("Email Error:", error);
     return res.status(500).json({ success: false, message: "Email could not be sent" });
 }
 

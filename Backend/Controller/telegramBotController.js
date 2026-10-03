@@ -43,7 +43,6 @@ onlineCount : {$sum : {$cond : [{$eq : ["$paymentMethod", "online"]},1,0]}}
 
        await ctx.reply(reportMessage, { parse_mode: "Markdown" });
      } catch (error) {
-         console.error("❌ Aggregation Error:", error.message);
     ctx.reply("❌ An error has occurred during database aggregation.");
      }
 }
@@ -56,7 +55,7 @@ onlineCount : {$sum : {$cond : [{$eq : ["$paymentMethod", "online"]},1,0]}}
 export const sendOrderAlert = async (bot, orderData) => {
     try {
         const adminChatId = process.env.ADMIN_TELEGRAM_CHAT_ID;
-        if (!adminChatId) return console.log("⚠️ Admin Chat ID missing in .env");
+        if (!adminChatId) return 
 
         
         let itemsList = "";
@@ -90,7 +89,6 @@ ${itemsList}
 
         
         await bot.telegram.sendMessage(adminChatId, message, { parse_mode: 'Markdown' });
-        console.log(`📨 Compact Telegram alert sent for Order ID: ${orderData._id}`);
     } catch (error) {
         console.error("❌ Error sending telegram alert:", error.message);
     }
@@ -99,34 +97,42 @@ ${itemsList}
 
 
 
-export const sendLowStockAlert = async (bot, productData) => {
+
+
+export const sendLowStockAlert = async (bot, lowStockArray) => {
     try {
         const adminChatId = process.env.ADMIN_TELEGRAM_CHAT_ID;
-        if (!adminChatId) return;
+        if (!adminChatId || !lowStockArray || lowStockArray.length === 0) return;
 
        
-        const product = Array.isArray(productData) ? productData[0] : productData;
+        let productList = "";
+        
+        lowStockArray.forEach((productData, index) => {
+            
+            const product = Array.isArray(productData) ? productData[0] : productData;
+            
+            if (product && product.name) {
+                const shortName = product.name.length > 30 
+                    ? product.name.substring(0, 30) + "..." 
+                    : product.name;
+                
+                productList += `• *${shortName}*\n  (ID: \`${product._id}\`) → 🔥 *${product.stock} left*\n\n`;
+            }
+        });
 
-        if (!product || !product.name) {
-            return console.log("⚠️ sendLowStockAlert: Product data or name is missing!");
-        }
-
-        const shortName = product.name.length > 35 
-            ? product.name.substring(0, 35) + "..." 
-            : product.name;
-
+        // 2. पूरा एक ही कंबाइन मैसेज लेआउट
         const message = `⚠️ *LOW STOCK WARNING!*\n` +
                         `----------------------------------\n` +
-                        `📦 *Product:* ${shortName}\n` +
-                        `🆔 *ID:* \`${product._id}\`\n` +
-                        `📉 *Current Stock:* 🔥 *${product.stock} left*\n` +
+                        `The stock of the following products is running low:\n\n` +
+                        `${productList}` +
                         `----------------------------------\n` +
-                        `🛒 _Please restock this item from your Admin Panel._`;
+                        `🛒 _Please restock these items from your Admin Panel._`;
 
         await bot.telegram.sendMessage(adminChatId, message, { parse_mode: 'Markdown' });
-        console.log(`⚠️ Telegram low stock alert sent for: ${product.name}`);
+        
     } catch (error) {
-        console.error("❌ Error sending low stock alert:", error.message);
+        console.error("❌ Error sending bulk low stock alert:", error.message);
     }
 };
+
 

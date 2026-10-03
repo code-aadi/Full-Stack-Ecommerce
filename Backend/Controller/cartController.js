@@ -11,47 +11,6 @@ export async function addToCart(req,res){
 if (!quantity || qty < 1 || isNaN(qty)) {
    return res.status(400).json({ success : false, message : "Invalid Quantity" });
 }
-/*
- try {
-     const productExist = await Product.findById(productId)
-  if(!productExist){
-    return res.status(404).json({
-        success : false,
-        message : "Requested product does not exist"
-    })
-  }
-  let userCart = await Cart.findOne({user : userId})
-  if(!userCart){
-    const newUserCart = await Cart.create({user : userId,
-         items:[{product : productId, quantity : quantity}]
-        })
-        return res.status(200).json({
-    success : true,
-    message : "Product added successfully",
-    cart : newUserCart
-})
-  }
-  
-  const itemIndex = userCart.items.findIndex(item => item.product.toString() === productId.toString())
-  if(itemIndex !== -1){
-    userCart.items[itemIndex].quantity += quantity
-  }
-  else{
- userCart.items.push({product : productId, quantity : quantity})
-  }
-   userCart = await userCart.save()
-console.log(userCart)
-res.status(200).json({
-    success : true,
-    message : "Cart updated successfully",
-    cart : userCart
-})
- } catch (error) {
-  return res.status(500).json({
-    success: false,
-    message: "Internal server error"
-})
- }*/
 
 try {
   const productExist = await Product.findById(productId)
@@ -78,7 +37,6 @@ try {
 })
   
 } catch (error) {
-  console.log(error)
   return res.status(500).json({
     success: false,
     message: "Internal server error",

@@ -2,9 +2,9 @@ import cron from "node-cron";
 import Order from "../Model/Orders.js";
 import Product from "../Model/productModel.js";
 
-// हर 5 मिनट में यह टास्क अपने आप रन होगा
+
 cron.schedule("*/5 * * * *", async () => {
-    console.log("⏰ Running Cron: Checking for expired pending orders...");
+    
     
     try {
         const currentTime = new Date();
