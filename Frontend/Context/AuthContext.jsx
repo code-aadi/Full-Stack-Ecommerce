@@ -12,6 +12,7 @@ const [loginLoading, setLoginLoading] = useState(false);
 const [accessToken , setAccessToken] = useState(null)
 const [registerLoading, setRegisterLoading] = useState(false);
 const [logoutLoading, setLogoutLoading] = useState(false)
+const [otpLoading, setOtpLoading] = useState(false)
 // --------------------register ------------------------------------
 async function userRegister(userData) {
 
@@ -20,18 +21,15 @@ async function userRegister(userData) {
 const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/register`,{
   method : "POST",
   headers : {"Content-Type" : "application/json"},
-  credentials : "include",
   body : JSON.stringify(userData)
 })
 const data = await response.json()
 if(data.success){
-  setUser(data.user)
-  setAccessToken(data.accessToken)
+  sessionStorage.setItem("verifyEmail",userData.email)
 }
 
 return data
 } catch (error) {
-  setUser(null)
   return { success: false, message: "Network error. Please try again." };
 }finally{
   setRegisterLoading(false)
@@ -67,6 +65,8 @@ try {
   setLoginLoading(false)
 }
 }
+
+
 
 useEffect(() => {
   async function initilizeAuth() {
@@ -145,8 +145,54 @@ async function logout() {
 }
 
 
+// ------------------- Email Verification -------------------------
+
+async function verifyOtp(otp, email) {
+  setOtpLoading(true)
+try {
+       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/verify-otp`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ 
+                email: email, 
+                otp: otp     
+            })
+          }
+          )
+          const data = await response.json()
+          if(data.success){
+            setAccessToken(data.accessToken)
+            setUser(data.user)
+          }
+          return data
+        }
+ catch (error) {
+  return {success : false, message : "Something went wrong. Please check your internet"}
+}finally{
+  setOtpLoading(false)
+}
+}
+
+
+//--------------- resend otp ----------------
+
+async function resendOtp(email) {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/resend-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+    const data = await response.json()
+  return data
+  } catch (error) {
+    return {success : false, message : "Something went wrong"}
+  }
+}
+
 return(
-    <AuthContext.Provider value={{userRegister, user, loginLoading, registerLoading, userLogin, logout, userLoading, accessToken, setAccessToken, logoutLoading}} >
+    <AuthContext.Provider value={{userRegister, resendOtp, verifyOtp, otpLoading, user, loginLoading, registerLoading, userLogin, logout, userLoading, accessToken, setAccessToken, logoutLoading}} >
         {children}
     </AuthContext.Provider>
 )

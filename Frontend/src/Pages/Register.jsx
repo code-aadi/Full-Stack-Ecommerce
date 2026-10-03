@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { AuthContext } from '../../Context/AuthContext';
 import { useAlert } from '../../Context/AlertContext';
+import { ThreeDotsLoader } from '../components/ThreeDots';
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate()
@@ -37,7 +38,8 @@ const Register = () => {
 const result = await userRegister(formData)
 if(result.success){
  showAlert(result.message, "success")
-//navigate("/login")
+
+navigate("/email-verification")
 }
 else{
   setError(result.message)
@@ -253,8 +255,8 @@ else{
             </div>
        {error && <p className='register-error'>{error}</p> } 
             <button type="submit" className="auth-btn" disabled = {registerLoading}>
-              <span>Create Account</span>
-              <ArrowRight size={18} />
+              <span>{registerLoading ? <ThreeDotsLoader /> : "Create Account"}</span>
+             {!registerLoading &&  <ArrowRight size={18} />}
             </button>
           </form>
 

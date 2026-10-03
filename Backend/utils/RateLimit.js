@@ -40,7 +40,7 @@ export const productLimiter = rateLimit({
 
 export const forgotPasswordLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 mins
-    limit: 3, // Forgot password/OTP sirf 3 baar allowed hai 15 mins me
+    limit: 3, 
     message: { success: false, status: 429, message: "Too many OTP requests. Please try again after 15 mins." },
     standardHeaders: true, legacyHeaders: false,
 });
@@ -51,4 +51,18 @@ export const paymentLimiter = rateLimit({
     limit: 3, 
     message: { success: false, status: 429, message: "Payment request limited. Please wait a moment." },
     standardHeaders: true, legacyHeaders: false,
+});
+
+
+
+
+export const otpLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 5, 
+    message: {
+        success: false,
+        message: "Too many OTP requests. Please wait for 15 minutes."
+    },
+    standardHeaders: true, 
+    legacyHeaders: false, 
 });

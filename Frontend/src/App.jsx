@@ -33,6 +33,7 @@ import UserOrders from './Pages/Orders';
 import UserOrderDetail from './Pages/userOrderDetails';
 import ForgotPassword from './Pages/ForgotPassword';
 import ResetPassword from './Pages/ResetPassword';
+import OtpPage from './Pages/OtpPage';
 
 
 const router = createBrowserRouter([
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
   {path : "/forgot-password", element : <PublicRoute><ForgotPassword /></PublicRoute> },
   {path : "/reset-password/:token", element : <PublicRoute><ResetPassword /></PublicRoute> },
   {path : "/login", element : <PublicRoute><Login /></PublicRoute>},
+  {path : "/email-verification", element : <PublicRoute><OtpPage /></PublicRoute>},
   {path : '/userAddress', element : <CartProtectedRoute><AddressPage /></CartProtectedRoute> },
   {path : '/payment', element : <CartProtectedRoute><PaymentPage /></CartProtectedRoute> },
   {path : '/order-success/:orderId', element : <SuccessProtection><OrderSuccess /></SuccessProtection> },

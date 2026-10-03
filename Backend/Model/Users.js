@@ -47,7 +47,10 @@ const userSchema = new mongoose.Schema({
         type : String
     },
   },
-  isSuperAdmin: { type: Boolean, default: false } 
+  isSuperAdmin: { type: Boolean, default: false } ,
+  otp : {type : String},
+   isVerified: { type: Boolean, default: false },
+    otpExpiry: { type: Date } 
 }, {timestamps : true})
 
 export const User = mongoose.model("User", userSchema)
