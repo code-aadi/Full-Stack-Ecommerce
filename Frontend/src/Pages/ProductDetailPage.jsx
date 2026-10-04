@@ -4,6 +4,7 @@ import { ShoppingCart, Heart, Star, ExternalLink, ShieldCheck, Truck, RotateCcw,
 import { cartContext } from '../../Context/CartContext';
 import { useAlert } from '../../Context/AlertContext';
 import EmptyState from '../components/EmptyState';
+import { ThreeDotsLoader } from '../components/ThreeDots';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -15,15 +16,16 @@ const ProductDetailPage = () => {
   const [error, setError] = useState(null);
 
 
-  const { cartItems, addToCart, quantityDecrease, quantityIncrease, removeFromCart } = useContext(cartContext);
+  const { addToCartLoading, cartItems, addToCart, quantityDecrease, quantityIncrease, removeFromCart } = useContext(cartContext);
 
-  
   const [isWishlisted, setIsWishlisted] = useState(false);
 const {showAlert} = useAlert()
   const cartItem = cartItems?.find((cItem) => cItem.product._id === product?._id || cItem.product.id === product?._id);
   const isInCart = Boolean(cartItem);
   const currentQuantity = cartItem ? cartItem.quantity : 1;
+const isProcessing =  addToCartLoading === product?._id;
 
+  
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
@@ -444,23 +446,23 @@ async function handleQuantityDecrease(id, currentQuantity,) {
                     {isInCart ? (
                       /* Jab Cart me hai -> Counter dikhega */
                       <div className="quantity-selector">
-                        <button className="qty-btn" onClick={()=> handleQuantityDecrease(product._id, currentQuantity)}>
+                        <button className="qty-btn" onClick={()=> handleQuantityDecrease(product._id, currentQuantity)} disabled = {currentQuantity >= product.stock || isProcessing }>
                           <Minus size={16} />
                         </button>
                         <span className="qty-value">{currentQuantity}</span>
                         <button
                           className="qty-btn"
                           onClick={()=> handleQuantityIncrease(product._id, currentQuantity)}
-                          disabled={currentQuantity >= product.stock}
+                          disabled={currentQuantity >= product.stock || isProcessing}
                         >
                           <Plus size={16} />
                         </button>
                       </div>
                     ) : (
                       /* Jab Cart me nahi hai -> Add To Cart Button dikhega */
-                      <button className="btn-add-to-cart" onClick={handleAddToCart}>
+                      <button className="btn-add-to-cart" onClick={handleAddToCart} disabled = {isProcessing}>
                         <ShoppingCart size={20} />
-                        <span>Add to Cart</span>
+                        <span>{addToCartLoading === product._id ? <ThreeDotsLoader /> : "Add To Cart"}</span>
                       </button>
                     )}
 

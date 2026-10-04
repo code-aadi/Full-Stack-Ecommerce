@@ -5,6 +5,7 @@ import Pagination from "../../components/Pagination";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
 import { useAlert } from "../../../Context/AlertContext";
+import Loader from "../../components/Loader";
 
 
 
@@ -18,6 +19,7 @@ const Users = () => {
   const page = searhParams.get("page") || 1
   const limit = searhParams.get("limit") || 10
 const [totalPages, setTotalPages] = useState(0)
+const [loading, setLoading] = useState(true)
 const debounceValue = useDebounce(searchTerm, 300)
 const {accessToken, setAccessToken} = useContext(AuthContext)
   useEffect(()=>{
@@ -27,6 +29,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
   url.searchParams.set("roleFilter", roleFilter)
   url.searchParams.set("page", page)
   url.searchParams.set("limit", limit)
+  setLoading(true)
   try {
     const response = await fetchApi(url,{
       method : "GET",
@@ -39,6 +42,8 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
    setTotalPages(data.totalPages)
   } catch (error) {
    showAlert("Something went wrong", "error")
+  }finally{
+    setLoading(false)
   }
  }
  fetchUsers()
@@ -327,6 +332,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
                 className="filter-select"
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
+                disabled = {loading}
               >
                 <option value="All">Role ▼</option>
                 <option value="User">User</option>
@@ -335,7 +341,8 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
             </div>
 
             <div className="table-card">
-  <div className="table-scroll">
+{loading ? <Loader text="Loading Users"/> : (
+    <div className="table-scroll">
     <table className="custom-table" style={{ minWidth: "700px" }}>
       <thead>
         <tr>
@@ -348,7 +355,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
         </tr>
       </thead>
       <tbody>
-        {/* Condition check: Agar koi user nahi hai toh message dikhao */}
+       
         {!users || users.length === 0 ? (
           <tr>
             <td 
@@ -399,10 +406,11 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
       </tbody>
     </table>
   </div>
+)}
 </div>
 
 
-        {users.length !== 0 &&  <Pagination totalPages={totalPages} limit={limit} page={page}/>}
+        {!loading && users.length !== 0 &&  <Pagination totalPages={totalPages} limit={limit} page={page}/>}
           </>
         
       </div>

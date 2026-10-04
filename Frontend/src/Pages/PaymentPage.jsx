@@ -137,8 +137,9 @@ try {
   },setAccessToken);
 
   const data = await verifyResponse.json();
-   if (!verifyResponse.ok || verifyData.success === false) {
-              showAlert(verifyData.message || "Payment verification failed!", "error");
+
+   if (!verifyResponse.ok || data.success === false) {
+              showAlert(data.message || "Payment verification failed!", "error");
               return;
             }
 if(data.success){

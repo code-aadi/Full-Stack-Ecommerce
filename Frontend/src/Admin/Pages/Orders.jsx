@@ -6,12 +6,14 @@ import useDebounce from "../../../Hooks/useDebounce";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
 import { useAlert } from "../../../Context/AlertContext";
+import Loader from "../../components/Loader";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [paymentFilter, setPaymentFilter] = useState("All");
+  const [loading, setLoading] = useState(true)
 const [searchParam] = useSearchParams()
     const [totalPages, setTotalPages] = useState(10);
     const page = searchParam.get("page") || 1;
@@ -46,6 +48,7 @@ useEffect(()=>{
    url.searchParams.set("orderStatus" , statusFilter)
    url.searchParams.set("paymentStatus" , paymentFilter)
    url.searchParams.set("dateFilter" , dateFilter)
+   setLoading(true)
     try {
       const response = await fetchApi(url,{
         method : "GET",
@@ -59,6 +62,8 @@ useEffect(()=>{
      
     } catch (error) {
       showAlert("Something went wrong", "error")
+    }finally{
+      setLoading(false)
     }
   }
 fetchOrders()
@@ -252,6 +257,7 @@ fetchOrders()
             className="filter-select"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
+            disabled = {loading}
           >
             <option value="All">Status ▼</option>
             <option value="Pending">Pending</option>
@@ -262,6 +268,7 @@ fetchOrders()
             className="filter-select"
             value={paymentFilter}
             onChange={(e) => setPaymentFilter(e.target.value)}
+            disabled = {loading}
           >
             <option value="All">Payment ▼</option>
             <option value="Paid">Paid</option>
@@ -271,6 +278,7 @@ fetchOrders()
           <select className="filter-select"
           value={dateFilter}
           onChange={(e)=> setDateFilter(e.target.value)}
+          disabled = {loading}
           >
             <option value="All">Date ▼</option>
             <option value="latest">Latest</option>
@@ -279,7 +287,8 @@ fetchOrders()
         </div>
 
       <div className="table-card">
-  <div className="table-scroll">
+{loading ? <Loader text="Loading Orders"/> : (
+    <div className="table-scroll">
     <table className="orders-table" style={{ minWidth: "700px" }}>
       <thead>
         <tr>
@@ -349,11 +358,12 @@ fetchOrders()
       </tbody>
     </table>
   </div>
+)}
 </div>
 
 
         
-      {orders.length !== 0 && <Pagination page={page} totalPages={totalPages} limit={limit} />}
+      {!loading && orders.length !== 0 && <Pagination page={page} totalPages={totalPages} limit={limit} />}
       </div>
     </>
   );

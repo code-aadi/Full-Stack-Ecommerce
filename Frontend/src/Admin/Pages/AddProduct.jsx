@@ -130,8 +130,21 @@ const [categories, setCategories] = useState([])
       type: 'add',
       message: responseData.message
     });
+    setFormData({
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+    subcategory: "",
+    url: "",
+    stock: 50,
+    rating: 0,
+    totalRatings: 0,
+  });
+  setImageFile(null);
+    setImagePreview(null);
       }
-    navigate("/admin/products");
+    
         
 
 
@@ -367,6 +380,17 @@ const [categories, setCategories] = useState([])
           background-color: #2563eb;
         }
 
+
+  .addProduct-form-disable{
+  background-color: #f3f4f6;
+opacity : 0.65;
+  border-color: #d1d5db;
+  color: #9ca3af;
+  border: 1px solid #999999;
+  cursor: not-allowed; 
+   pointer-events: none;
+    transition: all 0.2s ease-in-out;
+  }
         @media (max-width: 640px) {
           .form-grid {
             grid-template-columns: 1fr;
@@ -387,7 +411,7 @@ const [categories, setCategories] = useState([])
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="form-card">
+        <form onSubmit={handleSubmit} className="form-card" >
           <div className="form-grid">
             {/* Product Name */}
             <div className="input-group full-width">
@@ -397,9 +421,10 @@ const [categories, setCategories] = useState([])
               <input
                 type="text"
                 name="name"
-                
+                required
+                disabled = {loading}
                 placeholder="e.g. Wireless Noise Cancelling Headphones"
-                className="input-field"
+                className={`input-field ${loading ? "addProduct-form-disable" : ""}`}
                 value={formData.name}
                 onChange={handleChange}
               />
@@ -414,8 +439,9 @@ const [categories, setCategories] = useState([])
               <textarea
                 name="description"
                 required
+                disabled = {loading}
                 placeholder="Write detailed product features, specs..."
-                className="textarea-field"
+                className={`textarea-field ${loading ? "addProduct-form-disable" : ""}`}
                 value={formData.description}
                 onChange={handleChange}
               />
@@ -430,7 +456,8 @@ const [categories, setCategories] = useState([])
               <select
                 name="category"
                 required
-                className="select-field"
+                disabled = {loading}
+                className={`select-field ${loading ? "addProduct-form-disable" : ""}`}
                 value={formData.category}
                 onChange={handleChange}
               >
@@ -451,7 +478,8 @@ const [categories, setCategories] = useState([])
                 type="text"
                 name="subcategory"
                 placeholder="e.g. Audio, Men Casuals"
-                className="input-field"
+                className={`input-field ${loading ? "addProduct-form-disable" : ""}`}
+                disabled = {loading}
                 value={formData.subcategory}
                 onChange={handleChange}
               />
@@ -468,8 +496,9 @@ const [categories, setCategories] = useState([])
                 name="price"
                 min="0"
                 required
+                disabled = {loading}
                 placeholder="999"
-                className="input-field"
+                className={`input-field ${loading ? "addProduct-form-disable" : ""}`}
                 value={formData.price}
                 onChange={handleChange}
               />
@@ -483,8 +512,9 @@ const [categories, setCategories] = useState([])
                 type="number"
                 name="stock"
                 min="0"
+                disabled = {loading}
                 placeholder="50"
-                className="input-field"
+                className={`input-field ${loading ? "addProduct-form-disable" : ""}`}
                 value={formData.stock}
                 onChange={handleChange}
               />
@@ -507,7 +537,8 @@ const [categories, setCategories] = useState([])
                   <input
                     type="file"
                     accept="image/*"
-                    className="hidden-file-input"
+                    className={`hidden-file-input ${loading ? "addProduct-form-disable" : ""}`}
+                    disabled = {loading}
                     onChange={handleImageChange}
                   />
                 </label>
@@ -516,8 +547,9 @@ const [categories, setCategories] = useState([])
                   <img src={imagePreview} alt="Selected preview" className="preview-image" />
                   <button
                     type="button"
-                    className="remove-image-btn"
+                    className={`remove-image-btn ${loading ? "addProduct-form-disable" : ""}`}
                     onClick={handleRemoveImage}
+                    disabled = {loading}
                     title="Remove Image"
                   >
                     ✕
@@ -534,8 +566,9 @@ const [categories, setCategories] = useState([])
                 type="url"
                 name="url"
                 placeholder="https://amazon.in/dp/example or Flipkart link"
-                className="input-field"
+                className={`input-field ${loading ? "addProduct-form-disable" : ""}`}
                 value={formData.url}
+                disabled = {loading}
                 onChange={handleChange}
               />
               <span className="helper-text">Add link if item redirects externally.</span>
@@ -551,7 +584,8 @@ const [categories, setCategories] = useState([])
                 max="5"
                 step="0.1"
                 placeholder="0"
-                className="input-field"
+                className={`input-field ${loading ? "addProduct-form-disable" : ""}`}
+                disabled = {loading}
                 value={formData.rating}
                 onChange={handleChange}
               />
@@ -565,8 +599,9 @@ const [categories, setCategories] = useState([])
                 type="number"
                 name="totalRatings"
                 min="0"
+                disabled = {loading}
                 placeholder="0"
-                className="input-field"
+                className={`input-field ${loading ? "addProduct-form-disable" : ""}`}
                 value={formData.totalRatings}
                 onChange={handleChange}
               />

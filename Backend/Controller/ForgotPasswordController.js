@@ -14,6 +14,7 @@ export const forgotPassword = async (req,res)=>{
     }
     try {
       const userExist = await User.findOne({email : email})
+      console.log(userExist)
        if (!userExist) {
             return res.status(200).json({
                 success: true,
@@ -41,13 +42,14 @@ try {
         subject: 'Password Reset Request',
         html: message
     });
-
+console.log("email send")
     return res.status(200).json({
         success: true,
         message: "If this email is registered with us, a password reset link has been sent."
     });
     
 } catch (error) {
+    console.log(error)
     return res.status(500).json({ success: false, message: "Email could not be sent" });
 }
 
@@ -117,10 +119,12 @@ export const verifyToken =  async (req, res) => {
         const tokenDoc = await Token.findOne({ token: hashedToken });
         
         if (!tokenDoc) {
-            return res.status(400).json({ isValid: false, message: "टोकन इनवैलिड या एक्सपायर हो चुका है।" });
+            return res.status(400).json({ isValid: false, message: "Token is invalid or expired" });
         }
         return res.status(200).json({ isValid: true });
     } catch (error) {
         return res.status(500).json({ isValid: false });
     }
 }
+
+

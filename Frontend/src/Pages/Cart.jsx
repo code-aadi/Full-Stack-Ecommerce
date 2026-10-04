@@ -10,7 +10,6 @@ export default function Cart() {
   const { cartItems, quantityIncrease, quantityDecrease, removeFromCart, clearCart, cartLoading } = useContext(cartContext);
   const navigate = useNavigate();
   const { showAlert } = useAlert();
-  const [loading, setLoading] = useState(false);
 
   const subTotal = cartItems.reduce((acc, cart) => acc + cart.quantity * cart.product.price, 0);
   const tax = (subTotal * 18) / 100;
@@ -23,7 +22,7 @@ export default function Cart() {
  return <div style={{height : "60vh", display : "flex", justifyContent : "center"}}><Loader text='Loading Your Cart'/></div>
  }
 
-  if (cartItems.length === 0) {
+  if (cartItems.length === 0 && cartLoading === false) {
     return <EmptyState type="cart" buttonLink="/" />;
   }
 
@@ -36,14 +35,15 @@ export default function Cart() {
 
   async function handleQuantityIncrease(id, currentQuantity) {
     const result = await quantityIncrease(id, currentQuantity);
-    if (!result.success) {
+    if (result && !result.success) {
       showAlert(result.message, 'error');
     }
   }
 
   async function handleQuantityDecrease(id, currentQuantity) {
+    console.log("handle chala")
     const result = await quantityDecrease(id, currentQuantity);
-    if (!result.success) {
+    if (result && !result.success) {
       showAlert(result.message, 'error');
     }
   }

@@ -4,6 +4,7 @@ import getStatusBadge from "../Components/StatusBadge";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
 import { useAlert } from "../../../Context/AlertContext";
+import Loader from "../../components/Loader";
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -21,9 +22,11 @@ const {showAlert} = useAlert()
 const [recentOrders, setRecentOrders] = useState([])
 const [lowStockProducts, setLowStockProducts] = useState([])
 const {accessToken, setAccessToken} = useContext(AuthContext)
+const [loading, setLoading] = useState(true)
 useEffect(()=>{
   async function getDashboardData() {
     try {
+      setLoading(true)
       const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/admin/dashboard`,{
         method : "GET",
     headers : {
@@ -51,11 +54,12 @@ setLowStockProducts(data?.lowStockProducts)
   }
     } catch (error) {
       showAlert("Something went wrong. Please check your internet", "error")
+    }finally{
+      setLoading(false)
     }
   }
   getDashboardData()
 },[])
-
 
   return (
     <>
@@ -292,9 +296,11 @@ setLowStockProducts(data?.lowStockProducts)
         </div>
 
         <div className="dashboard-tables-grid">
-         <div className="table-section">
+       
+  <div className="table-section">
   <h3 className="section-title">Recent Orders</h3>
-  <div className="table-card">
+  {loading ? <Loader text="Loading Recent Orders"/> : (
+    <div className="table-card">
     <div className="table-scroll">
       <table className="dash-table" style={{ minWidth: "480px" }}>
         <thead>
@@ -367,12 +373,13 @@ setLowStockProducts(data?.lowStockProducts)
       </table>
     </div>
   </div>
+  )}
 </div>
-
 
          <div className="table-section">
   <h3 className="section-title">Low Stock Products</h3>
-  <div className="table-card">
+  {loading ? <Loader text="Loading Low Stock Products"/> : (
+    <div className="table-card">
     <div className="table-scroll">
       <table className="dash-table" style={{ minWidth: "320px" }}>
         <thead>
@@ -431,6 +438,7 @@ setLowStockProducts(data?.lowStockProducts)
       </table>
     </div>
   </div>
+  )}
 </div>
 
         </div>

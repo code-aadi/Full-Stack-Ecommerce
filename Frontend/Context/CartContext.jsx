@@ -49,7 +49,24 @@ async function addToCart(productId){
     }
     }
     else{
-        setCartRefresh(prev => prev + 1)
+     
+       setCartItems((prev)=>{
+            const productExistInCart = prev.find(cart => cart.product._id === productId)
+            if(productExistInCart){
+              return prev.map(item => 
+            item.product?._id === productId 
+                ? { ...item, quantity: item.quantity + 1 } 
+                : item
+        );
+            }
+            return [
+        ...prev, 
+        { 
+            product: { _id: productId }, 
+            quantity: 1 
+        }
+    ];
+        })
         setLocalCart((prev)=>{
     const ProductExistInCart = prev.find(cart => cart._id === productId)
     if(ProductExistInCart){
@@ -87,15 +104,25 @@ setCartItems(data.cart.items)
    
  }finally{
     setCartLoading(false)
-    setAddToCartLoading(false)
+    setAddToCartLoading(null)
  }
-} else{
-      
+} 
 
+    }
+    getCart()
+},[accessToken, cartRefresh, user])
+
+
+useEffect(()=>{
+async function getCartsOfNonUser() {
+       
+if(user) return
+setCartLoading(true)
     const ids = localCart?.map((cart) => cart._id)
 
    if(!ids|| ids.length === 0){
   setCartItems([])
+  setCartLoading(false)
     return
    }
  try {
@@ -116,20 +143,18 @@ setCartItems(data.cart.items)
     setCartItems(formatedData)
  } catch (error) {
  }finally{
-    setCartLoading(null)
+    setCartLoading(false)
  }
 }
-
-
-    }
-    getCart()
-},[accessToken, cartRefresh, user])
-
+getCartsOfNonUser()
+},[user, accessToken])
 
 
 
 async function quantityIncrease(productId, currentQuantity){
+ 
 if(user){
+   
     const newQuantity = currentQuantity + 1
     setAddToCartLoading(productId)
  setCartItems(prevItems =>
@@ -159,7 +184,12 @@ if(!response.ok){
     setAddToCartLoading(null)
 }
 } else{
-    setCartRefresh(prev => prev + 1)
+       
+setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.product._id === productId ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
     setLocalCart((prev) =>{
           return prev.map(item => item._id === productId ? {...item, quantity : item.quantity + 1} : item)
     })
@@ -208,7 +238,23 @@ const data = await response.json()
     setAddToCartLoading(null)
 }
 }else{
-    setCartRefresh(prev => prev + 1)
+    const currentItem = cartItems.find(item => item.product._id === productId)
+
+if(!currentItem) return
+    
+
+if(currentItem.quantity === 1){
+          setCartItems(prevItems => prevItems.filter(item => item.product._id !== productId));
+await removeFromCart(productId)
+return
+}
+ const newQuantity = currentQuantity - 1
+ setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.product._id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+   
      setLocalCart((prev)=>{
     const product = prev.find(item => item._id === productId)
     if(product?.quantity > 1){
@@ -271,13 +317,13 @@ if(user){
         setAddToCartLoading(null)
     }
 } else{
-            setCartRefresh(prev => prev + 1)
+           
            
     setLocalCart((prev)=>{
         return prev.filter(item => item._id !== productId)
     })
     setCartItems((prev)=>{
-        return prev.filter(item => item._id !== productId)
+        return prev.filter(item => item.product._id !== productId)
     })
     
 }
@@ -308,7 +354,7 @@ useEffect(()=>{
    }
     }
     localCartToDb()
-},[user])
+},[user, accessToken])
 
 // local storage
 
