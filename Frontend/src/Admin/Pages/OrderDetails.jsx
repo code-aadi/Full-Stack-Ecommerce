@@ -84,7 +84,7 @@ getOrderDetails()
   };
 
 
-  if (loading) return <div className="loading"><Loader text="Loading user order" /></div>;
+  if (loading) return <div style={{height: "80vh", display : "flex", justifyContent : "center"}}><Loader text="Loading User Order" /></div>;
   if (!order) {
   return (
     <div 

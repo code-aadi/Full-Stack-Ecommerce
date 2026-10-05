@@ -5,6 +5,7 @@ import { cartContext } from '../../Context/CartContext';
 import { useAlert } from '../../Context/AlertContext';
 import { Link } from 'react-router-dom';
 import { ThreeDotsLoader } from './ThreeDots';
+import TrendingProductsSkeleton from './Skeletons/TrendingProductsSkeleton';
 
 
 const FeaturedProducts = () => {
@@ -46,7 +47,7 @@ useEffect(()=>{
         <a href="/category/Electronics" className="home-link-btn">View All →</a>
       </div>
 
-      {loading ? (<Loader text='loading Trending Products'/>) : (
+      {loading ? <TrendingProductsSkeleton count={5}/> : (
         <div className="home-products-grid">
         {products.map((product) => (
           <div key={product._id} className="home-product-card">

@@ -208,8 +208,12 @@ const navigate = useNavigate()
 
         <div className="sidebar-bottom">
           <NavLink
-            to="/admin/settings"
-            onClick={closeMobileMenu}
+            to="/admin/dashboard"
+            onClick={()=>{
+              closeMobileMenu()
+              showAlert("Work on the Admin Panel Setting is in progress", "error")
+            }
+            }
             className={({ isActive }) =>
               isActive ? 'nav-item active' : 'nav-item'
             }

@@ -7,7 +7,8 @@ import EditProductModal from "../Components/EditProductModel";
 import Toast from "../../components/Toast";
 import { AuthContext } from "../../../Context/AuthContext";
 import { useAlert } from "../../../Context/AlertContext";
-import Loader from "../../components/Loader";
+
+import ProductTableSkeleton from "../../components/Skeletons/ProductTableSkeleton";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -440,6 +441,7 @@ useEffect(()=>{
             className="category-select"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
+            disabled = {productLoading}
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>
@@ -449,7 +451,7 @@ useEffect(()=>{
           </select>
         </div>
 
-   {productLoading ? <Loader text="Loading Products"/> : (
+   {productLoading ? <ProductTableSkeleton rows={40} /> : (
          <div className="table-card">
   <div className="table-scroll">
     <table className="product-table" style={{ minWidth: "650px" }}>

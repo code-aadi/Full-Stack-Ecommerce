@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import "../styles/PromoBanner.css"
+import PromoBannersSkeleton from './Skeletons/PromoBannersSkeleton';
+import { AuthContext } from '../../Context/AuthContext';
 
 // Hardcoded promotional banners data
 const PROMO_DATA = [
@@ -28,7 +30,10 @@ const PROMO_DATA = [
 ];
 
 export default function PromoBanner() {
-
+const {userLoading} = useContext(AuthContext)
+if(userLoading){
+  return <PromoBannersSkeleton />
+}
   return (
     <>
     <section className="promo-section" aria-label="Promotional Banners">

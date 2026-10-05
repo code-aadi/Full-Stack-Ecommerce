@@ -6,7 +6,7 @@ import useDebounce from "../../../Hooks/useDebounce";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
 import { useAlert } from "../../../Context/AlertContext";
-import Loader from "../../components/Loader";
+import OrdersTableSkeleton from "../../components/Skeletons/OrderTableSkeleton";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -287,7 +287,7 @@ fetchOrders()
         </div>
 
       <div className="table-card">
-{loading ? <Loader text="Loading Orders"/> : (
+{loading ? <OrdersTableSkeleton rows={8} /> : (
     <div className="table-scroll">
     <table className="orders-table" style={{ minWidth: "700px" }}>
       <thead>

@@ -93,14 +93,18 @@ showAlert(result.message, "success")
 
       <div className="user-dropdown-box">
         <span className='dropdown-cross'><X onClick={()=> setDropdownOpen(false)} /> </span>
-        <Link 
-          to="/profile" 
+        <div 
           className="user-dropdown-item drop-profile"
+          onClick={()=> {
+            showAlert("Work on the user profile page is in progress", "error")
+            setDropdownOpen(false)
+          }}
+        
           
         >
           <User size={16} />
           <span>My Profile</span>
-        </Link>
+        </div>
 
         <Link 
           to="/orders" 

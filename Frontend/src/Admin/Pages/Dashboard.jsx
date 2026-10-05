@@ -4,7 +4,9 @@ import getStatusBadge from "../Components/StatusBadge";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
 import { useAlert } from "../../../Context/AlertContext";
-import Loader from "../../components/Loader";
+
+import RecentOrdersSkeleton from "../../components/Skeletons/RecentOrderSkeleton";
+import LowStockSkeleton from "../../components/Skeletons/LowStockSkeleton";
 
 const Dashboard = () => {
   const navigate = useNavigate()
@@ -299,7 +301,7 @@ setLowStockProducts(data?.lowStockProducts)
        
   <div className="table-section">
   <h3 className="section-title">Recent Orders</h3>
-  {loading ? <Loader text="Loading Recent Orders"/> : (
+  {loading ? <RecentOrdersSkeleton />: (
     <div className="table-card">
     <div className="table-scroll">
       <table className="dash-table" style={{ minWidth: "480px" }}>
@@ -378,7 +380,7 @@ setLowStockProducts(data?.lowStockProducts)
 
          <div className="table-section">
   <h3 className="section-title">Low Stock Products</h3>
-  {loading ? <Loader text="Loading Low Stock Products"/> : (
+  {loading ? <LowStockSkeleton /> : (
     <div className="table-card">
     <div className="table-scroll">
       <table className="dash-table" style={{ minWidth: "320px" }}>

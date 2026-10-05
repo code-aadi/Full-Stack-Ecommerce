@@ -4,7 +4,7 @@ import { cartContext } from '../../Context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { useAlert } from '../../Context/AlertContext';
 import EmptyState from '../components/EmptyState';
-import Loader from '../components/Loader';
+import CartPageSkeleton from '../components/Skeletons/CartPageSkeleton';
 
 export default function Cart() {
   const { cartItems, quantityIncrease, quantityDecrease, removeFromCart, clearCart, cartLoading } = useContext(cartContext);
@@ -19,7 +19,7 @@ export default function Cart() {
     value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
  if(cartLoading){
- return <div style={{height : "60vh", display : "flex", justifyContent : "center"}}><Loader text='Loading Your Cart'/></div>
+ return <CartPageSkeleton />
  }
 
   if (cartItems.length === 0 && cartLoading === false) {

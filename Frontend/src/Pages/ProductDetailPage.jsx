@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ShoppingCart, Heart, Star, ExternalLink, ShieldCheck, Truck, RotateCcw, Minus, Plus } from 'lucide-react';
+import { ShoppingCart, Heart, Star, ExternalLink, ShieldCheck, Truck, RotateCcw, Minus, Plus, Container } from 'lucide-react';
 import { cartContext } from '../../Context/CartContext';
 import { useAlert } from '../../Context/AlertContext';
 import EmptyState from '../components/EmptyState';
 import { ThreeDotsLoader } from '../components/ThreeDots';
+import ProductDetailSkeleton from '../components/Skeletons/ProductDetailSkeleton';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -39,12 +40,19 @@ const isProcessing =  addToCartLoading === product?._id;
       } catch (err) {
         setError('Product load nahi ho paya. Kripya dobara try karein.');
       } finally {
-        setLoading(false);
+       setLoading(false);
       }
     };
 
     if (id) fetchProductDetails();
   }, [id]);
+
+
+
+
+  if(loading){
+  return <div className='pdp-container'><ProductDetailSkeleton /></div>
+}
 
 if(!product || error){
   return <EmptyState type='product'/>
@@ -73,6 +81,7 @@ async function handleQuantityDecrease(id, currentQuantity,) {
     showAlert(result.message, "error")
   }
 }
+
   return (
     <>
       <style>{`

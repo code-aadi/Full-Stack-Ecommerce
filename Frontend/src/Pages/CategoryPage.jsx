@@ -5,6 +5,7 @@ import Pagination from '../components/Pagination';
 import { useAlert } from '../../Context/AlertContext';
 import EmptyState from '../components/EmptyState';
 import '../styles/CategoryPage.css';
+import ProductCardSkeleton from '../components/Skeletons/ProductCardSkeleton';
 
 const CategoryProductsPage = () => {
   const [searchParams] = useSearchParams();
@@ -42,16 +43,9 @@ const CategoryProductsPage = () => {
     getCategoriesData();
   }, [categoryName, page, limit]);
 
-  if (loading) {
-    return (
-      <div className="category-loading-wrapper">
-        <div className="category-spinner"></div>
-        <p className="category-loading-text">Loading items for {categoryName}...</p>
-      </div>
-    );
-  }
+ 
 
-  // Error state handle karein
+  
   if (error) {
     return <EmptyState type="category" />;
   }
@@ -78,7 +72,14 @@ const CategoryProductsPage = () => {
       </div>
 
       {/* Product Grid View */}
-      {products?.length > 0 ? (
+     {loading ? (
+        <div className="category-products-grid">
+    {Array.from({ length: 8 }).map((_, index) => (
+      <ProductCardSkeleton key={index} />
+    ))}
+  </div>
+     ) : (
+       products?.length > 0 ? (
         <div className="category-products-grid">
           {products?.map((product) => (
             <ProductCard key={product._id} item={product} />
@@ -97,7 +98,8 @@ const CategoryProductsPage = () => {
             Back to Home
           </Link>
         </div>
-      )}
+      )
+     )}
 
       {totalPages > 1 && (
         <div className="category-pagination-wrapper">

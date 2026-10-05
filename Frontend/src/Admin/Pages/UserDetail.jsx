@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
 import { useAlert } from "../../../Context/AlertContext";
+import Loader from "../../components/Loader";
 
 const UserDetail = ({ onBack }) => {
   const [user, setUser] = useState(null);
@@ -78,7 +79,7 @@ fetchUser()
     }
   };
 
-  if (loading) return <div className="loading-box">Loading user details...</div>;
+  if (loading) return <div style={{height: "80vh", display : "flex", justifyContent : "center"}}><Loader text="Loading User Details"/></div>;
   if (!user) return <div className="loading-box">User Not Found!</div>;
 
   

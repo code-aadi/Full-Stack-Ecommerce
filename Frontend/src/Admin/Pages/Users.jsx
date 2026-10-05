@@ -6,6 +6,7 @@ import { AuthContext } from "../../../Context/AuthContext";
 import fetchApi from "../../../utils/fetchApi";
 import { useAlert } from "../../../Context/AlertContext";
 import Loader from "../../components/Loader";
+import UsersTableSkeleton from "../../components/Skeletons/UsersTableSkeleton";
 
 
 
@@ -341,7 +342,7 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
             </div>
 
             <div className="table-card">
-{loading ? <Loader text="Loading Users"/> : (
+{loading ? <UsersTableSkeleton rows={8}/> : (
     <div className="table-scroll">
     <table className="custom-table" style={{ minWidth: "700px" }}>
       <thead>

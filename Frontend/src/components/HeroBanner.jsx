@@ -1,6 +1,13 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import HeroBannerSkeleton from './Skeletons/HeroBannerSkeleton';
+import { AuthContext } from '../../Context/AuthContext';
 
 const HeroBanner = () => {
+  const {userLoading} = useContext(AuthContext)
+ if(userLoading){
+  return <HeroBannerSkeleton />
+ }
+
   return (
     <div className="container">
       <div className="hero-banner">

@@ -7,6 +7,7 @@ import Pagination from '../components/Pagination';
 import EmptyState from '../components/EmptyState';
 import { useAlert } from '../../Context/AlertContext';
 import Loader from '../components/Loader';
+import ProductCardSkeleton from '../components/Skeletons/ProductCardSkeleton';
 const SearchPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
@@ -229,7 +230,11 @@ const SearchPage = () => {
       {/* Main Content Area */}
       <div className="search-content">
         {loading ? (
-         <Loader text={`Loading Product For "${searchTerm}`}/>
+         <div className="product-grid">
+    {Array.from({ length: 8 }).map((_, index) => (
+      <ProductCardSkeleton key={index} />
+    ))}
+  </div>
         ) : products?.length > 0 ? (
           <div className="filter-products">
             <div

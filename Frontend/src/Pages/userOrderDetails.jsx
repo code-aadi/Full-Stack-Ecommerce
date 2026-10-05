@@ -5,6 +5,7 @@ import fetchApi from "../../utils/fetchApi";
 import { AuthContext } from "../../Context/AuthContext";
 import EmptyState from "../components/EmptyState";
 import { useAlert } from "../../Context/AlertContext";
+import Loader from "../components/Loader";
 
 const statusSteps = ["pending", "confirmed", "shipped", "delivered"];
 const UserOrderDetail = () => {
@@ -13,10 +14,12 @@ const UserOrderDetail = () => {
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
 const {accessToken, setAccessToken} = useContext(AuthContext)
+const [loading, setLoading] = useState(true)
  useEffect(()=>{
   if (!accessToken) return;
   async function fetchOrderDetails() {
     if(!id) return
+    setLoading(true)
     try {
       const response = await fetchApi(`${import.meta.env.VITE_API_BASE_URL}/api/order/${id}`,
           {
@@ -30,6 +33,8 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
       
     } catch (error) {
       showAlert("Something went wrong", "error")
+    }finally{
+      setLoading(false)
     }
   }
   fetchOrderDetails()
@@ -50,6 +55,11 @@ const {accessToken, setAccessToken} = useContext(AuthContext)
     });
   };
 
+  if(loading){
+    return <div style={{height: "80vh", display : "flex", justifyContent : "center"}}>
+      <Loader text="Loading Order Details" />
+    </div>
+  }
   if (!order) return <EmptyState type="orderdetail" />;
 
   const currentStep = statusSteps.indexOf(order.orderStatus?.toLowerCase());
