@@ -18,6 +18,8 @@ import  { paymentLimiter, productLimiter } from "./utils/RateLimit.js"
 import webhookRoute from "./routes/razorpayWebhookRoute.js"
 import { connectTelegramBot } from "./config/telegramBot.js"
 import "./utils/stockReleaseCron.js"
+import "./utils/removeUsersCron.js"
+import helmet from "helmet"
 
 
 
@@ -29,6 +31,7 @@ import "./utils/stockReleaseCron.js"
 const app = express()
 connectDB()
 
+app.use(helmet())
 app.use(express.json())
 
 app.use(cookieParser())
