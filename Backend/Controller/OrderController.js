@@ -162,3 +162,6 @@ const {totalAmount, tax} = cartTotal(validatedItems)
 }
 
 export default orders
+
+
+

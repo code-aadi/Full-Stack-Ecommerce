@@ -52,7 +52,11 @@ app.use("/api/admin/product", AdminProductRoute)
 app.use("/api/admin/dashboard", AdminDashboardRoutes)
 app.use("/api/admin/orders", AdminOrderRoute)
 app.use("/api/admin/users", AdminUserRoutes)
-app.listen(process.env.port)
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 connectTelegramBot()
 
 
