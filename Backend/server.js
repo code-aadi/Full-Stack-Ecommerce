@@ -36,7 +36,23 @@ app.use(express.json())
 
 app.use(cookieParser())
 
-app.use(cors({origin : process.env.FRONTEND_URL, credentials : true}))
+const allowedOrigins = [
+  process.env.FRONTEND_URL,          
+  "http://localhost:5173",           
+  "http://localhost:3000"            
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Blocked by CORS Policy!"));
+    }
+  },
+  credentials: true
+}));
 
 app.use("/api/products", productLimiter,  productRouter);
 
