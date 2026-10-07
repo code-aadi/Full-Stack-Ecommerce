@@ -137,7 +137,7 @@ setCartLoading(true)
     const formatedData = data?.products.map(product => {
         return {
             product : product,
-            quantity : cartItemsObj[product._id]
+            quantity : cartItemsObj[product._id] || 1
         }
     });
     setCartItems(formatedData)
@@ -147,7 +147,7 @@ setCartLoading(true)
  }
 }
 getCartsOfNonUser()
-},[user, accessToken])
+},[localCart])
 
 
 
