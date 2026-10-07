@@ -36,6 +36,7 @@ const navigate = useNavigate()
         .admin-sidebar {
           width: 250px;
           height: 100vh;
+          height: 100dvh; /* mobile par asli visible height */
           background-color: #1e293b;
           color: #e2e8f0;
           display: flex;
@@ -49,6 +50,7 @@ const navigate = useNavigate()
         }
 
         .sidebar-brand {
+          flex-shrink: 0;
           padding: 20px 24px;
           font-size: 1.25rem;
           font-weight: 700;
@@ -61,6 +63,8 @@ const navigate = useNavigate()
 
         .sidebar-menu {
           flex: 1;
+          min-height: 0;        /* sirf beech ka menu scroll hoga, zarurat padne par */
+          overflow-y: auto;
           display: flex;
           flex-direction: column;
           padding: 16px 12px;
@@ -91,7 +95,9 @@ const navigate = useNavigate()
         }
 
         .sidebar-bottom {
+          flex-shrink: 0;       /* Settings + Logout hamesha dikhenge */
           padding: 16px 12px;
+          padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); /* iPhone home bar */
           border-top: 1px solid #334155;
           display: flex;
           flex-direction: column;
@@ -145,7 +151,9 @@ const navigate = useNavigate()
           .admin-sidebar {
             position: fixed;
             top: 0;
+            bottom: 0;          /* top + bottom se height khud set hogi */
             left: 0;
+            height: auto;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
             z-index: 1050;
