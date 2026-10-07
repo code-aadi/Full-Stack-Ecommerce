@@ -104,12 +104,12 @@ if(user){
  const data = await response.json()
 
 setCartItems(data.cart.items)
+setAddToCartLoading({})
 
  } catch (error) {
-   
+   setAddToCartLoading({})
  }finally{
     setCartLoading(false)
-    setAddToCartLoading({})
  }
 } 
 
