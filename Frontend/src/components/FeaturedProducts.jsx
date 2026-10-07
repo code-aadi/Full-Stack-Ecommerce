@@ -66,7 +66,7 @@ useEffect(()=>{
                 </div>
               </div>
             </div>
-            <button className="home-btn-add-cart"  disabled={addToCartLoading === product._id}  onClick={()=> handleAddToCart(product._id)}> {addToCartLoading === product._id ? <ThreeDotsLoader />: "Add to cart"}</button>
+            <button className="home-btn-add-cart"  disabled={!!addToCartLoading[product._id]}  onClick={()=> handleAddToCart(product._id)}> {addToCartLoading === product._id ? <ThreeDotsLoader />: "Add to cart"}</button>
           </div>
         ))}
       </div>
