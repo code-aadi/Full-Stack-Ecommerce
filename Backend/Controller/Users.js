@@ -214,13 +214,12 @@ export const refreshAccessToken = async (req, res) => {
     const newAccessToken = generateAccessToken(decoded.userId);
     const newRefreshToken = await generateRefreshToken(decoded.userId, decoded.familyId);
 
-    res.cookie("REFRESH-TOKEN", newRefreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
+ res.cookie("REFRESH-TOKEN", newRefreshToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
     return res.status(200).json({
       success: true,
       accessToken: newAccessToken,
