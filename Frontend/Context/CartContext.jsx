@@ -39,7 +39,7 @@ setAddToCartLoading((prev)=>(
         }, setAccessToken)
         const data = await response.json()
         if(response.ok){
-            setCartRefresh(prev => prev + 1)
+            await getCart()
           return {success : true, message : "Product is added to cart"}
         }
         
@@ -95,8 +95,7 @@ setAddToCartLoading((prev)=>(
 }
 
 
-useEffect(()=>{
-    async function getCart(){
+async function getCart(){
         setCartLoading(true)
        
 if(user){
@@ -119,8 +118,13 @@ setCartItems(data.cart.items)
 } 
 
     }
+
+useEffect(()=>{
+    
     getCart()
-},[accessToken, cartRefresh, user])
+},[accessToken, user])
+
+
 
 
 useEffect(()=>{
