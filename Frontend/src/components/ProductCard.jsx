@@ -9,7 +9,7 @@ const ProductCard = ({ item }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { showAlert } = useAlert();
   const { cartItems, addToCart, quantityDecrease, quantityIncrease, addToCartLoading } = useContext(cartContext);
-const isProcessing = addToCartLoading === item._id;
+const isProcessing = !!addToCartLoading[item?._id]
   const cartItem = cartItems?.find(
     (cItem) => cItem.product._id === item?._id || cItem.product.id === item?._id
   );
@@ -418,11 +418,11 @@ const isProcessing = addToCartLoading === item._id;
             <button
               type="button"
               className="cart-btn"
-              disabled={isOutOfStock || addToCartLoading === item._id}
+              disabled={isOutOfStock || isProcessing}
               onClick={() => handleAddToCart(item._id)}
             >
               <ShoppingCart size={15} />
-              <span>{isOutOfStock ? 'Out of Stock' : addToCartLoading === item._id ? <ThreeDotsLoader /> : "Add to cart"}</span>
+              <span>{isOutOfStock ? 'Out of Stock' : isProcessing ? <ThreeDotsLoader /> : "Add to cart"}</span>
             </button>
           )}
         </div>

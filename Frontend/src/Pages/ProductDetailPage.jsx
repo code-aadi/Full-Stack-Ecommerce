@@ -24,7 +24,7 @@ const {showAlert} = useAlert()
   const cartItem = cartItems?.find((cItem) => cItem.product._id === product?._id || cItem.product.id === product?._id);
   const isInCart = Boolean(cartItem);
   const currentQuantity = cartItem ? cartItem.quantity : 1;
-const isProcessing =  addToCartLoading === product?._id;
+const isProcessing =  addToCartLoading[product?._id];
 
   
   useEffect(() => {
@@ -471,7 +471,7 @@ async function handleQuantityDecrease(id, currentQuantity,) {
                       /* Jab Cart me nahi hai -> Add To Cart Button dikhega */
                       <button className="btn-add-to-cart" onClick={handleAddToCart} disabled = {isProcessing}>
                         <ShoppingCart size={20} />
-                        <span>{addToCartLoading === product._id ? <ThreeDotsLoader /> : "Add To Cart"}</span>
+                        <span>{isProcessing ? <ThreeDotsLoader /> : "Add To Cart"}</span>
                       </button>
                     )}
 
