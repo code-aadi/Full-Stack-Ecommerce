@@ -8,7 +8,8 @@ import AdminNavButton from './AdminNavButton';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, userLoading } = useContext(AuthContext);
+  const { user , userLoading} = useContext(AuthContext);
+  const {cartLoading} = useContext(cartContext)
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { cartItems } = useContext(cartContext);
   const [searchInput, setSearchInput] = useState('');
@@ -22,6 +23,8 @@ const Navbar = () => {
       setDropdownOpen(!dropdownOpen);
     }
   }
+
+
 
   // Search Submit Handler
   const handleSearchSubmit = (e) => {
@@ -53,10 +56,15 @@ const Navbar = () => {
 
         {/* Action Icons */}
         <div className="nav-icons">
-          <button className="icon-btn" onClick={handleIconClick}>
-            {user ? <p className="nav-user-logo">{userLogo}</p> : <User size={22} />}
-          </button>
-          
+         <button className="icon-btn" onClick={handleIconClick} disabled={userLoading}>
+  {userLoading ? (
+    <span className="user-btn-spinner" />
+  ) : user ? (
+    <p className="nav-user-logo">{userLogo}</p>
+  ) : (
+    <User size={22} />
+  )}
+</button>
           <button className="icon-btn">
             <Heart size={22} />
           </button>
@@ -65,7 +73,13 @@ const Navbar = () => {
             {dropdownOpen && <UserDropdown setDropdownOpen={setDropdownOpen} />}
             <button className="icon-btn" onClick={() => navigate("/MyCart")}>
               <ShoppingCart size={22} />
-              <span className="cart-badge">{cartItems?.length || 0}</span>
+              <span className="cart-badge">
+    {cartLoading || userLoading ? (
+      <span className="cart-badge-spinner" />
+    ) : (
+      cartItems?.length || 0
+    )}
+  </span>
             </button>
           </div>
         </div>

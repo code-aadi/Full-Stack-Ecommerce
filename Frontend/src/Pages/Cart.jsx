@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAlert } from '../../Context/AlertContext';
 import EmptyState from '../components/EmptyState';
 import CartPageSkeleton from '../components/Skeletons/CartPageSkeleton';
+import { AuthContext } from '../../Context/AuthContext';
 
 export default function Cart() {
   const { cartItems, quantityIncrease, quantityDecrease, removeFromCart, clearCart, cartLoading } = useContext(cartContext);
+  const {userLoading} = useContext(AuthContext)
   const navigate = useNavigate();
   const { showAlert } = useAlert();
 
@@ -18,7 +20,7 @@ export default function Cart() {
   const formatINR = (value) =>
     value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
- if(cartLoading){
+ if(cartLoading || userLoading){
  return <CartPageSkeleton />
  }
 

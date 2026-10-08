@@ -127,43 +127,50 @@ useEffect(()=>{
 
 
 
-useEffect(()=>{
-async function getCartsOfNonUser() {
-       
-if(user) return
-setCartLoading(true)
-    const ids = localCart?.map((cart) => cart._id)
+useEffect(() => {
+  async function getCartsOfNonUser() {
+    if (user) {
+      return;
+    }
 
-   if(!ids|| ids.length === 0){
-  setCartItems([])
-  setCartLoading(false)
-    return
-   }
- try {
-    
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/cart/localCart`,{
-        method : "POST",
-        headers :{"Content-Type" : "application/json"},
-        body : JSON.stringify({ids})
-    })
-    const data = await response.json()
-    
-    const formatedData = data?.products.map(product => {
-        return {
-            product : product,
-            quantity : cartItemsObj[product._id] || 1
+    const ids = localCart?.map((cart) => cart._id);
+
+    if (!ids || ids.length === 0) {
+      setCartItems([]);
+      setCartLoading(false);
+      return;
+    }
+
+    setCartLoading(true);
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/cart/localCart`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids }),
         }
-    });
-    setCartItems(formatedData)
- } catch (error) {
- }finally{
-    setCartLoading(false)
- }
-}
-getCartsOfNonUser()
-},[localCart])
+      );
+      const data = await response.json();
 
+      const formatedData = data?.products?.map((product) => {
+        return {
+          product: product,
+          quantity: cartItemsObj?.[product._id] || 1,
+        };
+      }) || [];
 
+      setCartItems(formatedData);
+    } catch (error) {
+      console.error("Failed to fetch local cart:", error);
+    } finally {
+      setCartLoading(false); 
+    }
+  }
+
+  getCartsOfNonUser();
+}, [localCart, user]); 
 
 async function quantityIncrease(productId, currentQuantity){
  
