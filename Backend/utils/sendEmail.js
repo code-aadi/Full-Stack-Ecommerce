@@ -1,11 +1,12 @@
-/*import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 const sendEmail = async (options) => {
    
     const transporter = nodemailer.createTransport({
         host : 'smtp.gmail.com',
-        port : 465,
-        secure : true,
+        port : 587,
+        secure : false,
+        requireTLS : true,
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
@@ -23,9 +24,9 @@ const sendEmail = async (options) => {
     await transporter.sendMail(mailOptions);
 };
 
-export default sendEmail;*/
+export default sendEmail;
 
-
+/*
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -47,4 +48,4 @@ const sendEmail = async (options) => {
 };
 
 export default sendEmail;
-
+*/
