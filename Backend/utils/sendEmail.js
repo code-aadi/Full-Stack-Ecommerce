@@ -3,17 +3,17 @@ import nodemailer from 'nodemailer';
 const sendEmail = async (options) => {
    
     const transporter = nodemailer.createTransport({
-        host: '://brevo.com',
+        host: 'smtp-relay.brevo.com', 
         port: 587,
         secure: false, 
         auth: {
-            user: process.env.EMAIL_USER, 
-            pass: process.env.EMAIL_PASS  
+            user: process.env.SMTP_USER, 
+            pass: process.env.SMTP_PASS  
         }
     });
 
     const mailOptions = {
-        from: process.env.EMAIL_USER,
+        from: process.env.SENDER_EMAIL, 
         to: options.email,            
         subject: options.subject,
         html: options.html       
@@ -30,6 +30,7 @@ const sendEmail = async (options) => {
 };
 
 export default sendEmail;
+
 
 
 
