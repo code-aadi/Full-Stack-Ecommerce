@@ -1,36 +1,36 @@
 import nodemailer from 'nodemailer';
 
 const sendEmail = async (options) => {
-    // Port 465 (secure: true) Gmail ke liye zyada reliable hota hai production me
+   
     const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465, 
-        secure: true, // 465 ke liye true karein
+        host: '://brevo.com',
+        port: 587,
+        secure: false, 
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
+            user: process.env.EMAIL_USER, 
+            pass: process.env.EMAIL_PASS  
         }
     });
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
-        to: options.email,       
+        to: options.email,            
         subject: options.subject,
         html: options.html       
     };
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log("Email sent successfully in production:", info.messageId);
+        console.log("Email successfully sent via Brevo:", info.messageId);
         return info;
     } catch (error) {
-        // Yeh Render ke dashboard par exact error print karega
-        console.error("Nodemailer Production Error Details:", error);
-        throw error; 
+        console.error("Brevo sending failed error:", error);
+        throw error;
     }
 };
 
 export default sendEmail;
+
 
 
 /*
