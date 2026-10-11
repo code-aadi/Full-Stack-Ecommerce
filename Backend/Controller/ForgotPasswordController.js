@@ -27,7 +27,7 @@ export const forgotPassword = async (req,res)=>{
         userId : userExist._id,
         token : hashedToken
        })
-     const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
      const message = `<p>You have requested a password reset</p>
                  <p>Click the link below to change your password (this link is valid for 10 minutes):</p>
