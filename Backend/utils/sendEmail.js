@@ -30,31 +30,28 @@ export default sendEmail;
 
 
 
-import 'dotenv/config';
-import * as sibApiV3Sdk from '@getbrevo/brevo';
 
+import { BrevoClient } from '@getbrevo/brevo';
 const sendEmail = async (options) => {
-    let defaultClient = sibApiV3Sdk.ApiClient.instance;
-    let apiKey = defaultClient.authentications['api-key'];
-    apiKey.apiKey = process.env.BREVO_API_KEY; 
-
-    let apiInstance = new sibApiV3Sdk.TransactionalEmailsApi();
-    let sendSmtpEmail = new sibApiV3Sdk.SendSmtpEmail();
-
-    sendSmtpEmail.subject = options.subject;
-    sendSmtpEmail.htmlContent = options.html;
-    sendSmtpEmail.sender = { 
-        name: "My App Team", 
-        email: process.env.SENDER_EMAIL
-    };
-    sendSmtpEmail.to = [{ 
-        email: options.email 
-    }];
-
     try {
-        const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
-        console.log('Email successfully sent via Brevo HTTP API. Data:', JSON.stringify(data));
-        return data;
+        const brevo = new BrevoClient({ 
+            apiKey: process.env.BREVO_API_KEY 
+        });
+
+        const result = await brevo.transactionalEmails.sendTransacEmail({
+            subject: options.subject,
+            htmlContent: options.html,
+            sender: { 
+                name: "My App Team", 
+                email: process.env.SENDER_EMAIL 
+            },
+            to: [{ 
+                email: options.email 
+            }]
+        });
+
+        console.log('Email successfully sent via Brevo HTTP API. Result:', result);
+        return result;
     } catch (error) {
         console.error("Brevo API sending failed:", error);
         throw error;
