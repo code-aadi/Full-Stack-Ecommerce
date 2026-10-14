@@ -54,6 +54,11 @@ app.use(cors({
   credentials: true
 }));
 
+
+app.get('/health', (req, res) => {
+  res.status(200).send('Server is healthy and awake!');
+});
+
 app.use("/api/products", productLimiter,  productRouter);
 
 
