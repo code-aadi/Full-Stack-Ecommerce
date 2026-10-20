@@ -22,17 +22,18 @@ import "./utils/removeUsersCron.js"
 import helmet from "helmet"
 
 
-
-
-
-
-
-
 const app = express()
 connectDB()
 app.set('trust proxy', 1);
 app.use(helmet())
-app.use(express.json())
+
+app.use((req, res, next) => {
+    if (req.originalUrl === "/api/payment/razorpay-webhook") {
+        return next(); 
+    }
+    express.json()(req, res, next);
+});
+
 
 app.use(cookieParser())
 
