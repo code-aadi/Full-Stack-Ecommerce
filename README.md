@@ -27,7 +27,6 @@ It goes well beyond a basic CRUD shop. It covers the problems real stores run in
 | 🖥️ **Frontend (Vercel)** | [https://full-stack-ecommerce-aadi.vercel.app](https://full-stack-ecommerce-aadi.vercel.app) |
 | ⚙️ **Backend API (Render)** | [https://full-stack-ecommerce-2-4trd.onrender.com](https://full-stack-ecommerce-2-4trd.onrender.com) |
 
-> ⏳ **Note:** the backend is hosted on Render's free plan, which puts the server to sleep after a period of inactivity. The **first request can take 30–60 seconds** while it wakes up, so the demo may load slowly the first time. After that it runs normally.
 
 The admin panel needs an account with the `admin` role (see [Create an admin user](#5-create-an-admin-user)).
 
